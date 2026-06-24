@@ -17,7 +17,7 @@ function getContainerRect(containerRef: React.RefObject<HTMLDivElement | null>):
   return containerRef.current ? containerRef.current.getBoundingClientRect() : null;
 }
 
-type PacketDot = { x: number; y: number; id: string };
+type PacketDot = { x: number; y: number; id: string; edgeId: string; progress: number };
 type EdgeBadge = { x: number; y: number; label: string; edgeId: string };
 
 export const FlowOverlay = React.memo(function FlowOverlay() {
@@ -69,19 +69,26 @@ export const FlowOverlay = React.memo(function FlowOverlay() {
         if (!ctm) continue;
         const sx = ctm.a * pt.x + ctm.c * pt.y + ctm.e - containerRect.left;
         const sy = ctm.b * pt.x + ctm.d * pt.y + ctm.f - containerRect.top;
-        dots.push({ x: sx, y: sy, id: p.id });
+        dots.push({ x: sx, y: sy, id: p.id, edgeId: p.edgeId, progress: p.progress });
       } catch {
         // path not yet in DOM
       }
     }
 
-    // Edge throughput badges (only when running or has metrics)
+    // Edge throughput badges + active-edge highlight
     const edgeBadges: EdgeBadge[] = [];
     for (const edge of edges) {
       const rps = edgeMetrics[edge.id];
+      const path = getEdgePath(edge.id);
+      const group = document.querySelector<SVGGElement>(
+        `.react-flow__edge[data-id="${edge.id}"]`
+      );
+      if (group) {
+        if (rps && rps > 0) group.classList.add("archlet-edge-active");
+        else group.classList.remove("archlet-edge-active");
+      }
       if (!rps && !isRunning) continue;
       if (rps === 0 || rps == null) continue;
-      const path = getEdgePath(edge.id);
       if (!path) continue;
       try {
         const len = path.getTotalLength();
@@ -99,23 +106,39 @@ export const FlowOverlay = React.memo(function FlowOverlay() {
     // Clear dynamic layer only (defs stay)
     layer.innerHTML = "";
 
-    // Packet dots: glow circle (large soft amber) + core dot
+    // Cap visible packets PER EDGE to keep flow clean (no blob clustering).
+    const PER_EDGE_CAP = 8;
+    const byEdge = new Map<string, PacketDot[]>();
     for (const d of dots) {
-      const glow = document.createElementNS(SVG_NS, "circle");
-      glow.setAttribute("cx", String(d.x));
-      glow.setAttribute("cy", String(d.y));
-      glow.setAttribute("r", "10");
-      glow.setAttribute("fill", "url(#packet-glow)");
-      glow.setAttribute("opacity", "0.55");
-      layer.appendChild(glow);
+      const arr = byEdge.get(d.edgeId) ?? [];
+      arr.push(d);
+      byEdge.set(d.edgeId, arr);
+    }
 
-      const core = document.createElementNS(SVG_NS, "circle");
-      core.setAttribute("cx", String(d.x));
-      core.setAttribute("cy", String(d.y));
-      core.setAttribute("r", "4.5");
-      core.setAttribute("fill", "url(#packet-core)");
-      core.setAttribute("filter", "url(#packet-blur)");
-      layer.appendChild(core);
+    for (const arr of byEdge.values()) {
+      // Sort by progress so we sample evenly
+      arr.sort((a, b) => a.progress - b.progress);
+      const sampled = arr.length <= PER_EDGE_CAP
+        ? arr
+        : arr.filter((_, i) => i % Math.ceil(arr.length / PER_EDGE_CAP) === 0);
+
+      for (const d of sampled) {
+        // Crisp amber dot with tiny white core — no blur, no halo
+        const ring = document.createElementNS(SVG_NS, "circle");
+        ring.setAttribute("cx", String(d.x));
+        ring.setAttribute("cy", String(d.y));
+        ring.setAttribute("r", "3.5");
+        ring.setAttribute("fill", "#F59E0B");
+        layer.appendChild(ring);
+
+        const hi = document.createElementNS(SVG_NS, "circle");
+        hi.setAttribute("cx", String(d.x - 0.7));
+        hi.setAttribute("cy", String(d.y - 0.7));
+        hi.setAttribute("r", "1");
+        hi.setAttribute("fill", "#FEF3C7");
+        hi.setAttribute("opacity", "0.95");
+        layer.appendChild(hi);
+      }
     }
 
     // Edge throughput badges — HTML overlay for crisp typography.

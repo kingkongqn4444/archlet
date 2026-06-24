@@ -6,6 +6,13 @@ import "./globals.css";
 import { App } from "./app";
 import { queryClient } from "./lib/query-client";
 import { initSentry } from "./lib/sentry-init";
+import { useDiagramStore } from "./features/canvas/store/diagram-store";
+
+if (import.meta.env.DEV) {
+  (window as unknown as { __archlet: { store: typeof useDiagramStore } }).__archlet = {
+    store: useDiagramStore,
+  };
+}
 
 // Init Sentry before rendering (NO-OP if VITE_SENTRY_DSN unset)
 initSentry();

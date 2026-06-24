@@ -175,13 +175,13 @@ function SimulatingBadge() {
       className="absolute top-16 left-1/2 -translate-x-1/2 z-30 pointer-events-none"
       aria-live="polite"
     >
-      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500 text-white text-[11px] font-semibold tracking-tight shadow-float">
+      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-plum-900/95 dark:bg-plum-50/10 backdrop-blur border border-amber-400/50 text-amber-300 dark:text-amber-300 text-[11px] font-semibold tracking-tight shadow-float">
         <span className="relative inline-flex w-2 h-2">
-          <span className="absolute inset-0 rounded-full bg-emerald-200 animate-ping" />
-          <span className="relative rounded-full w-2 h-2 bg-white" />
+          <span className="absolute inset-0 rounded-full bg-amber-400 animate-ping opacity-75" />
+          <span className="relative rounded-full w-2 h-2 bg-amber-500" />
         </span>
-        <Activity size={11} />
-        Simulating
+        <Activity size={11} className="text-amber-300" />
+        <span>Simulating</span>
       </div>
     </div>
   );
