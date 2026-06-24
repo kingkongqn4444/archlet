@@ -22,6 +22,8 @@ export const DiagramNodeSchema = z.object({
   data: z.object({
     label: z.string(),
     description: z.string().optional(),
+    variant: z.string().optional(),
+    config: z.record(z.string(), z.unknown()).optional(),
   }),
 });
 

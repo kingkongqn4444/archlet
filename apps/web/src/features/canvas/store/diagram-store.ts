@@ -12,6 +12,7 @@ import {
   type Connection,
 } from "@xyflow/react";
 import type { DiagramNode, DiagramEdge, Level, Diagram } from "@archlet/shared";
+import { getDefaultVariant, parseVariantConfig } from "@archlet/shared";
 
 export type RFNode = Node<DiagramNode["data"] & Record<string, unknown>, DiagramNode["type"]>;
 export type RFEdge = Edge<{ label?: string } & Record<string, unknown>>;
@@ -31,6 +32,8 @@ type DiagramActions = {
   setName: (name: string) => void;
   addNode: (node: DiagramNode) => void;
   updateNode: (id: string, data: Partial<DiagramNode["data"]>) => void;
+  updateNodeConfig: (id: string, config: Record<string, unknown>) => void;
+  updateNodeVariant: (id: string, variantId: string) => void;
   deleteNode: (id: string) => void;
   updateEdge: (id: string, data: { label?: string }) => void;
   deleteEdge: (id: string) => void;
@@ -47,7 +50,10 @@ type DiagramStore = DiagramState & DiagramActions;
 const emptyLevel = (): LevelData => ({ nodes: [], edges: [] });
 
 function toRFNode(n: DiagramNode): RFNode {
-  return { ...n, data: { ...n.data } } as RFNode;
+  const type = n.type as DiagramNode["type"];
+  const variantId = n.data.variant ?? getDefaultVariant(type).id;
+  const config = n.data.config ?? parseVariantConfig(type, variantId, {});
+  return { ...n, data: { ...n.data, variant: variantId, config } } as RFNode;
 }
 
 function fromRFNode(n: RFNode): DiagramNode {
@@ -55,7 +61,12 @@ function fromRFNode(n: RFNode): DiagramNode {
     id: n.id,
     type: n.type as DiagramNode["type"],
     position: n.position,
-    data: { label: n.data.label as string, description: n.data.description as string | undefined },
+    data: {
+      label: n.data.label as string,
+      description: n.data.description != null ? String(n.data.description) : undefined,
+      variant: n.data.variant as string | undefined,
+      config: n.data.config as Record<string, unknown> | undefined,
+    },
   };
 }
 
@@ -71,8 +82,12 @@ export const useDiagramStore = create<DiagramStore>()(
 
       setName: (name) => set({ name }),
 
-      addNode: (node) =>
-        set((s) => ({ nodes: [...s.nodes, toRFNode(node)] })),
+      addNode: (node) => {
+        const variantId = node.data.variant ?? getDefaultVariant(node.type).id;
+        const config = node.data.config ?? parseVariantConfig(node.type, variantId, {});
+        const withDefaults: DiagramNode = { ...node, data: { ...node.data, variant: variantId, config } };
+        set((s) => ({ nodes: [...s.nodes, toRFNode(withDefaults)] }));
+      },
 
       updateNode: (id, data) =>
         set((s) => ({
@@ -80,6 +95,26 @@ export const useDiagramStore = create<DiagramStore>()(
             n.id === id ? { ...n, data: { ...n.data, ...data } } : n
           ),
         })),
+
+      updateNodeConfig: (id, config) =>
+        set((s) => ({
+          nodes: s.nodes.map((n) =>
+            n.id === id ? { ...n, data: { ...n.data, config } } : n
+          ),
+        })),
+
+      updateNodeVariant: (id, variantId) =>
+        set((s) => {
+          const node = s.nodes.find((n) => n.id === id);
+          if (!node) return {};
+          const type = node.type as DiagramNode["type"];
+          const config = parseVariantConfig(type, variantId, {});
+          return {
+            nodes: s.nodes.map((n) =>
+              n.id === id ? { ...n, data: { ...n.data, variant: variantId, config } } : n
+            ),
+          };
+        }),
 
       deleteNode: (id) =>
         set((s) => ({
