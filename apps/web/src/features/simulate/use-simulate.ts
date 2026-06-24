@@ -25,21 +25,37 @@ export function useSimulate() {
     [applySnapshot]
   );
 
-  if (!simRef.current) {
-    simRef.current = ensureSingleton(handleSnapshot);
-  }
+  // Always point to the current module-level singleton (which may have been
+  // rebuilt by the topology listener). This prevents FlowOverlay from reading
+  // stale packets after a topology change.
+  simRef.current = ensureSingleton(handleSnapshot);
 
-  // Rebuild singleton when diagram nodes/edges change — only one listener globally
+  // Rebuild singleton only when topology actually changes (add/remove node/edge,
+  // edge endpoints, or node type/variant). Drag-position updates and selection
+  // do not justify a sim reset.
   useEffect(() => {
     if (listenerAttached) return;
     listenerAttached = true;
-    const unsub = useDiagramStore.subscribe((state, prev) => {
-      if (state.nodes !== prev.nodes || state.edges !== prev.edges) {
-        singleton?.stop();
-        setRunning(false);
-        clearMetrics();
-        singleton = new Simulator(state.nodes, state.edges, handleSnapshot);
-      }
+    const topologyKey = (s: ReturnType<typeof useDiagramStore.getState>): string => {
+      const n = s.nodes
+        .map((x) => `${x.id}:${x.type}:${(x.data?.variant as string) ?? ""}`)
+        .sort()
+        .join("|");
+      const e = s.edges
+        .map((x) => `${x.id}:${x.source}->${x.target}`)
+        .sort()
+        .join("|");
+      return `${n}#${e}`;
+    };
+    let lastKey = topologyKey(useDiagramStore.getState());
+    const unsub = useDiagramStore.subscribe((state) => {
+      const key = topologyKey(state);
+      if (key === lastKey) return;
+      lastKey = key;
+      singleton?.stop();
+      setRunning(false);
+      clearMetrics();
+      singleton = new Simulator(state.nodes, state.edges, handleSnapshot);
     });
     return () => {
       unsub();
@@ -63,5 +79,8 @@ export function useSimulate() {
     clearMetrics();
   }, [setRunning, clearMetrics]);
 
-  return { isRunning, start, stop, reset, simRef };
+  // Always-fresh accessor — reads the current module-level singleton at call time.
+  const getSim = useCallback(() => singleton, []);
+
+  return { isRunning, start, stop, reset, simRef, getSim };
 }

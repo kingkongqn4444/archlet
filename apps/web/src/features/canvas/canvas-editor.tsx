@@ -18,6 +18,7 @@ import { LevelSwitcher } from "./toolbar/level-switcher";
 import { useKeyboard } from "./hooks/use-keyboard";
 import { PropertiesPanel } from "./properties/properties-panel";
 import { FlowOverlay } from "@/features/simulate/flow-overlay";
+import { CanvasHints } from "./toolbar/canvas-hints";
 import type { NodeType } from "@archlet/shared";
 import type { PublicDiagramResponse } from "@archlet/shared";
 
@@ -123,6 +124,7 @@ function CanvasInner({ readOnly = false }: CanvasInnerProps) {
           <Controls position="bottom-right" showInteractive={false} />
         </ReactFlow>
         {!readOnly && <FlowOverlay />}
+        {!readOnly && <CanvasHints />}
       </div>
       {!readOnly && <LevelSwitcher />}
       {!readOnly && <PropertiesPanel />}

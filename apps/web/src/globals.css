@@ -92,43 +92,68 @@ html, body {
   border-color: rgba(108,43,217,0.25);
 }
 
-/* Edge animation */
+/* Edge animation — passive (visible always) */
 .archlet-edge-flow {
   stroke-dasharray: 6 4;
   animation: dashdraw 1s linear infinite;
+}
+/* Active edge — used while simulator is running to amplify flow feel */
+.react-flow__edge.archlet-edge-active .react-flow__edge-path {
+  stroke-width: 2.5 !important;
+  filter: drop-shadow(0 0 3px rgba(245, 158, 11, 0.45));
+  animation: dashdraw 0.6s linear infinite;
 }
 @keyframes dashdraw {
   to { stroke-dashoffset: -20; }
 }
 
+/* Selected-node subtle pulse — extends ring with soft halo */
+.archlet-selected-pulse {
+  animation: archletPulse 2.2s ease-in-out infinite;
+}
+@keyframes archletPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(108, 43, 217, 0.18), 0 2px 12px -4px rgba(54,17,74,0.12); }
+  50%      { box-shadow: 0 0 0 6px rgba(108, 43, 217, 0.0),  0 2px 12px -4px rgba(54,17,74,0.12); }
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .archlet-edge-flow,
+  .archlet-selected-pulse,
+  .react-flow__edge.archlet-edge-active .react-flow__edge-path,
   .animate-dashdraw,
-  .animate-floatY {
+  .animate-floatY,
+  .animate-ping,
+  .animate-pulse {
     animation: none !important;
   }
   * { transition-duration: 0.01ms !important; }
 }
 
-/* Hide handle dots by default — show on node hover / selection */
+/* Connection handles — bigger, glowing plum on hover */
 .react-flow__handle {
-  width: 8px !important;
-  height: 8px !important;
+  width: 12px !important;
+  height: 12px !important;
   background: #B294D1 !important;
   border: 2px solid #FEFCF6 !important;
   opacity: 0;
-  transition: opacity 0.15s ease, transform 0.15s ease;
+  transition: opacity 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
 .react-flow__node:hover .react-flow__handle,
 .react-flow__node.selected .react-flow__handle {
   opacity: 1;
+  box-shadow: 0 0 0 3px rgba(108,43,217,0.18);
 }
 .react-flow__handle:hover {
   background: #6C2BD9 !important;
-  transform: scale(1.25);
+  transform: scale(1.3);
+  box-shadow: 0 0 0 5px rgba(108,43,217,0.28), 0 0 12px rgba(108,43,217,0.45);
 }
 .dark .react-flow__handle { border-color: #1A0F26 !important; }
+.dark .react-flow__node:hover .react-flow__handle,
+.dark .react-flow__node.selected .react-flow__handle {
+  box-shadow: 0 0 0 3px rgba(178,148,209,0.20);
+}
 
 /* Subtle scrollbars */
 ::-webkit-scrollbar { width: 10px; height: 10px; }

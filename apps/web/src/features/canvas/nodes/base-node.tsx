@@ -2,6 +2,7 @@ import React, { useState, useCallback } from "react";
 import { Handle, Position, NodeToolbar } from "@xyflow/react";
 import { Copy, Trash2, Settings } from "lucide-react";
 import { useDiagramStore, type RFNode } from "../store/diagram-store";
+import { useSimStore } from "@/features/simulate/sim-store";
 import type { DiagramNode, NodeType } from "@archlet/shared";
 import { getVariant, getDefaultVariant } from "@archlet/shared";
 import { usePropertiesPanel } from "../properties/use-properties-panel";
@@ -46,6 +47,42 @@ function VariantBadge({ type, variantId }: { type: NodeType; variantId?: string 
   );
 }
 
+function utilTone(util: number): { ring: string; bg: string; dot: string; text: string; pulse: boolean } {
+  if (util > 0.8) return {
+    ring: "ring-red-500/30", bg: "bg-red-500/15", dot: "bg-red-500", text: "text-red-700 dark:text-red-300", pulse: true,
+  };
+  if (util > 0.5) return {
+    ring: "ring-amber-500/30", bg: "bg-amber-500/15", dot: "bg-amber-500", text: "text-amber-700 dark:text-amber-300", pulse: false,
+  };
+  return {
+    ring: "ring-emerald-500/30", bg: "bg-emerald-500/15", dot: "bg-emerald-500", text: "text-emerald-700 dark:text-emerald-300", pulse: false,
+  };
+}
+
+function UtilChip({ nodeId }: { nodeId: string }) {
+  const metric = useSimStore((s) => s.nodeMetrics[nodeId]);
+  const isRunning = useSimStore((s) => s.isRunning);
+  if (!metric && !isRunning) return null;
+  const util = metric?.util ?? 0;
+  if (util === 0 && !isRunning) return null;
+  const tone = utilTone(util);
+  const pct = `${Math.round(util * 100)}%`;
+  return (
+    <div
+      className={[
+        "absolute -top-2 -right-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full",
+        "text-[10px] font-bold tracking-tight ring-1",
+        "bg-white dark:bg-plum-900 shadow-soft",
+        tone.bg, tone.ring, tone.text,
+      ].join(" ")}
+      aria-label={`utilization ${pct}`}
+    >
+      <span className={`w-1.5 h-1.5 rounded-full ${tone.dot} ${tone.pulse ? "animate-pulse" : ""}`} />
+      {pct}
+    </div>
+  );
+}
+
 export const BaseNode = React.memo(function BaseNode({
   id,
   data,
@@ -84,10 +121,11 @@ export const BaseNode = React.memo(function BaseNode({
   }, [id, nodes, addNode]);
 
   const ringClass = selected
-    ? "ring-2 ring-plum-500 ring-offset-2 ring-offset-cream-50 dark:ring-offset-plum-950"
+    ? "ring-2 ring-plum-500 ring-offset-2 ring-offset-cream-50 dark:ring-offset-plum-950 archlet-selected-pulse"
     : "hover:-translate-y-0.5 hover:shadow-float";
 
   const nodeType = nodes.find((n) => n.id === id)?.type as NodeType | undefined;
+  const isUser = nodeType === "user";
 
   return (
     <>
@@ -122,12 +160,13 @@ export const BaseNode = React.memo(function BaseNode({
 
       <div
         className={[
-          "min-w-[180px] min-h-[56px] rounded-2xl bg-white dark:bg-plum-900/85 backdrop-blur",
+          "relative min-w-[180px] min-h-[56px] rounded-2xl bg-white dark:bg-plum-900/85 backdrop-blur",
           "border border-cream-200 dark:border-plum-700/40 shadow-card",
           "transition-all duration-150",
           ringClass,
         ].join(" ")}
       >
+        {!isUser && <UtilChip nodeId={id} />}
         <div className="flex items-center gap-2.5 px-3 py-2.5">
           <span
             className={[
