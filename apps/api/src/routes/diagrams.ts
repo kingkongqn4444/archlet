@@ -7,6 +7,7 @@ import {
   CreateDiagramRequestSchema,
   UpdateDiagramRequestSchema,
   RenameDiagramRequestSchema,
+  SetEmbedRequestSchema,
   type DiagramResponse,
 } from "@archlet/shared";
 
@@ -30,6 +31,7 @@ function rowToResponse(row: typeof diagrams.$inferSelect): DiagramResponse {
     name: row.name,
     levelData: JSON.parse(row.levelData),
     activeLevel: row.activeLevel as DiagramResponse["activeLevel"],
+    publicEmbed: row.publicEmbed === 1,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
   };
@@ -192,6 +194,38 @@ app.delete("/:id", async (c) => {
 
   await db.delete(diagrams).where(eq(diagrams.id, id));
   return c.json({ ok: true });
+});
+
+// PATCH /api/diagrams/:id/embed — toggle public embed (owner only)
+app.patch("/:id/embed", async (c) => {
+  const body = await c.req.json().catch(() => null);
+  const parsed = SetEmbedRequestSchema.safeParse(body);
+  if (!parsed.success) return c.json({ error: "Invalid request" }, 400);
+
+  const db = drizzle(c.env.DB);
+  const user = c.get("user");
+  const id = c.req.param("id");
+
+  const [existing] = await db
+    .select()
+    .from(diagrams)
+    .where(and(eq(diagrams.id, id), eq(diagrams.ownerId, user.id)));
+  if (!existing) return c.json({ error: "Not found" }, 404);
+
+  await db
+    .update(diagrams)
+    .set({ publicEmbed: parsed.data.enabled ? 1 : 0 })
+    .where(eq(diagrams.id, id));
+
+  // Bust CF edge cache for the public embed endpoint
+  try {
+    const origin = new URL(c.req.url).origin;
+    await caches.default.delete(new Request(`${origin}/api/public/embed/${id}`));
+  } catch {
+    // caches.default not available in local dev — safe to ignore
+  }
+
+  return c.json({ ok: true, publicEmbed: parsed.data.enabled });
 });
 
 export default app;

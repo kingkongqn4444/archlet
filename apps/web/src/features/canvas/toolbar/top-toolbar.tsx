@@ -1,19 +1,24 @@
 import React, { useState } from "react";
 import { Undo2, Redo2, Maximize, Moon, Sun, Share2, Sparkles } from "lucide-react";
 import { useReactFlow } from "@xyflow/react";
-import { toast } from "sonner";
-import { useTemporalDiagram } from "../store/diagram-store";
+import { useTemporalDiagram, useDiagramStore } from "../store/diagram-store";
 import { useDarkMode } from "../hooks/use-dark-mode";
 import { AiPanel } from "@/features/ai/ai-panel";
+import { ShareDialog } from "@/features/share/share-dialog";
 
 export const TopToolbar = React.memo(function TopToolbar() {
-  const [name, setName] = useState("Untitled diagram");
   const [editingName, setEditingName] = useState(false);
   const [aiOpen, setAiOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const { fitView, getViewport } = useReactFlow();
   const { undo, redo } = useTemporalDiagram();
   const { isDark, toggle } = useDarkMode();
   const zoom = Math.round((getViewport().zoom ?? 1) * 100);
+
+  const diagramId = useDiagramStore((s) => s.id);
+  const name = useDiagramStore((s) => s.name);
+  const setName = useDiagramStore((s) => s.setName);
+  const publicEmbed = false; // loaded from query cache; dialog fetches live
 
   return (
     <>
@@ -63,7 +68,7 @@ export const TopToolbar = React.memo(function TopToolbar() {
             {isDark ? <Sun size={15} /> : <Moon size={15} />}
           </button>
           <button
-            onClick={() => toast.info("Share coming in Phase 4")}
+            onClick={() => setShareOpen(true)}
             className="flex items-center gap-1 px-2 py-1 rounded text-xs bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 hover:opacity-90"
           >
             <Share2 size={12} /> Share
@@ -72,6 +77,13 @@ export const TopToolbar = React.memo(function TopToolbar() {
       </div>
 
       <AiPanel open={aiOpen} onOpenChange={setAiOpen} />
+      {diagramId && (
+        <ShareDialog
+          open={shareOpen}
+          onOpenChange={setShareOpen}
+          diagram={{ id: diagramId, name, publicEmbed }}
+        />
+      )}
     </>
   );
 });

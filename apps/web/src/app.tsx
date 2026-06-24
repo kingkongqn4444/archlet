@@ -7,12 +7,18 @@ import { SignupPage } from "@/pages/signup-page";
 import { WorkspacePage } from "@/pages/workspace-page";
 import { CanvasPage } from "@/pages/canvas-page";
 import { AccountPage } from "@/pages/account-page";
+import { SharedPage } from "@/pages/shared-page";
+import { EmbedPage } from "@/pages/embed-page";
 
 export function App() {
   return (
     <BrowserRouter>
       <Toaster />
       <Routes>
+        {/* Public share routes — no auth, no AppShell */}
+        <Route path="/s/:token" element={<SharedPage />} />
+        <Route path="/e/:id" element={<EmbedPage />} />
+
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />

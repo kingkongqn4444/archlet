@@ -1,4 +1,5 @@
 import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
+import { sql } from "drizzle-orm";
 
 export const user = sqliteTable("user", {
   id: text("id").primaryKey(),
@@ -76,6 +77,7 @@ export const diagrams = sqliteTable(
     name: text("name").notNull(),
     levelData: text("level_data").notNull(),
     activeLevel: text("active_level").notNull().default("high"),
+    publicEmbed: integer("public_embed").notNull().default(sql`0`),
     createdAt: integer("created_at").notNull(),
     updatedAt: integer("updated_at").notNull(),
   },
@@ -83,4 +85,17 @@ export const diagrams = sqliteTable(
     index("idx_diagrams_project").on(t.projectId, t.updatedAt),
     index("idx_diagrams_owner").on(t.ownerId),
   ]
+);
+
+export const shareTokens = sqliteTable(
+  "share_tokens",
+  {
+    token: text("token").primaryKey(),
+    diagramId: text("diagram_id")
+      .notNull()
+      .references(() => diagrams.id, { onDelete: "cascade" }),
+    createdAt: integer("created_at").notNull(),
+    expiresAt: integer("expires_at"),
+  },
+  (t) => [index("idx_share_diagram").on(t.diagramId)]
 );
