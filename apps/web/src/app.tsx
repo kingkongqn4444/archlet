@@ -6,6 +6,7 @@ import { LoginPage } from "@/pages/login-page";
 import { SignupPage } from "@/pages/signup-page";
 import { WorkspacePage } from "@/pages/workspace-page";
 import { CanvasPage } from "@/pages/canvas-page";
+import { AccountPage } from "@/pages/account-page";
 
 export function App() {
   return (
@@ -28,6 +29,14 @@ export function App() {
           element={
             <AuthGuard>
               <CanvasPage />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/account/keys"
+          element={
+            <AuthGuard>
+              <AccountPage />
             </AuthGuard>
           }
         />

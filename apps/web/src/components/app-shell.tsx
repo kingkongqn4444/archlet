@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
 import { signOut, useSession } from "@/lib/auth-client";
 import { ProjectsSidebar } from "@/features/projects/projects-sidebar";
@@ -45,6 +45,12 @@ export function AppShell({ children, activeProjectId = null, onProjectSelect }: 
           <span className="text-xs text-slate-400 hidden sm:inline">
             {session?.user.name}
           </span>
+          <Link
+            to="/account/keys"
+            className="text-xs px-2 py-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500"
+          >
+            API Keys
+          </Link>
           <button
             onClick={handleLogout}
             className="text-xs px-2 py-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500"

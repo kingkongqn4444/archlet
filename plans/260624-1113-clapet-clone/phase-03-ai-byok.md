@@ -88,18 +88,18 @@ Output ONLY tool calls. No prose.
 11. **Token usage**: nếu provider trả total_tokens, hiển thị `1.2k tokens, ~$0.003 ước tính`.
 
 ## Todo List
-- [ ] Settings page nhập API keys + default provider
-- [ ] localStorage save/load keys với versioned schema
-- [ ] AIClient interface + tool schema
-- [ ] OpenAI adapter (streaming tool calls)
-- [ ] Anthropic adapter (streaming tool calls)
-- [ ] DeepSeek adapter (reuse OpenAI)
-- [ ] apply-tool-call: ToolCall → Zustand actions
-- [ ] AI panel UI (prompt, level, generate, cancel)
-- [ ] Streaming status indicator
-- [ ] System prompt templates per level
-- [ ] Error states (401, quota, network)
-- [ ] Smoke test: prompt "Design Twitter clone" tạo diagram đầy đủ
+- [x] Settings page nhập API keys + default provider
+- [x] localStorage save/load keys với versioned schema
+- [x] AIClient interface + tool schema
+- [x] OpenAI adapter (streaming tool calls)
+- [x] Anthropic adapter (streaming tool calls)
+- [x] DeepSeek adapter (reuse OpenAI)
+- [x] apply-tool-call: ToolCall → Zustand actions
+- [x] AI panel UI (prompt, level, generate, cancel)
+- [x] Streaming status indicator
+- [x] System prompt templates per level
+- [x] Error states (401, quota, network)
+- [ ] Smoke test: prompt "Design Twitter clone" tạo diagram đầy đủ (requires real key)
 
 ## Success Criteria
 - 3 provider chạy được với key thật của user

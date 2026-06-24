@@ -40,7 +40,7 @@ AI-assisted system architecture diagram tool. Clone feature-parity với clapet.
 | 0 | Skeleton & Auth | ✅ completed (2026-06-24) | [phase-00-skeleton-and-auth.md](./phase-00-skeleton-and-auth.md) |
 | 1 | Canvas Editor | ✅ completed (2026-06-24, smoke pending) | [phase-01-canvas-editor.md](./phase-01-canvas-editor.md) |
 | 2 | Persistence | ✅ completed (2026-06-24) | [phase-02-persistence.md](./phase-02-persistence.md) |
-| 3 | AI BYOK | pending | [phase-03-ai-byok.md](./phase-03-ai-byok.md) |
+| 3 | AI BYOK | ✅ completed (2026-06-24) | [phase-03-ai-byok.md](./phase-03-ai-byok.md) |
 | 4 | Share & Embed | pending | [phase-04-share-embed.md](./phase-04-share-embed.md) |
 | 5 | Export & Account | pending | [phase-05-export-account.md](./phase-05-export-account.md) |
 | 6 | Polish | pending | [phase-06-polish.md](./phase-06-polish.md) |
