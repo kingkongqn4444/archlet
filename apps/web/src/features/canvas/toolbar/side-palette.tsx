@@ -54,6 +54,7 @@ type FlyoutState = {
   nodeType: NodeType;
   label: string;
   anchorTop: number;
+  anchorLeft: number;
 } | null;
 
 // ── PaletteTile ────────────────────────────────────────────────────────────
@@ -61,7 +62,7 @@ type FlyoutState = {
 interface PaletteTileProps {
   item: PaletteItem;
   isActive: boolean;
-  onHoverStart: (type: NodeType, label: string, anchorTop: number) => void;
+  onHoverStart: (type: NodeType, label: string, anchorTop: number, anchorLeft: number) => void;
   onHoverEnd: () => void;
 }
 
@@ -79,8 +80,9 @@ function PaletteTile({ item, isActive, onHoverStart, onHoverEnd }: PaletteTilePr
     if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
     hoverTimerRef.current = setTimeout(() => {
       const rect = tileRef.current?.getBoundingClientRect();
-      if (rect) {
-        onHoverStart(item.type, item.label, rect.top);
+      const paletteRect = tileRef.current?.closest("[data-archlet-palette]")?.getBoundingClientRect();
+      if (rect && paletteRect) {
+        onHoverStart(item.type, item.label, rect.top, paletteRect.right + 8);
       }
     }, 150);
   }
@@ -151,9 +153,9 @@ export const SidePalette = React.memo(function SidePalette() {
   }, []);
 
   const handleTileHoverStart = useCallback(
-    (type: NodeType, label: string, anchorTop: number) => {
+    (type: NodeType, label: string, anchorTop: number, anchorLeft: number) => {
       cancelFlyoutClose();
-      setFlyout({ nodeType: type, label, anchorTop });
+      setFlyout({ nodeType: type, label, anchorTop, anchorLeft });
     },
     [cancelFlyoutClose]
   );
@@ -227,6 +229,7 @@ export const SidePalette = React.memo(function SidePalette() {
             nodeType={flyout.nodeType}
             typeLabel={flyout.label}
             anchorTop={flyout.anchorTop}
+            anchorLeft={flyout.anchorLeft}
             onClose={closeFlyout}
           />
         </div>

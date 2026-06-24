@@ -6,6 +6,7 @@ interface VariantFlyoutProps {
   nodeType: NodeType;
   typeLabel: string;
   anchorTop: number; // px from viewport top
+  anchorLeft: number; // px from viewport left (right edge of palette + gap)
   onClose: () => void;
 }
 
@@ -60,7 +61,7 @@ function VariantCard({
   );
 }
 
-export function VariantFlyout({ nodeType, typeLabel, anchorTop, onClose }: VariantFlyoutProps) {
+export function VariantFlyout({ nodeType, typeLabel, anchorTop, anchorLeft, onClose }: VariantFlyoutProps) {
   const flyoutRef = useRef<HTMLDivElement>(null);
   const variants = VARIANTS_CATALOG[nodeType] as Variant[];
 
@@ -83,11 +84,11 @@ export function VariantFlyout({ nodeType, typeLabel, anchorTop, onClose }: Varia
     setTimeout(onClose, 100);
   }
 
-  // Position: palette is at left:3 (12px), width ~44px, so flyout starts at ~60px
+  // anchorLeft = right edge of palette + 8px gap (computed from real DOM rect)
   // anchorTop places top of flyout near the hovered icon
   const style: React.CSSProperties = {
     position: "fixed",
-    left: 64,
+    left: anchorLeft,
     top: Math.max(8, anchorTop - 8),
     width: 240,
     zIndex: 50,
