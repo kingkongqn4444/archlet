@@ -94,12 +94,35 @@ function CanvasInner({ readOnly = false }: CanvasInnerProps) {
     (e: React.DragEvent) => {
       if (readOnly) return;
       e.preventDefault();
-      const type = e.dataTransfer.getData("application/reactflow") as NodeType;
-      if (!type) return;
+      const raw = e.dataTransfer.getData("application/reactflow");
+      if (!raw) return;
+
+      let type: NodeType;
+      let variantId: string | undefined;
+
+      // New format: JSON object with { type, variantId }
+      if (raw.startsWith("{")) {
+        try {
+          const parsed = JSON.parse(raw) as { type: NodeType; variantId?: string };
+          type = parsed.type;
+          variantId = parsed.variantId;
+        } catch {
+          type = raw as NodeType;
+        }
+      } else {
+        // Legacy plain-string format
+        type = raw as NodeType;
+      }
+
       const position = screenToFlowPosition({ x: e.clientX, y: e.clientY });
       const rawLabel = type.replace("_", " ");
       const label = rawLabel.charAt(0).toUpperCase() + rawLabel.slice(1);
-      addNode({ id: `${type}-${Date.now()}`, type, position, data: { label } });
+      addNode({
+        id: `${type}-${Date.now()}`,
+        type,
+        position,
+        data: { label, ...(variantId ? { variant: variantId } : {}) },
+      });
     },
     [screenToFlowPosition, addNode, readOnly]
   );

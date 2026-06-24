@@ -4,7 +4,8 @@ export type FindingCategory =
   | "topology"
   | "performance"
   | "best-practice"
-  | "capacity";
+  | "capacity"
+  | "patterns";
 
 export type Finding = {
   id: string;
@@ -16,4 +17,6 @@ export type Finding = {
   edgeIds: string[];
   suggestion?: string;
   docsUrl?: string;
+  /** Estimated score impact: positive = points gained, negative = points lost */
+  impact?: number;
 };
