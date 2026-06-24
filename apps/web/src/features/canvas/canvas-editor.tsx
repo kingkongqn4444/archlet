@@ -20,6 +20,7 @@ import { PropertiesPanel } from "./properties/properties-panel";
 import { FlowOverlay } from "@/features/simulate/flow-overlay";
 import { CanvasHints } from "./toolbar/canvas-hints";
 import { AiPanel } from "@/features/ai/ai-panel";
+import { ReviewPanel } from "@/features/review/review-panel";
 import type { NodeType } from "@archlet/shared";
 import type { PublicDiagramResponse } from "@archlet/shared";
 
@@ -55,6 +56,17 @@ function CanvasMarkers() {
           orient="auto-start-reverse"
         >
           <path d="M0,0 L10,5 L0,10 z" fill="#6C2BD9" />
+        </marker>
+        <marker
+          id="archlet-arrow-red"
+          viewBox="0 0 10 10"
+          refX="8"
+          refY="5"
+          markerWidth="6"
+          markerHeight="6"
+          orient="auto-start-reverse"
+        >
+          <path d="M0,0 L10,5 L0,10 z" fill="#EF4444" />
         </marker>
       </defs>
     </svg>
@@ -130,6 +142,7 @@ function CanvasInner({ readOnly = false }: CanvasInnerProps) {
       </div>
       {!readOnly && <LevelSwitcher />}
       {!readOnly && <PropertiesPanel />}
+      {!readOnly && <ReviewPanel />}
       {!readOnly && <AiPanel open={heroAiOpen} onOpenChange={setHeroAiOpen} />}
       {readOnly && (
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-[11px] text-ink-500 dark:text-cream-200/50 pointer-events-none tracking-tight">

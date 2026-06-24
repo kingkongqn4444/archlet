@@ -3,6 +3,7 @@ import { Handle, Position, NodeToolbar } from "@xyflow/react";
 import { Copy, Trash2, Settings } from "lucide-react";
 import { useDiagramStore, type RFNode } from "../store/diagram-store";
 import { useSimStore } from "@/features/simulate/sim-store";
+import { useReviewStore } from "@/features/review/review-store";
 import type { DiagramNode, NodeType } from "@archlet/shared";
 import { getVariant, getDefaultVariant } from "@archlet/shared";
 import { usePropertiesPanel } from "../properties/use-properties-panel";
@@ -120,7 +121,12 @@ export const BaseNode = React.memo(function BaseNode({
     addNode(node);
   }, [id, nodes, addNode]);
 
-  const ringClass = selected
+  const highlightedNodeIds = useReviewStore((s) => s.highlightedNodeIds);
+  const isReviewHighlighted = highlightedNodeIds.has(id);
+
+  const ringClass = isReviewHighlighted
+    ? "ring-2 ring-red-500/70 ring-offset-2 ring-offset-cream-50 dark:ring-offset-plum-950"
+    : selected
     ? "ring-2 ring-plum-500/80 ring-offset-2 ring-offset-cream-50 dark:ring-offset-plum-950 archlet-selected-pulse animate-glow-once"
     : "hover:-translate-y-0.5 hover:shadow-float";
 
