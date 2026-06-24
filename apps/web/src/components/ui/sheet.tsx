@@ -5,9 +5,11 @@ interface SheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   children: React.ReactNode;
+  /** When true, renders no backdrop scrim — panel slides in over live canvas */
+  noBackdrop?: boolean;
 }
 
-function Sheet({ open, onOpenChange, children }: SheetProps) {
+function Sheet({ open, onOpenChange, children, noBackdrop = false }: SheetProps) {
   React.useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape" && open) onOpenChange(false);
@@ -19,12 +21,14 @@ function Sheet({ open, onOpenChange, children }: SheetProps) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex">
-      {/* backdrop */}
-      <div
-        className="fixed inset-0 bg-black/30"
-        onClick={() => onOpenChange(false)}
-      />
+    <div className="fixed inset-0 z-50 flex pointer-events-none">
+      {/* backdrop — only rendered when noBackdrop is false */}
+      {!noBackdrop && (
+        <div
+          className="fixed inset-0 bg-black/20 pointer-events-auto"
+          onClick={() => onOpenChange(false)}
+        />
+      )}
       {children}
     </div>
   );
@@ -33,17 +37,21 @@ function Sheet({ open, onOpenChange, children }: SheetProps) {
 function SheetContent({
   children,
   className,
+  style,
 }: {
   children: React.ReactNode;
   className?: string;
+  style?: React.CSSProperties;
 }) {
   return (
     <div
       className={cn(
         "fixed right-0 top-0 h-full w-80 bg-cream-50 dark:bg-plum-950 shadow-float flex flex-col z-50",
         "border-l border-cream-200 dark:border-plum-700/40",
+        "pointer-events-auto",
         className
       )}
+      style={style}
       onClick={(e) => e.stopPropagation()}
     >
       {children}

@@ -39,29 +39,24 @@ function IconBtn({
 
 function CostBadge({ onClick }: { onClick: () => void }) {
   const total = useCostStore((s) => s.total);
-  const colorClass =
-    total < 500
-      ? "text-emerald-600 dark:text-emerald-400"
-      : total < 2000
-      ? "text-amber-600 dark:text-amber-400"
-      : "text-red-600 dark:text-red-400";
-  const dotClass =
-    total < 500
-      ? "bg-emerald-500"
-      : total < 2000
-      ? "bg-amber-500"
-      : "bg-red-500";
+  const dotColor =
+    total < 500 ? "#34d399" : total < 2000 ? "#fbbf24" : "#f87171";
+  const textColor =
+    total < 500 ? "text-emerald-400" : total < 2000 ? "text-amber-400" : "text-red-400";
 
   return (
     <button
       onClick={onClick}
       title="Cost estimate"
-      className="inline-flex items-center gap-1.5 h-8 px-2.5 rounded-full text-[11px] font-semibold hover:bg-cream-100 dark:hover:bg-plum-800/60 transition-all duration-150"
+      className={`inline-flex items-center gap-1.5 h-7 px-2.5 rounded-full text-[11px] font-semibold transition-all duration-150 ${textColor}
+        bg-white/5 dark:bg-white/5 border border-white/10 dark:border-white/10
+        hover:bg-white/10 dark:hover:bg-white/10`}
     >
-      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotClass}`} />
-      <span className={colorClass}>
-        ${total < 1 ? "0" : Math.round(total).toLocaleString()}/mo
-      </span>
+      <span
+        className="w-1.5 h-1.5 rounded-full shrink-0"
+        style={{ background: dotColor, boxShadow: `0 0 6px ${dotColor}` }}
+      />
+      ${total < 1 ? "0" : Math.round(total).toLocaleString()}/mo
     </button>
   );
 }
