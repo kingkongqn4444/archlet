@@ -39,12 +39,17 @@ export function App() {
           }
         />
         <Route
-          path="/account/keys"
+          path="/account"
           element={
             <AuthGuard>
               <AccountPage />
             </AuthGuard>
           }
+        />
+        {/* Legacy redirect: /account/keys → /account?tab=api-keys */}
+        <Route
+          path="/account/keys"
+          element={<Navigate to="/account?tab=api-keys" replace />}
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

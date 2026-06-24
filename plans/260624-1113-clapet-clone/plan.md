@@ -42,7 +42,7 @@ AI-assisted system architecture diagram tool. Clone feature-parity với clapet.
 | 2 | Persistence | ✅ completed (2026-06-24) | [phase-02-persistence.md](./phase-02-persistence.md) |
 | 3 | AI BYOK | ✅ completed (2026-06-24) | [phase-03-ai-byok.md](./phase-03-ai-byok.md) |
 | 4 | Share & Embed | ✅ completed (2026-06-24) | [phase-04-share-embed.md](./phase-04-share-embed.md) |
-| 5 | Export & Account | pending | [phase-05-export-account.md](./phase-05-export-account.md) |
+| 5 | Export & Account | ✅ completed (2026-06-24, R2 upload deferred) | [phase-05-export-account.md](./phase-05-export-account.md) |
 | 6 | Polish | pending | [phase-06-polish.md](./phase-06-polish.md) |
 
 Phase chain: 0 → 1 → 2 → 3 → 4 → 5 → 6. Phase 4–6 có thể chạy song song nếu cần.

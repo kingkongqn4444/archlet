@@ -46,10 +46,10 @@ export function AppShell({ children, activeProjectId = null, onProjectSelect }: 
             {session?.user.name}
           </span>
           <Link
-            to="/account/keys"
+            to="/account"
             className="text-xs px-2 py-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500"
           >
-            API Keys
+            Account
           </Link>
           <button
             onClick={handleLogout}

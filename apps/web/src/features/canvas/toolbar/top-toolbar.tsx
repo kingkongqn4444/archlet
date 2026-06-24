@@ -1,15 +1,17 @@
 import React, { useState } from "react";
-import { Undo2, Redo2, Maximize, Moon, Sun, Share2, Sparkles } from "lucide-react";
+import { Undo2, Redo2, Maximize, Moon, Sun, Share2, Sparkles, Download } from "lucide-react";
 import { useReactFlow } from "@xyflow/react";
 import { useTemporalDiagram, useDiagramStore } from "../store/diagram-store";
 import { useDarkMode } from "../hooks/use-dark-mode";
 import { AiPanel } from "@/features/ai/ai-panel";
 import { ShareDialog } from "@/features/share/share-dialog";
+import { ExportDialog } from "@/features/export/export-dialog";
 
 export const TopToolbar = React.memo(function TopToolbar() {
   const [editingName, setEditingName] = useState(false);
   const [aiOpen, setAiOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
   const { fitView, getViewport } = useReactFlow();
   const { undo, redo } = useTemporalDiagram();
   const { isDark, toggle } = useDarkMode();
@@ -68,6 +70,13 @@ export const TopToolbar = React.memo(function TopToolbar() {
             {isDark ? <Sun size={15} /> : <Moon size={15} />}
           </button>
           <button
+            onClick={() => setExportOpen(true)}
+            className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700"
+            title="Export diagram"
+          >
+            <Download size={15} />
+          </button>
+          <button
             onClick={() => setShareOpen(true)}
             className="flex items-center gap-1 px-2 py-1 rounded text-xs bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 hover:opacity-90"
           >
@@ -84,6 +93,11 @@ export const TopToolbar = React.memo(function TopToolbar() {
           diagram={{ id: diagramId, name, publicEmbed }}
         />
       )}
+      <ExportDialog
+        open={exportOpen}
+        onOpenChange={setExportOpen}
+        diagramName={name}
+      />
     </>
   );
 });
