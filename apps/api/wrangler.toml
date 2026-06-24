@@ -1,0 +1,13 @@
+name = "archlet-api"
+main = "src/index.ts"
+compatibility_date = "2026-06-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+BETTER_AUTH_URL = "http://localhost:8787"
+WEB_ORIGIN = "http://localhost:5173"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "archlet-db"
+database_id = "f9221fe1-69d3-427e-9ee2-84208757c7cf"
