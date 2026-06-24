@@ -10,6 +10,11 @@ import { initSentry } from "./lib/sentry-init";
 // Init Sentry before rendering (NO-OP if VITE_SENTRY_DSN unset)
 initSentry();
 
+// Apply dark theme from localStorage BEFORE first paint to avoid flash
+if (localStorage.getItem("archlet_theme") === "dark") {
+  document.documentElement.classList.add("dark");
+}
+
 // Analytics (PostHog) is initialized lazily by CookieConsent after user consent
 
 const root = document.getElementById("root");
