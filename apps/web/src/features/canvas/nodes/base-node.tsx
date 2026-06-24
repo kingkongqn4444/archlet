@@ -21,13 +21,13 @@ function VariantBadge({ type, variantId }: { type: NodeType; variantId?: string 
   const variant = getVariant(type, resolvedId) ?? getDefaultVariant(type);
 
   return (
-    <span className="text-[10px] tracking-tight text-ink-500 dark:text-cream-200/60 inline-flex items-center gap-1 mt-0.5">
+    <span className="text-[11px] font-medium tracking-tight text-ink-500 dark:text-cream-200/60 inline-flex items-center gap-1 mt-0.5">
       {variant.iconSlug && (
         <img
           src={`https://cdn.simpleicons.org/${variant.iconSlug}/6b7280`}
           alt=""
-          width={10}
-          height={10}
+          width={11}
+          height={11}
           className="dark:hidden shrink-0"
           onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
         />
@@ -36,8 +36,8 @@ function VariantBadge({ type, variantId }: { type: NodeType; variantId?: string 
         <img
           src={`https://cdn.simpleicons.org/${variant.iconSlug}/a1a1aa`}
           alt=""
-          width={10}
-          height={10}
+          width={11}
+          height={11}
           className="hidden dark:inline shrink-0"
           onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
         />
@@ -121,7 +121,7 @@ export const BaseNode = React.memo(function BaseNode({
   }, [id, nodes, addNode]);
 
   const ringClass = selected
-    ? "ring-2 ring-plum-500 ring-offset-2 ring-offset-cream-50 dark:ring-offset-plum-950 archlet-selected-pulse"
+    ? "ring-2 ring-plum-500/80 ring-offset-2 ring-offset-cream-50 dark:ring-offset-plum-950 archlet-selected-pulse animate-glow-once"
     : "hover:-translate-y-0.5 hover:shadow-float";
 
   const nodeType = nodes.find((n) => n.id === id)?.type as NodeType | undefined;
@@ -180,7 +180,7 @@ export const BaseNode = React.memo(function BaseNode({
             {editing ? (
               <input
                 autoFocus
-                className="text-[13px] font-semibold bg-transparent border-b border-plum-300 outline-none w-full text-ink-900 dark:text-cream-50"
+                className="text-[14px] font-semibold tracking-tight bg-transparent border-b border-plum-300 outline-none w-full text-ink-900 dark:text-cream-50"
                 value={label}
                 onChange={(e) => setLabel(e.target.value)}
                 onBlur={commitLabel}
@@ -188,7 +188,7 @@ export const BaseNode = React.memo(function BaseNode({
               />
             ) : (
               <span
-                className="text-[13px] font-semibold tracking-tight truncate cursor-text text-ink-900 dark:text-cream-50"
+                className="text-[14px] font-semibold tracking-tight truncate cursor-text text-ink-900 dark:text-cream-50"
                 onDoubleClick={() => setEditing(true)}
               >
                 {String(data.label ?? "")}

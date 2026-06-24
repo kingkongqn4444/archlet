@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -19,6 +19,7 @@ import { useKeyboard } from "./hooks/use-keyboard";
 import { PropertiesPanel } from "./properties/properties-panel";
 import { FlowOverlay } from "@/features/simulate/flow-overlay";
 import { CanvasHints } from "./toolbar/canvas-hints";
+import { AiPanel } from "@/features/ai/ai-panel";
 import type { NodeType } from "@archlet/shared";
 import type { PublicDiagramResponse } from "@archlet/shared";
 
@@ -68,6 +69,7 @@ function CanvasInner({ readOnly = false }: CanvasInnerProps) {
   const onConnect = useDiagramStore((s) => s.onConnect);
   const addNode = useDiagramStore((s) => s.addNode);
   const { screenToFlowPosition } = useReactFlow();
+  const [heroAiOpen, setHeroAiOpen] = useState(false);
 
   useKeyboard();
 
@@ -124,10 +126,11 @@ function CanvasInner({ readOnly = false }: CanvasInnerProps) {
           <Controls position="bottom-right" showInteractive={false} />
         </ReactFlow>
         {!readOnly && <FlowOverlay />}
-        {!readOnly && <CanvasHints />}
+        {!readOnly && <CanvasHints onPullAi={() => setHeroAiOpen(true)} />}
       </div>
       {!readOnly && <LevelSwitcher />}
       {!readOnly && <PropertiesPanel />}
+      {!readOnly && <AiPanel open={heroAiOpen} onOpenChange={setHeroAiOpen} />}
       {readOnly && (
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-[11px] text-ink-500 dark:text-cream-200/50 pointer-events-none tracking-tight">
           Made with <span className="font-semibold text-plum-700 dark:text-plum-300">archlet</span>

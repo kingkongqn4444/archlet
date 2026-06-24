@@ -48,13 +48,13 @@ export const TopToolbar = React.memo(function TopToolbar() {
 
   return (
     <>
-      <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1 px-2 py-1.5 bg-white/95 dark:bg-plum-900/90 backdrop-blur-md border border-cream-200 dark:border-plum-700/40 rounded-full shadow-float">
+      <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1 px-2 py-1.5 bg-white/95 dark:bg-plum-900/90 backdrop-blur-md border border-cream-200 dark:border-plum-700/40 rounded-full shadow-float shadow-inset-pill dark:shadow-inset-pill-dark">
         {/* Diagram name */}
         <div className="flex items-center min-w-0 pl-2 pr-1 group">
           {editingName ? (
             <input
               autoFocus
-              className="text-sm font-semibold bg-transparent border-b border-plum-400 outline-none w-40 text-ink-900 dark:text-cream-50"
+              className="text-[14px] font-semibold tracking-tight bg-transparent border-b border-plum-400 outline-none w-40 text-ink-900 dark:text-cream-50"
               value={name}
               onChange={(e) => setName(e.target.value)}
               onBlur={() => setEditingName(false)}
@@ -65,7 +65,7 @@ export const TopToolbar = React.memo(function TopToolbar() {
               type="button"
               onDoubleClick={() => setEditingName(true)}
               onClick={() => setEditingName(true)}
-              className="flex items-center gap-1.5 text-sm font-semibold tracking-tight text-ink-900 dark:text-cream-50 max-w-[160px] truncate"
+              className="flex items-center gap-1.5 text-[14px] font-semibold tracking-tight text-ink-900 dark:text-cream-50 max-w-[160px] truncate"
             >
               <span className="truncate">{name}</span>
               <Pencil

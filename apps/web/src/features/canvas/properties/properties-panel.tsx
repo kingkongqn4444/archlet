@@ -26,6 +26,63 @@ function useDebounced<T extends (...args: Parameters<T>) => void>(fn: T, delay: 
   );
 }
 
+/** Map known iconSlug → hex accent color for variant-specific gradient header. */
+const VARIANT_ACCENT: Record<string, string> = {
+  postgresql: "#336791",
+  mysql: "#4479A1",
+  mongodb: "#47A248",
+  redis: "#DC382D",
+  elasticsearch: "#005571",
+  sqlite: "#003B57",
+  mariadb: "#003545",
+  amazons3: "#569A31",
+  googlecloudstorage: "#4285F4",
+  cloudflare: "#F38020",
+  amazoncloudfront: "#FF9900",
+  rabbitmq: "#FF6600",
+  apachekafka: "#231F20",
+  nginx: "#009639",
+  haproxy: "#106DA9",
+  nodedotjs: "#5FA04E",
+  go: "#00ADD8",
+  python: "#3776AB",
+  rust: "#000000",
+  java: "#007396",
+  googlechrome: "#4285F4",
+  firefox: "#FF7139",
+  safari: "#000000",
+};
+
+function variantHeaderStyle(iconSlug?: string | null): React.CSSProperties {
+  if (!iconSlug) return {};
+  const color = VARIANT_ACCENT[iconSlug.toLowerCase()] ?? "#6C2BD9";
+  return {
+    backgroundImage: `linear-gradient(90deg, ${color}26 0%, transparent 75%)`,
+  };
+}
+
+interface SectionHeadingProps {
+  children: React.ReactNode;
+}
+function SectionHeading({ children }: SectionHeadingProps) {
+  return (
+    <p className="text-[11px] font-bold uppercase tracking-widest text-ink-400 dark:text-cream-200/40">
+      {children}
+    </p>
+  );
+}
+
+interface FieldLabelProps {
+  children: React.ReactNode;
+}
+function FieldLabel({ children }: FieldLabelProps) {
+  return (
+    <label className="text-[10.5px] font-medium text-ink-600 dark:text-cream-200/70 uppercase tracking-wide">
+      {children}
+    </label>
+  );
+}
+
 export function PropertiesPanel() {
   const { nodeId, close } = usePropertiesPanel();
   const nodes = useDiagramStore((s) => s.nodes);
@@ -84,18 +141,22 @@ export function PropertiesPanel() {
 
   return (
     <div
+      key={nodeId ?? "closed"}
       className={[
         "absolute top-16 right-3 bottom-24 z-30 w-80",
         "bg-white dark:bg-plum-900/95 backdrop-blur-md",
         "rounded-2xl border border-cream-200 dark:border-plum-700/40 shadow-float",
         "flex flex-col overflow-hidden",
         "transition-transform duration-200 ease-out",
-        isOpen ? "translate-x-0" : "translate-x-[calc(100%+16px)]",
+        isOpen ? "translate-x-0 animate-slide-in-right" : "translate-x-[calc(100%+16px)]",
       ].join(" ")}
       aria-hidden={!isOpen}
     >
-      {/* Header */}
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-cream-200 dark:border-plum-700/40 shrink-0">
+      {/* Header with variant-colored gradient */}
+      <div
+        className="flex items-center gap-2 px-4 py-3 border-b border-cream-200 dark:border-plum-700/40 shrink-0"
+        style={variantHeaderStyle(variant?.iconSlug)}
+      >
         {variant?.iconSlug && (
           <>
             <img
@@ -116,7 +177,7 @@ export function PropertiesPanel() {
             />
           </>
         )}
-        <span className="flex-1 text-[13px] font-semibold text-ink-900 dark:text-cream-50 truncate">
+        <span className="flex-1 text-[13px] font-semibold tracking-tight text-ink-900 dark:text-cream-50 truncate">
           {variant?.label ?? "Configure"}
         </span>
         <button
@@ -130,45 +191,35 @@ export function PropertiesPanel() {
 
       {/* Scrollable body */}
       <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-5">
-        {/* Label + Description */}
         <section className="flex flex-col gap-3">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-ink-400 dark:text-cream-200/40">
-            General
-          </p>
+          <SectionHeading>General</SectionHeading>
           <div className="flex flex-col gap-1">
-            <label className="text-[11px] font-medium text-ink-600 dark:text-cream-200/70 uppercase tracking-wide">
-              Label
-            </label>
+            <FieldLabel>Label</FieldLabel>
             <Input
               value={String(node?.data.label ?? "")}
               onChange={handleLabelChange}
-              className="h-8 text-[12px]"
+              className="h-8 text-[12px] transition focus:ring-2 focus:ring-plum-500/30 focus:border-plum-400"
               placeholder="Node label"
             />
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-[11px] font-medium text-ink-600 dark:text-cream-200/70 uppercase tracking-wide">
-              Description
-            </label>
+            <FieldLabel>Description</FieldLabel>
             <Input
               value={String(node?.data.description ?? "")}
               onChange={handleDescriptionChange}
-              className="h-8 text-[12px]"
+              className="h-8 text-[12px] transition focus:ring-2 focus:ring-plum-500/30 focus:border-plum-400"
               placeholder="Optional description"
             />
           </div>
         </section>
 
-        {/* Variant selector */}
         {variants.length > 0 && (
           <section className="flex flex-col gap-3">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-ink-400 dark:text-cream-200/40">
-              Variant
-            </p>
+            <SectionHeading>Variant</SectionHeading>
             <Select
               value={variantId ?? ""}
               onChange={handleVariantChange}
-              className="h-8 text-[12px]"
+              className="h-8 text-[12px] transition focus:ring-2 focus:ring-plum-500/30 focus:border-plum-400"
             >
               {variants.map((v) => (
                 <option key={v.id} value={v.id}>
@@ -177,19 +228,16 @@ export function PropertiesPanel() {
               ))}
             </Select>
             {variant?.description && (
-              <p className="text-[11px] text-ink-500 dark:text-cream-200/50 -mt-1">
+              <p className="text-[11px] leading-relaxed text-ink-500 dark:text-cream-200/50 -mt-1">
                 {variant.description}
               </p>
             )}
           </section>
         )}
 
-        {/* Config fields */}
         {configSchema && (
           <section className="flex flex-col gap-3">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-ink-400 dark:text-cream-200/40">
-              Configuration
-            </p>
+            <SectionHeading>Configuration</SectionHeading>
             <VariantConfigForm
               schema={configSchema}
               values={config}

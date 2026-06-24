@@ -20,7 +20,6 @@ export const LevelSwitcher = React.memo(function LevelSwitcher() {
   const [collapsed, setCollapsed] = useState(false);
   const wrapRef = useRef<HTMLDivElement | null>(null);
 
-  // close dropdown on outside click
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
       if (!wrapRef.current?.contains(e.target as Node)) setMenuOpen(false);
@@ -48,9 +47,11 @@ export const LevelSwitcher = React.memo(function LevelSwitcher() {
     <>
       <div
         ref={wrapRef}
-        className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1 px-2 py-1.5 bg-white/95 dark:bg-plum-900/90 backdrop-blur-md border border-cream-200 dark:border-plum-700/40 rounded-full shadow-float"
+        className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1 px-2 py-1.5
+                   bg-white/95 dark:bg-plum-900/90 backdrop-blur-md
+                   border border-cream-200 dark:border-plum-700/40 rounded-full
+                   shadow-float shadow-inset-pill dark:shadow-inset-pill-dark"
       >
-        {/* Undo / Redo */}
         <button
           onClick={() => undo()}
           title="Undo"
@@ -68,28 +69,25 @@ export const LevelSwitcher = React.memo(function LevelSwitcher() {
 
         <span className="w-px h-5 bg-cream-200 dark:bg-plum-700/50 mx-1" aria-hidden="true" />
 
-        {/* Simulate Run/Stop */}
         <RunButton />
 
         <span className="w-px h-5 bg-cream-200 dark:bg-plum-700/50 mx-1" aria-hidden="true" />
 
-        {/* Pull CTA */}
         <button
           onClick={() => setAiOpen(true)}
-          className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-plum-900 text-cream-50 text-[13px] font-semibold tracking-tight hover:bg-plum-700 transition-all duration-150 hover:scale-[1.03] shadow-soft"
+          className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-plum-900 text-cream-50 text-[12px] font-semibold tracking-tight hover:bg-plum-700 transition-all duration-150 hover:scale-[1.03] shadow-soft"
         >
-          <Sparkles size={13} className="text-amber-300" />
+          <Sparkles size={12} className="text-amber-300" />
           Pull
         </button>
 
-        {/* Level dropdown */}
         <div className="relative">
           <button
             onClick={() => setMenuOpen((v) => !v)}
-            className="inline-flex items-center gap-1 h-9 px-3 rounded-full text-[13px] font-medium text-ink-700 dark:text-cream-100 hover:bg-cream-100 dark:hover:bg-plum-800/60 transition"
+            className="inline-flex items-center gap-1 h-9 px-3 rounded-full text-[12px] font-medium text-ink-700 dark:text-cream-100 hover:bg-cream-100 dark:hover:bg-plum-800/60 transition"
           >
             {activeLabel}
-            <ChevronDown size={13} className={`transition-transform ${menuOpen ? "rotate-180" : ""}`} />
+            <ChevronDown size={12} className={`transition-transform ${menuOpen ? "rotate-180" : ""}`} />
           </button>
           {menuOpen && (
             <div className="absolute bottom-full right-0 mb-2 min-w-[140px] py-1 bg-white dark:bg-plum-900 border border-cream-200 dark:border-plum-700/40 rounded-xl shadow-float">
@@ -100,7 +98,7 @@ export const LevelSwitcher = React.memo(function LevelSwitcher() {
                     setLevel(l.key);
                     setMenuOpen(false);
                   }}
-                  className={`w-full text-left px-3 py-1.5 text-[13px] transition ${
+                  className={`w-full text-left px-3 py-1.5 text-[12px] transition ${
                     activeLevel === l.key
                       ? "bg-plum-50 dark:bg-plum-800/50 text-plum-700 dark:text-plum-200 font-semibold"
                       : "text-ink-700 dark:text-cream-100 hover:bg-cream-100 dark:hover:bg-plum-800/40"
@@ -115,7 +113,6 @@ export const LevelSwitcher = React.memo(function LevelSwitcher() {
 
         <span className="w-px h-5 bg-cream-200 dark:bg-plum-700/50 mx-1" aria-hidden="true" />
 
-        {/* Collapse */}
         <button
           onClick={() => setCollapsed(true)}
           title="Hide toolbar"

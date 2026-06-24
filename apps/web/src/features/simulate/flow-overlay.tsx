@@ -24,6 +24,7 @@ export const FlowOverlay = React.memo(function FlowOverlay() {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const layerRef = useRef<SVGGElement>(null);
+  const htmlLayerRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number | null>(null);
   const { isRunning, getSim } = useSimulate();
   const edgeMetrics = useSimStore((s) => s.edgeMetrics);
@@ -46,6 +47,7 @@ export const FlowOverlay = React.memo(function FlowOverlay() {
   const draw = useCallback(() => {
     const svg = svgRef.current;
     const layer = layerRef.current;
+    const htmlLayer = htmlLayerRef.current;
     if (!svg || !layer) return;
     const containerRect = getContainerRect(containerRef);
     if (!containerRect) return;
@@ -116,50 +118,24 @@ export const FlowOverlay = React.memo(function FlowOverlay() {
       layer.appendChild(core);
     }
 
-    // Edge throughput pill: cream bg + amber border + bolt icon + text
-    for (const b of edgeBadges) {
-      const g = document.createElementNS(SVG_NS, "g");
-      g.setAttribute("transform", `translate(${b.x}, ${b.y})`);
-
-      // Approximate width based on label length
-      const w = Math.max(58, 18 + b.label.length * 6);
-      const h = 18;
-
-      const rect = document.createElementNS(SVG_NS, "rect");
-      rect.setAttribute("x", String(-w / 2));
-      rect.setAttribute("y", String(-h / 2));
-      rect.setAttribute("width", String(w));
-      rect.setAttribute("height", String(h));
-      rect.setAttribute("rx", "9");
-      rect.setAttribute("fill", "#FEFCF6");
-      rect.setAttribute("stroke", "#FCD34D");
-      rect.setAttribute("stroke-width", "1");
-      rect.setAttribute("filter", "url(#pill-shadow)");
-      g.appendChild(rect);
-
-      // Lightning bolt icon (mini)
-      const bolt = document.createElementNS(SVG_NS, "path");
-      const boltX = -w / 2 + 7;
-      bolt.setAttribute(
-        "d",
-        `M ${boltX} -3 L ${boltX + 3} -3 L ${boltX + 1.5} 0 L ${boltX + 4} 0 L ${boltX + 0.5} 4 L ${boltX + 2} 0.5 L ${boltX - 0.5} 0.5 Z`
-      );
-      bolt.setAttribute("fill", "#D97706");
-      g.appendChild(bolt);
-
-      const textEl = document.createElementNS(SVG_NS, "text");
-      textEl.setAttribute("x", String(-w / 2 + w / 2 + 4));
-      textEl.setAttribute("y", "3.5");
-      textEl.setAttribute("text-anchor", "middle");
-      textEl.setAttribute("font-size", "10.5");
-      textEl.setAttribute("font-family", "ui-sans-serif, system-ui, sans-serif");
-      textEl.setAttribute("font-weight", "700");
-      textEl.setAttribute("fill", "#92400E");
-      textEl.setAttribute("letter-spacing", "-0.01em");
-      textEl.textContent = b.label;
-      g.appendChild(textEl);
-
-      layer.appendChild(g);
+    // Edge throughput badges — HTML overlay for crisp typography.
+    if (htmlLayer) {
+      htmlLayer.innerHTML = "";
+      for (const b of edgeBadges) {
+        const div = document.createElement("div");
+        div.style.position = "absolute";
+        div.style.left = `${b.x}px`;
+        div.style.top = `${b.y}px`;
+        div.style.transform = "translate(-50%, -50%)";
+        div.className =
+          "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10.5px] font-bold tracking-tight " +
+          "bg-cream-50/95 dark:bg-plum-900/85 border border-amber-300 dark:border-amber-400/40 " +
+          "text-amber-700 dark:text-amber-300 shadow-soft backdrop-blur-sm whitespace-nowrap";
+        div.innerHTML =
+          `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>` +
+          `<span>${b.label}</span>`;
+        htmlLayer.appendChild(div);
+      }
     }
   }, [isRunning, edgeMetrics, edges, getSim]);
 
@@ -215,6 +191,7 @@ export const FlowOverlay = React.memo(function FlowOverlay() {
         </defs>
         <g ref={layerRef} />
       </svg>
+      <div ref={htmlLayerRef} style={{ position: "absolute", inset: 0, pointerEvents: "none" }} />
     </div>
   );
 });

@@ -40,6 +40,10 @@ export default {
         soft: "0 2px 8px -2px rgba(54,17,74,0.08)",
         card: "0 2px 12px -4px rgba(54,17,74,0.12)",
         float: "0 8px 28px -8px rgba(54,17,74,0.18)",
+        "inset-pill":
+          "inset 0 1px 0 0 rgba(255,255,255,0.55), inset 0 -1px 0 0 rgba(54,17,74,0.04)",
+        "inset-pill-dark":
+          "inset 0 1px 0 0 rgba(255,255,255,0.05), inset 0 -1px 0 0 rgba(0,0,0,0.2)",
       },
       keyframes: {
         dashdraw: {
@@ -50,10 +54,26 @@ export default {
           "0%,100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-4px)" },
         },
+        slideInRight: {
+          from: { opacity: "0", transform: "translateX(16px)" },
+          to: { opacity: "1", transform: "translateX(0)" },
+        },
+        bobSlow: {
+          "0%,100%": { transform: "translateY(0) rotate(-0.5deg)" },
+          "50%": { transform: "translateY(-6px) rotate(0.5deg)" },
+        },
+        glowOnce: {
+          "0%": { boxShadow: "0 0 0 0 rgba(108,43,217,0.55), 0 0 0 0 rgba(108,43,217,0.0)" },
+          "60%": { boxShadow: "0 0 0 6px rgba(108,43,217,0.0), 0 0 18px 2px rgba(108,43,217,0.0)" },
+          "100%": { boxShadow: "0 0 0 0 rgba(108,43,217,0.0), 0 0 0 0 rgba(108,43,217,0.0)" },
+        },
       },
       animation: {
         dashdraw: "dashdraw 1s linear infinite",
         floatY: "floatY 4s ease-in-out infinite",
+        "slide-in-right": "slideInRight 0.22s cubic-bezier(0.22, 1, 0.36, 1)",
+        "bob-slow": "bobSlow 6s ease-in-out infinite",
+        "glow-once": "glowOnce 0.7s ease-out",
       },
     },
   },

@@ -9,7 +9,7 @@ type PaletteItem = {
   type: NodeType;
   icon: React.ReactNode;
   label: string;
-  accent: string; // bg + icon color for hover
+  accent: string;
 };
 
 type Group = { title: string; items: PaletteItem[] };
@@ -57,12 +57,11 @@ function PaletteTile({ item }: { item: PaletteItem }) {
       draggable
       onDragStart={onDragStart}
       title={item.label}
-      className="group relative w-10 h-10 flex items-center justify-center rounded-xl cursor-grab active:cursor-grabbing text-ink-700 dark:text-cream-100 hover:bg-cream-100 dark:hover:bg-plum-800/60 hover:scale-105 transition-all duration-150 select-none"
+      className="group relative w-9 h-9 flex items-center justify-center rounded-xl cursor-grab active:cursor-grabbing text-ink-700 dark:text-cream-100 hover:bg-cream-100 dark:hover:bg-plum-800/60 hover:scale-105 transition-all duration-150 select-none"
     >
       <span className={`inline-flex items-center justify-center w-7 h-7 rounded-lg transition-colors ${item.accent} dark:group-hover:bg-white/10`}>
         {item.icon}
       </span>
-      {/* Hover label — slides in from right */}
       <span
         role="tooltip"
         className="pointer-events-none absolute left-full ml-2 px-2.5 py-1 rounded-md text-[11px] font-medium bg-ink-900 text-cream-50 whitespace-nowrap opacity-0 group-hover:opacity-100 translate-x-1 group-hover:translate-x-0 transition-all duration-200 z-50 shadow-soft"
@@ -75,15 +74,17 @@ function PaletteTile({ item }: { item: PaletteItem }) {
 
 export const SidePalette = React.memo(function SidePalette() {
   return (
-    <div className="absolute left-3 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-0.5 p-1.5 bg-white/95 dark:bg-plum-900/90 backdrop-blur-md border border-cream-200 dark:border-plum-700/40 rounded-2xl shadow-float">
+    <div
+      data-archlet-palette
+      tabIndex={-1}
+      className="absolute left-3 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-0 p-1 bg-white/95 dark:bg-plum-900/90 backdrop-blur-md border border-cream-200 dark:border-plum-700/40 rounded-2xl shadow-float shadow-inset-pill dark:shadow-inset-pill-dark"
+    >
       {GROUPS.map((group, gi) => (
         <React.Fragment key={group.title}>
           {gi > 0 && (
-            <div className="flex items-center gap-1 mx-1 mt-1 mb-0.5" aria-hidden="true">
-              <span className="h-px flex-1 bg-cream-200 dark:bg-plum-700/40" />
-            </div>
+            <div className="mx-2 mt-1 mb-0.5 h-px bg-cream-200/80 dark:bg-plum-700/40" aria-hidden="true" />
           )}
-          <div className="px-1 pt-0.5 pb-0.5 text-[8.5px] font-bold tracking-[0.08em] uppercase text-ink-300 dark:text-cream-200/40 text-center select-none">
+          <div className="px-1 pt-0.5 pb-0.5 text-[9px] archlet-smallcaps font-semibold text-ink-300 dark:text-cream-200/40 text-center select-none">
             {group.title}
           </div>
           {group.items.map((item) => (

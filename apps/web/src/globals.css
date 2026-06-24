@@ -13,12 +13,34 @@ html, body {
     "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  font-feature-settings: "ss01", "cv11";
 }
 .dark html, .dark body, html.dark, body.dark {
   background: #1A0F26;
   color: #FBF7EC;
 }
 .dark body { background: #1A0F26; color: #FBF7EC; }
+
+/* Premium accent: very subtle warm radial vignette on the app canvas.
+   Adds depth without affecting contrast — kept under main content. */
+.archlet-canvas-bg {
+  background-color: #FEFCF6;
+  background-image:
+    radial-gradient(900px 600px at 12% 8%, rgba(245, 239, 250, 0.85), transparent 65%),
+    radial-gradient(700px 500px at 92% 95%, rgba(252, 211, 77, 0.06), transparent 70%);
+}
+.dark .archlet-canvas-bg {
+  background-color: #1A0F26;
+  background-image:
+    radial-gradient(900px 600px at 12% 8%, rgba(108, 43, 217, 0.18), transparent 65%),
+    radial-gradient(700px 500px at 92% 95%, rgba(252, 179, 37, 0.05), transparent 70%);
+}
+
+/* Small-caps utility for elegant grouping titles (e.g. side palette). */
+.archlet-smallcaps {
+  font-variant: all-small-caps;
+  letter-spacing: 0.08em;
+}
 
 /* ── React Flow viewport: warm cream w/ dotted grid ─────────────── */
 .react-flow {
