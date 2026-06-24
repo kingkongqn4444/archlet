@@ -35,11 +35,11 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       if (this.props.fallback) return this.props.fallback;
       return (
-        <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-8 text-center bg-white dark:bg-slate-950">
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+        <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-8 text-center bg-cream-50 dark:bg-plum-950">
+          <h1 className="text-3xl font-bold tracking-tight text-ink-900 dark:text-cream-50">
             Something went wrong
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 max-w-sm text-sm">
+          <p className="text-ink-500 dark:text-cream-200/60 max-w-sm text-sm">
             {this.state.errorMessage || "An unexpected error occurred."}
           </p>
           <div className="flex gap-3">

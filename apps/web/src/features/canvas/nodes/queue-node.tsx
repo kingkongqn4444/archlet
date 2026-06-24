@@ -10,8 +10,8 @@ export const QueueNode = React.memo(function QueueNode(props: NodeProps<RFNode>)
       id={props.id}
       data={props.data}
       selected={props.selected}
-      icon={<ListOrdered size={14} />}
-      colorClass="border-orange-200 dark:border-orange-800"
+      icon={<ListOrdered size={16} />}
+      accentClass="bg-orange-100 text-orange-600 dark:bg-orange-500/20 dark:text-orange-300"
     />
   );
 });

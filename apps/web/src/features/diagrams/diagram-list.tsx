@@ -102,50 +102,63 @@ export function DiagramList({ projectId }: Props) {
   }
 
   return (
-    <div className="flex flex-col h-full p-4 gap-3">
+    <div className="flex flex-col h-full p-6 gap-5 overflow-y-auto">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Diagrams</h2>
+        <div>
+          <h2 className="text-xl font-bold tracking-tight text-ink-900 dark:text-cream-50">
+            Diagrams
+          </h2>
+          <p className="text-sm text-ink-500 dark:text-cream-200/60 mt-0.5">
+            {diagrams.length} {diagrams.length === 1 ? "diagram" : "diagrams"}
+          </p>
+        </div>
         <Button size="sm" onClick={() => setShowNew(true)}>
-          <PlusIcon className="w-4 h-4 mr-1" /> New diagram
+          <PlusIcon className="w-4 h-4 mr-1.5" /> New diagram
         </Button>
       </div>
 
       {isLoading && (
-        <p className="text-sm text-slate-400">Loading…</p>
+        <p className="text-sm text-ink-500 dark:text-cream-200/60">Loading…</p>
       )}
 
       {!isLoading && diagrams.length === 0 && (
-        <div className="flex-1 flex flex-col items-center justify-center gap-3 text-center">
-          <FileText className="w-12 h-12 text-slate-200 dark:text-slate-700" />
-          <p className="text-sm text-slate-400">No diagrams yet</p>
+        <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center">
+          <div className="w-16 h-16 rounded-3xl bg-plum-100 dark:bg-plum-900/40 flex items-center justify-center">
+            <FileText className="w-7 h-7 text-plum-500" />
+          </div>
+          <p className="text-sm text-ink-500 dark:text-cream-200/60">No diagrams yet</p>
           <Button onClick={() => setShowNew(true)}>Create your first diagram</Button>
         </div>
       )}
 
-      <div className="grid gap-2 grid-cols-[repeat(auto-fill,minmax(200px,1fr))]">
+      <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(220px,1fr))]">
         {diagrams.map((diagram) => (
           <div
             key={diagram.id}
-            className="group relative flex flex-col gap-1 p-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 cursor-pointer hover:border-slate-400 dark:hover:border-slate-500 transition-colors"
+            className="group relative flex flex-col gap-2 p-4 rounded-2xl border border-cream-200 dark:border-plum-700/30 bg-white dark:bg-plum-900/40 cursor-pointer hover:border-plum-300 dark:hover:border-plum-500/50 hover:shadow-card hover:-translate-y-0.5 transition-all duration-150"
             onClick={() => navigate(`/d/${diagram.id}`)}
           >
-            <FileText className="w-8 h-8 text-slate-300 dark:text-slate-600" />
-            <span className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">
+            <div className="w-10 h-10 rounded-xl bg-plum-50 dark:bg-plum-800/50 flex items-center justify-center">
+              <FileText className="w-5 h-5 text-plum-500" />
+            </div>
+            <span className="text-sm font-semibold tracking-tight text-ink-900 dark:text-cream-50 truncate">
               {diagram.name}
             </span>
-            <span className="text-xs text-slate-400">
-              {new Date(diagram.updatedAt).toLocaleDateString()}
+            <span className="text-[11px] text-ink-500 dark:text-cream-200/50">
+              Updated {new Date(diagram.updatedAt).toLocaleDateString()}
             </span>
             <div className="absolute top-2 right-2 hidden group-hover:flex items-center gap-1">
               <button
-                className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700"
+                className="p-1.5 rounded-full bg-white dark:bg-plum-900 border border-cream-200 dark:border-plum-700/40 hover:bg-cream-100 dark:hover:bg-plum-800 shadow-soft"
                 onClick={(e) => { e.stopPropagation(); setRenaming(diagram); }}
+                title="Rename"
               >
-                <Pencil className="w-3 h-3 text-slate-500" />
+                <Pencil className="w-3 h-3 text-ink-700 dark:text-cream-100" />
               </button>
               <button
-                className="p-1 rounded hover:bg-red-100 dark:hover:bg-red-900/30 text-red-500"
+                className="p-1.5 rounded-full bg-white dark:bg-plum-900 border border-cream-200 dark:border-plum-700/40 hover:bg-red-50 dark:hover:bg-red-900/30 text-red-500 shadow-soft"
                 onClick={(e) => { e.stopPropagation(); void handleDelete(diagram); }}
+                title="Delete"
               >
                 <Trash2 className="w-3 h-3" />
               </button>

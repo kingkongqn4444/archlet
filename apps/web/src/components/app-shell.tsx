@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
+import { LogOut, UserCircle2 } from "lucide-react";
 import { signOut, useSession } from "@/lib/auth-client";
 import { ProjectsSidebar } from "@/features/projects/projects-sidebar";
 
@@ -35,26 +36,28 @@ export function AppShell({ children, activeProjectId = null, onProjectSelect }: 
   }
 
   return (
-    <div className="w-screen h-screen flex flex-col overflow-hidden bg-slate-50 dark:bg-slate-950">
+    <div className="w-screen h-screen flex flex-col overflow-hidden bg-cream-50 dark:bg-plum-950">
       {/* Top bar */}
-      <header className="h-9 flex items-center justify-between px-3 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0">
-        <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-          archlet
-        </span>
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-400 hidden sm:inline">
+      <header className="h-11 flex items-center justify-between px-4 border-b border-cream-200 dark:border-plum-700/30 bg-white/80 dark:bg-plum-900/40 backdrop-blur shrink-0">
+        <Link to="/" className="text-sm font-bold tracking-tight text-ink-900 dark:text-cream-50">
+          archlet<span className="text-plum-500">.</span>
+        </Link>
+        <div className="flex items-center gap-1">
+          <span className="text-xs text-ink-500 dark:text-cream-200/60 hidden sm:inline mr-2">
             {session?.user.name}
           </span>
           <Link
             to="/account"
-            className="text-xs px-2 py-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500"
+            className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full hover:bg-cream-100 dark:hover:bg-plum-800/50 text-ink-700 dark:text-cream-100 transition"
           >
+            <UserCircle2 size={13} />
             Account
           </Link>
           <button
             onClick={handleLogout}
-            className="text-xs px-2 py-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500"
+            className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full hover:bg-cream-100 dark:hover:bg-plum-800/50 text-ink-700 dark:text-cream-100 transition"
           >
+            <LogOut size={13} />
             Logout
           </button>
         </div>
@@ -66,7 +69,7 @@ export function AppShell({ children, activeProjectId = null, onProjectSelect }: 
           selectedProjectId={selectedProjectId}
           onSelectProject={handleSelectProject}
         />
-        <main className="flex-1 overflow-hidden relative">
+        <main className="flex-1 overflow-hidden relative bg-cream-50 dark:bg-plum-950">
           {children}
         </main>
       </div>

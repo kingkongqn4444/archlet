@@ -47,9 +47,9 @@ export function CookieConsent() {
     <div
       role="dialog"
       aria-label="Cookie consent"
-      className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-50 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-xl p-4"
+      className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-50 rounded-2xl border border-cream-200 dark:border-plum-700/40 bg-white/95 dark:bg-plum-900/90 backdrop-blur shadow-float p-4"
     >
-      <p className="text-sm text-slate-700 dark:text-slate-300 mb-3">
+      <p className="text-sm text-ink-700 dark:text-cream-100 mb-3 leading-relaxed">
         We use analytics (PostHog) to improve Archlet. No data is sold or shared
         with advertisers.
       </p>

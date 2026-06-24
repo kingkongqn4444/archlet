@@ -10,8 +10,8 @@ export const LoadBalancerNode = React.memo(function LoadBalancerNode(props: Node
       id={props.id}
       data={props.data}
       selected={props.selected}
-      icon={<SplitSquareHorizontal size={14} />}
-      colorClass="border-teal-200 dark:border-teal-800"
+      icon={<SplitSquareHorizontal size={16} />}
+      accentClass="bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-300"
     />
   );
 });

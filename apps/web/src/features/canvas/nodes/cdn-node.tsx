@@ -10,8 +10,8 @@ export const CdnNode = React.memo(function CdnNode(props: NodeProps<RFNode>) {
       id={props.id}
       data={props.data}
       selected={props.selected}
-      icon={<Globe size={14} />}
-      colorClass="border-cyan-200 dark:border-cyan-800"
+      icon={<Globe size={16} />}
+      accentClass="bg-sky-100 text-sky-600 dark:bg-sky-500/20 dark:text-sky-300"
     />
   );
 });

@@ -6,27 +6,142 @@
   box-sizing: border-box;
 }
 
-/* ── Dark mode: React Flow chrome ─────────────────────────── */
+html, body {
+  background: #FEFCF6;
+  color: #1A0E22;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+.dark html, .dark body, html.dark, body.dark {
+  background: #1A0F26;
+  color: #FBF7EC;
+}
+.dark body { background: #1A0F26; color: #FBF7EC; }
+
+/* ── React Flow viewport: warm cream w/ dotted grid ─────────────── */
+.react-flow {
+  background: #FEFCF6;
+}
+.dark .react-flow { background: #1A0F26; }
+
+.react-flow__background {
+  background-color: #FEFCF6;
+}
+.dark .react-flow__background { background-color: #1A0F26; }
+
+/* Override default dot color via CSS var (xyflow uses --xy-background-pattern-color) */
+.react-flow {
+  --xy-background-pattern-color: #E5D9BD;
+}
+.dark .react-flow {
+  --xy-background-pattern-color: #2B1B3D;
+}
+
+/* Controls — cream pill */
+.react-flow__controls {
+  background: rgba(255,255,255,0.92) !important;
+  backdrop-filter: blur(8px);
+  border: 1px solid #F2EAD3 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 28px -8px rgba(54,17,74,0.18) !important;
+  overflow: hidden;
+}
+.react-flow__controls-button {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid #F2EAD3 !important;
+  color: #3D2C4A !important;
+  transition: background 0.15s ease;
+}
+.react-flow__controls-button:last-child { border-bottom: none !important; }
+.react-flow__controls-button:hover {
+  background: #F5EFFA !important;
+  color: #6C2BD9 !important;
+}
+.react-flow__controls-button svg { fill: currentColor; }
+
 .dark .react-flow__controls {
-  background: rgb(15 23 42);
-  border-color: rgb(51 65 85);
+  background: rgba(54,17,74,0.85) !important;
+  border-color: rgba(108,43,217,0.25) !important;
 }
-
 .dark .react-flow__controls-button {
-  background: rgb(30 41 59);
-  color: white;
-  border-color: rgb(51 65 85);
+  border-bottom-color: rgba(108,43,217,0.18) !important;
+  color: #E9DFF4 !important;
 }
-
 .dark .react-flow__controls-button:hover {
-  background: rgb(51 65 85);
+  background: rgba(108,43,217,0.18) !important;
+  color: #fff !important;
 }
 
-.dark .react-flow__attribution {
-  background: transparent;
-  color: rgb(148 163 184);
+.react-flow__attribution {
+  background: transparent !important;
+  color: #A89BBC !important;
+  font-size: 10px;
 }
+.dark .react-flow__attribution { color: #6B5C7A !important; }
 
+.react-flow__minimap {
+  background: rgba(255,255,255,0.92) !important;
+  border-radius: 12px;
+  border: 1px solid #F2EAD3;
+}
 .dark .react-flow__minimap {
-  background: rgb(15 23 42);
+  background: rgba(54,17,74,0.85) !important;
+  border-color: rgba(108,43,217,0.25);
 }
+
+/* Edge animation */
+.archlet-edge-flow {
+  stroke-dasharray: 6 4;
+  animation: dashdraw 1s linear infinite;
+}
+@keyframes dashdraw {
+  to { stroke-dashoffset: -20; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .archlet-edge-flow,
+  .animate-dashdraw,
+  .animate-floatY {
+    animation: none !important;
+  }
+  * { transition-duration: 0.01ms !important; }
+}
+
+/* Hide handle dots by default — show on node hover / selection */
+.react-flow__handle {
+  width: 8px !important;
+  height: 8px !important;
+  background: #B294D1 !important;
+  border: 2px solid #FEFCF6 !important;
+  opacity: 0;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.react-flow__node:hover .react-flow__handle,
+.react-flow__node.selected .react-flow__handle {
+  opacity: 1;
+}
+.react-flow__handle:hover {
+  background: #6C2BD9 !important;
+  transform: scale(1.25);
+}
+.dark .react-flow__handle { border-color: #1A0F26 !important; }
+
+/* Subtle scrollbars */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: #E9DFF4;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.dark ::-webkit-scrollbar-thumb { background: rgba(108,43,217,0.28); background-clip: padding-box; border: 2px solid transparent; }
+::-webkit-scrollbar-thumb:hover { background: #B294D1; background-clip: padding-box; }
+
+/* Selection */
+::selection { background: rgba(108,43,217,0.22); color: #1A0E22; }
+.dark ::selection { background: rgba(252,179,37,0.35); color: #FBF7EC; }

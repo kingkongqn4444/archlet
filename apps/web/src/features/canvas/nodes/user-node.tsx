@@ -10,8 +10,8 @@ export const UserNode = React.memo(function UserNode(props: NodeProps<RFNode>) {
       id={props.id}
       data={props.data}
       selected={props.selected}
-      icon={<User size={14} />}
-      colorClass="border-blue-200 dark:border-blue-800"
+      icon={<User size={16} />}
+      accentClass="bg-rose-100 text-rose-600 dark:bg-rose-500/20 dark:text-rose-300"
     />
   );
 });

@@ -16,16 +16,16 @@ function CanvasPageInner({ id }: { id: string }) {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-slate-400 text-sm">Loading diagram…</p>
+      <div className="flex items-center justify-center h-full bg-cream-50 dark:bg-plum-950">
+        <p className="text-ink-500 dark:text-cream-200/60 text-sm">Loading diagram…</p>
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-red-400 text-sm">Failed to load diagram.</p>
+      <div className="flex items-center justify-center h-full bg-cream-50 dark:bg-plum-950">
+        <p className="text-red-500 text-sm">Failed to load diagram.</p>
       </div>
     );
   }

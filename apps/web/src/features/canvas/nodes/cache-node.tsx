@@ -10,8 +10,8 @@ export const CacheNode = React.memo(function CacheNode(props: NodeProps<RFNode>)
       id={props.id}
       data={props.data}
       selected={props.selected}
-      icon={<Cpu size={14} />}
-      colorClass="border-yellow-200 dark:border-yellow-800"
+      icon={<Cpu size={16} />}
+      accentClass="bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-300"
     />
   );
 });

@@ -25,6 +25,38 @@ interface CanvasInnerProps {
   readOnly?: boolean;
 }
 
+/** Inline SVG defs for custom arrow markers used by edges. */
+function CanvasMarkers() {
+  return (
+    <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true">
+      <defs>
+        <marker
+          id="archlet-arrow-amber"
+          viewBox="0 0 10 10"
+          refX="8"
+          refY="5"
+          markerWidth="6"
+          markerHeight="6"
+          orient="auto-start-reverse"
+        >
+          <path d="M0,0 L10,5 L0,10 z" fill="#D97706" />
+        </marker>
+        <marker
+          id="archlet-arrow-plum"
+          viewBox="0 0 10 10"
+          refX="8"
+          refY="5"
+          markerWidth="6"
+          markerHeight="6"
+          orient="auto-start-reverse"
+        >
+          <path d="M0,0 L10,5 L0,10 z" fill="#6C2BD9" />
+        </marker>
+      </defs>
+    </svg>
+  );
+}
+
 function CanvasInner({ readOnly = false }: CanvasInnerProps) {
   const nodes = useDiagramStore((s) => s.nodes);
   const edges = useDiagramStore((s) => s.edges);
@@ -66,10 +98,11 @@ function CanvasInner({ readOnly = false }: CanvasInnerProps) {
       };
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full bg-cream-50 dark:bg-plum-950">
+      <CanvasMarkers />
       {!readOnly && <TopToolbar />}
       {!readOnly && <SidePalette />}
-      <div className={`w-full h-full ${!readOnly ? "pt-12" : ""}`}>
+      <div className={`w-full h-full ${!readOnly ? "pt-14" : ""}`}>
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -82,15 +115,16 @@ function CanvasInner({ readOnly = false }: CanvasInnerProps) {
           fitView
           deleteKeyCode={null}
           proOptions={{ hideAttribution: false }}
+          defaultEdgeOptions={{ type: "default" }}
         >
-          <Background variant={BackgroundVariant.Dots} gap={20} size={1} />
-          <Controls position="bottom-right" />
+          <Background variant={BackgroundVariant.Dots} gap={22} size={1.4} />
+          <Controls position="bottom-right" showInteractive={false} />
         </ReactFlow>
       </div>
       {!readOnly && <LevelSwitcher />}
       {readOnly && (
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-xs text-slate-400 pointer-events-none">
-          Made with archlet
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-[11px] text-ink-500 dark:text-cream-200/50 pointer-events-none tracking-tight">
+          Made with <span className="font-semibold text-plum-700 dark:text-plum-300">archlet</span>
         </div>
       )}
     </div>

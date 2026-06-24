@@ -10,8 +10,8 @@ export const WorkerNode = React.memo(function WorkerNode(props: NodeProps<RFNode
       id={props.id}
       data={props.data}
       selected={props.selected}
-      icon={<Cog size={14} />}
-      colorClass="border-indigo-200 dark:border-indigo-800"
+      icon={<Cog size={16} />}
+      accentClass="bg-indigo-100 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-300"
     />
   );
 });

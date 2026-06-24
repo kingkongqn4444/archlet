@@ -27,25 +27,32 @@ export function SharedPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <p className="text-slate-400 text-sm">Loading diagram…</p>
+      <div className="flex items-center justify-center h-screen bg-cream-50 dark:bg-plum-950">
+        <p className="text-ink-500 dark:text-cream-200/60 text-sm">Loading diagram…</p>
       </div>
     );
   }
 
   if (isError || !data) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-center space-y-2">
-          <p className="text-slate-600 font-medium">Diagram not found</p>
-          <p className="text-slate-400 text-sm">This link may have expired or been revoked.</p>
+      <div className="flex items-center justify-center h-screen bg-cream-50 dark:bg-plum-950">
+        <div className="text-center space-y-3 max-w-sm px-6">
+          <div className="w-16 h-16 mx-auto rounded-3xl bg-plum-100 dark:bg-plum-900/40 flex items-center justify-center text-2xl">
+            🔒
+          </div>
+          <p className="text-ink-900 dark:text-cream-50 font-bold tracking-tight text-lg">
+            Diagram not found
+          </p>
+          <p className="text-ink-500 dark:text-cream-200/60 text-sm">
+            This link may have expired or been revoked.
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-screen h-screen overflow-hidden bg-white dark:bg-slate-950">
+    <div className="w-screen h-screen overflow-hidden bg-cream-50 dark:bg-plum-950">
       <CanvasEditor readOnly initialData={data} />
     </div>
   );

@@ -6,40 +6,45 @@ import {
   Code,
   Download,
   KeyRound,
+  ArrowRight,
 } from "lucide-react";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 const FEATURES = [
   {
     icon: Sparkles,
     title: "AI generates from text",
     desc: "Describe your system in plain language and watch the diagram build itself.",
+    accent: "bg-plum-100 text-plum-600",
   },
   {
     icon: Layers,
     title: "3 levels of abstraction",
     desc: "Switch between High, Mid, and Low abstraction views without losing context.",
+    accent: "bg-amber-100 text-amber-600",
   },
   {
     icon: Share2,
     title: "Shareable read-only links",
     desc: "Share a diagram with your team or stakeholders via a permanent link.",
+    accent: "bg-rose-100 text-rose-600",
   },
   {
     icon: Code,
     title: "Embed in docs (iframe)",
     desc: "Drop a live diagram into Notion, Confluence, or any iframe-enabled page.",
+    accent: "bg-emerald-100 text-emerald-600",
   },
   {
     icon: Download,
     title: "Export PNG / SVG / PDF",
     desc: "One-click exports for slides, wikis, or print.",
+    accent: "bg-cyan-100 text-cyan-600",
   },
   {
     icon: KeyRound,
     title: "BYOK — your keys, your cost",
     desc: "Use your own OpenAI, Anthropic, or DeepSeek key. We never bill for AI.",
+    accent: "bg-violet-100 text-violet-600",
   },
 ];
 
@@ -64,21 +69,23 @@ const FAQS = [
 
 export function LandingPage() {
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100">
+    <div className="min-h-screen bg-cream-50 dark:bg-plum-950 text-ink-900 dark:text-cream-50 selection:bg-plum-200">
       {/* Nav */}
-      <header className="sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur">
-        <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-          <span className="font-bold text-lg tracking-tight">archlet</span>
-          <div className="flex gap-2">
+      <header className="sticky top-0 z-50 border-b border-cream-200/70 dark:border-plum-700/30 bg-cream-50/80 dark:bg-plum-950/80 backdrop-blur-md">
+        <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
+          <span className="font-bold text-xl tracking-tight">
+            archlet<span className="text-plum-500">.</span>
+          </span>
+          <div className="flex gap-2 items-center">
             <Link
               to="/login"
-              className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+              className="h-10 px-4 inline-flex items-center text-sm font-semibold text-ink-700 dark:text-cream-100 hover:text-plum-700 dark:hover:text-plum-300 transition"
             >
               Sign in
             </Link>
             <Link
               to="/signup"
-              className={cn(buttonVariants({ size: "sm" }))}
+              className="h-10 px-5 inline-flex items-center rounded-full bg-plum-900 text-cream-50 text-sm font-semibold tracking-tight hover:bg-plum-700 hover:scale-[1.02] transition-all duration-150 shadow-soft"
             >
               Start free
             </Link>
@@ -87,70 +94,99 @@ export function LandingPage() {
       </header>
 
       {/* Hero */}
-      <section className="max-w-4xl mx-auto px-4 pt-24 pb-16 text-center">
-        <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 dark:bg-slate-800 px-3 py-1 text-xs font-medium text-slate-600 dark:text-slate-300 mb-6">
-          <Sparkles className="w-3 h-3" />
-          Free forever · BYOK
-        </div>
-        <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight leading-tight mb-6">
-          AI-assisted system{" "}
-          <span className="text-blue-600 dark:text-blue-400">
-            architecture diagrams
-          </span>
-        </h1>
-        <p className="text-xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mb-10">
-          Design, share, and embed system designs with an AI agent that thinks
-          at 3 levels of abstraction — High, Mid, and Low.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link
-            to="/signup"
-            className={cn(buttonVariants({ size: "lg" }), "text-base px-8")}
-          >
-            Start free — BYOK
-          </Link>
-          <Link
-            to="/login"
-            className={cn(buttonVariants({ variant: "outline", size: "lg" }), "text-base")}
-          >
-            Sign in
-          </Link>
+      <section className="relative overflow-hidden">
+        {/* Radial blob */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-32 -right-24 w-[640px] h-[640px] rounded-full bg-plum-100 dark:bg-plum-700/20 blur-3xl opacity-70"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -bottom-40 -left-20 w-[520px] h-[520px] rounded-full bg-amber-100 dark:bg-amber-500/10 blur-3xl opacity-60"
+        />
+
+        <div className="relative max-w-5xl mx-auto px-5 pt-24 pb-20 text-center">
+          <div className="inline-flex items-center gap-2 rounded-full bg-white/80 dark:bg-plum-900/60 border border-cream-200 dark:border-plum-700/40 px-3 py-1.5 text-xs font-semibold text-plum-700 dark:text-plum-200 mb-7 shadow-soft">
+            <Sparkles size={11} className="text-amber-500" />
+            Free forever — bring your own AI key
+          </div>
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.05] mb-6">
+            Architecture diagrams<br />
+            that{" "}
+            <span className="relative inline-block">
+              <span className="relative z-10 italic font-serif">think</span>
+              <span
+                aria-hidden="true"
+                className="absolute inset-x-0 bottom-1 h-3 bg-amber-300/70 dark:bg-amber-500/40 -z-0 rounded"
+              />
+            </span>
+            .
+          </h1>
+          <p className="text-lg sm:text-xl text-ink-500 dark:text-cream-200/70 max-w-2xl mx-auto mb-10 leading-relaxed">
+            Design, share, and embed system diagrams with an AI agent that thinks at
+            3 levels of abstraction — High, Mid, and Low.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              to="/signup"
+              className="inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full bg-plum-900 text-cream-50 text-base font-semibold tracking-tight hover:bg-plum-700 hover:scale-[1.02] transition-all duration-150 shadow-soft"
+            >
+              Start free — BYOK
+              <ArrowRight size={16} />
+            </Link>
+            <a
+              href="#"
+              className="inline-flex items-center justify-center h-12 px-7 rounded-full bg-white dark:bg-plum-900/50 border border-cream-200 dark:border-plum-700/40 text-ink-900 dark:text-cream-50 text-base font-semibold tracking-tight hover:bg-cream-100 dark:hover:bg-plum-800/60 transition"
+            >
+              View demo
+            </a>
+          </div>
         </div>
       </section>
 
       {/* Features */}
-      <section className="max-w-6xl mx-auto px-4 py-16">
-        <h2 className="text-3xl font-bold text-center mb-12">
+      <section className="max-w-6xl mx-auto px-5 py-20">
+        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-center mb-3">
           Everything you need to document your system
         </h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {FEATURES.map(({ icon: Icon, title, desc }) => (
+        <p className="text-ink-500 dark:text-cream-200/60 text-center max-w-xl mx-auto mb-14">
+          From idea to embedded diagram in minutes. No subscriptions, no node limits.
+        </p>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {FEATURES.map(({ icon: Icon, title, desc, accent }) => (
             <div
               key={title}
-              className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 p-6"
+              className="rounded-2xl border border-cream-200 dark:border-plum-700/30 bg-cream-100/70 dark:bg-plum-900/30 p-6 hover:-translate-y-1 hover:shadow-card transition-all duration-200"
             >
-              <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center mb-4">
-                <Icon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              <div className={`w-11 h-11 rounded-2xl flex items-center justify-center mb-4 ${accent} dark:bg-white/5 dark:text-cream-50`}>
+                <Icon className="w-5 h-5" />
               </div>
-              <h3 className="font-semibold mb-2">{title}</h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400">{desc}</p>
+              <h3 className="font-bold text-base mb-1.5 tracking-tight">{title}</h3>
+              <p className="text-sm text-ink-500 dark:text-cream-200/60 leading-relaxed">
+                {desc}
+              </p>
             </div>
           ))}
         </div>
       </section>
 
       {/* Pricing */}
-      <section className="max-w-2xl mx-auto px-4 py-16 text-center">
-        <h2 className="text-3xl font-bold mb-4">Simple pricing</h2>
-        <p className="text-slate-500 dark:text-slate-400 mb-10">
+      <section className="max-w-2xl mx-auto px-5 py-20 text-center">
+        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3">
+          Simple pricing
+        </h2>
+        <p className="text-ink-500 dark:text-cream-200/60 mb-10">
           One plan. Free forever.
         </p>
-        <div className="rounded-2xl border-2 border-blue-500 bg-white dark:bg-slate-900 p-8 shadow-xl">
-          <div className="text-5xl font-extrabold mb-2">$0</div>
-          <div className="text-sm text-slate-500 dark:text-slate-400 mb-6">
-            per month · forever
+        <div className="rounded-3xl border-2 border-plum-500 bg-plum-50 dark:bg-plum-900/40 p-10 shadow-float text-left">
+          <div className="flex items-baseline gap-2 mb-2">
+            <span className="text-6xl font-extrabold tracking-tight">$0</span>
+            <span className="text-sm text-ink-500 dark:text-cream-200/60">/ forever</span>
           </div>
-          <ul className="text-left space-y-3 mb-8">
+          <p className="text-sm text-ink-500 dark:text-cream-200/60 mb-7">
+            BYOK — Bring Your Own Key. We never charge for AI usage.
+          </p>
+          <ul className="space-y-3 mb-8">
             {[
               "Unlimited diagrams",
               "3-level abstraction switching",
@@ -159,60 +195,64 @@ export function LandingPage() {
               "iframe embeds",
               "PNG / SVG / PDF export",
             ].map((item) => (
-              <li key={item} className="flex items-center gap-2 text-sm">
-                <span className="text-blue-500 font-bold">✓</span>
+              <li key={item} className="flex items-center gap-2.5 text-sm text-ink-900 dark:text-cream-50">
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-plum-500 text-cream-50 text-[10px] font-bold">
+                  ✓
+                </span>
                 {item}
               </li>
             ))}
           </ul>
           <Link
             to="/signup"
-            className={cn(buttonVariants({ size: "lg" }), "w-full text-base")}
+            className="block text-center h-12 px-8 leading-[3rem] rounded-full bg-plum-900 text-cream-50 font-semibold tracking-tight hover:bg-plum-700 transition-all duration-150 shadow-soft"
           >
             Get started — free forever
           </Link>
-          <p className="text-xs text-slate-400 mt-3">
-            Bring Your Own Key — we never charge for AI usage.
-          </p>
         </div>
       </section>
 
       {/* FAQ */}
-      <section className="max-w-2xl mx-auto px-4 py-16">
-        <h2 className="text-3xl font-bold text-center mb-10">FAQ</h2>
-        <div className="space-y-4">
+      <section className="max-w-2xl mx-auto px-5 py-20">
+        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-center mb-10">
+          FAQ
+        </h2>
+        <div className="space-y-3">
           {FAQS.map(({ q, a }) => (
             <details
               key={q}
-              className="group rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 p-5"
+              className="group rounded-2xl border border-cream-200 dark:border-plum-700/30 bg-cream-100/50 dark:bg-plum-900/30 px-5 py-4 open:bg-white dark:open:bg-plum-900/50 transition-colors"
             >
-              <summary className="font-medium cursor-pointer list-none flex justify-between items-center">
+              <summary className="font-semibold cursor-pointer list-none flex justify-between items-center text-ink-900 dark:text-cream-50">
                 {q}
-                <span className="ml-2 text-slate-400 group-open:rotate-180 transition-transform">
+                <span className="ml-2 text-plum-500 group-open:rotate-180 transition-transform">
                   ▾
                 </span>
               </summary>
-              <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">{a}</p>
+              <p className="mt-3 text-sm text-ink-500 dark:text-cream-200/70 leading-relaxed">
+                {a}
+              </p>
             </details>
           ))}
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 dark:border-slate-800 mt-8">
-        <div className="max-w-6xl mx-auto px-4 py-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-400">
-          <span>© {new Date().getFullYear()} Archlet. All rights reserved.</span>
+      <footer className="bg-plum-900 text-cream-100 mt-10">
+        <div className="max-w-6xl mx-auto px-5 py-10 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm">
+          <div className="flex items-center gap-3">
+            <span className="font-bold tracking-tight text-cream-50">
+              archlet<span className="text-amber-300">.</span>
+            </span>
+            <span className="text-cream-100/60">
+              © {new Date().getFullYear()} · All rights reserved.
+            </span>
+          </div>
           <div className="flex gap-6">
-            <Link
-              to="/privacy"
-              className="hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
-            >
+            <Link to="/privacy" className="text-cream-100/70 hover:text-cream-50 transition-colors">
               Privacy
             </Link>
-            <Link
-              to="/terms"
-              className="hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
-            >
+            <Link to="/terms" className="text-cream-100/70 hover:text-cream-50 transition-colors">
               Terms
             </Link>
           </div>

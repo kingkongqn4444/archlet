@@ -19,18 +19,20 @@ export function WorkspacePage() {
     >
       {isLoading ? (
         <div className="flex items-center justify-center h-full">
-          <p className="text-slate-400 text-sm">Loading…</p>
+          <p className="text-ink-500 dark:text-cream-200/60 text-sm">Loading…</p>
         </div>
       ) : effectiveProjectId ? (
         <DiagramList projectId={effectiveProjectId} />
       ) : (
-        <div className="flex flex-col items-center justify-center h-full gap-4 text-center px-8">
-          <LayoutDashboard className="w-16 h-16 text-slate-200 dark:text-slate-700" />
-          <h2 className="text-lg font-semibold text-slate-700 dark:text-slate-300">
+        <div className="flex flex-col items-center justify-center h-full gap-5 text-center px-8">
+          <div className="w-20 h-20 rounded-3xl bg-plum-100 dark:bg-plum-900/40 flex items-center justify-center">
+            <LayoutDashboard className="w-9 h-9 text-plum-500" />
+          </div>
+          <h2 className="text-xl font-bold tracking-tight text-ink-900 dark:text-cream-50">
             Create your first project
           </h2>
-          <p className="text-sm text-slate-400 max-w-xs">
-            Click the <strong>+</strong> button in the Projects sidebar to get started.
+          <p className="text-sm text-ink-500 dark:text-cream-200/60 max-w-xs leading-relaxed">
+            Click the <strong className="text-plum-500">+</strong> button in the Projects sidebar to get started.
           </p>
         </div>
       )}

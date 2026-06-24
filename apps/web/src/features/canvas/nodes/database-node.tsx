@@ -10,8 +10,8 @@ export const DatabaseNode = React.memo(function DatabaseNode(props: NodeProps<RF
       id={props.id}
       data={props.data}
       selected={props.selected}
-      icon={<Database size={14} />}
-      colorClass="border-purple-200 dark:border-purple-800"
+      icon={<Database size={16} />}
+      accentClass="bg-cyan-100 text-cyan-600 dark:bg-cyan-500/20 dark:text-cyan-300"
     />
   );
 });

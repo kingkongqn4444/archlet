@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { Sparkles } from "lucide-react";
 import { signIn } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Form, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 export function LoginPage() {
@@ -34,13 +34,28 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Sign in</CardTitle>
-          <CardDescription>Enter your email and password</CardDescription>
-        </CardHeader>
-        <CardContent>
+    <div className="min-h-screen flex items-center justify-center bg-cream-50 dark:bg-plum-950 px-4 relative overflow-hidden">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-40 -right-40 w-[480px] h-[480px] rounded-full bg-plum-100 dark:bg-plum-700/20 blur-3xl"
+      />
+      <div className="relative w-full max-w-md rounded-3xl bg-white dark:bg-plum-900/80 backdrop-blur border border-cream-200 dark:border-plum-700/40 shadow-float overflow-hidden">
+        {/* Gradient strip */}
+        <div className="bg-gradient-to-br from-plum-500 via-plum-600 to-plum-800 px-7 py-6 text-cream-50">
+          <Link to="/" className="inline-flex items-center gap-1 font-bold text-2xl tracking-tight">
+            archlet<span className="text-amber-300">.</span>
+          </Link>
+          <p className="text-plum-100/80 text-sm mt-1">Welcome back.</p>
+        </div>
+
+        <div className="px-7 pt-6 pb-7">
+          <h1 className="text-2xl font-bold tracking-tight text-ink-900 dark:text-cream-50 mb-1">
+            Sign in
+          </h1>
+          <p className="text-sm text-ink-500 dark:text-cream-200/60 mb-6">
+            Enter your email and password
+          </p>
+
           <Form onSubmit={handleSubmit}>
             <FormItem>
               <FormLabel htmlFor="email">Email</FormLabel>
@@ -49,34 +64,43 @@ export function LoginPage() {
                 type="email"
                 required
                 autoComplete="email"
+                placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </FormItem>
             <FormItem>
-              <FormLabel htmlFor="password">Password</FormLabel>
+              <div className="flex items-center justify-between">
+                <FormLabel htmlFor="password">Password</FormLabel>
+                <a href="#" className="text-xs text-plum-500 hover:text-plum-700 dark:hover:text-plum-300 font-medium">
+                  Forgot password?
+                </a>
+              </div>
               <Input
                 id="password"
                 type="password"
                 required
                 autoComplete="current-password"
+                placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </FormItem>
             <FormMessage>{error}</FormMessage>
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full mt-2" disabled={loading}>
               {loading ? "Signing in…" : "Sign in"}
+              {!loading && <Sparkles size={14} className="ml-1.5 text-amber-300" />}
             </Button>
           </Form>
-          <p className="mt-4 text-center text-sm text-slate-500">
+
+          <p className="mt-6 text-center text-sm text-ink-500 dark:text-cream-200/60">
             No account?{" "}
-            <Link to="/signup" className="underline">
+            <Link to="/signup" className="text-plum-500 hover:text-plum-700 dark:hover:text-plum-300 font-semibold">
               Sign up
             </Link>
           </p>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

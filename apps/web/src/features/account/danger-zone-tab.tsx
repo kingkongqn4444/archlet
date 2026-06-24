@@ -39,10 +39,10 @@ export function DangerZoneTab() {
   }
 
   return (
-    <div className="flex flex-col gap-6 max-w-md">
-      <div className="flex gap-2 items-start rounded-md border border-red-200 bg-red-50 dark:bg-red-950/30 dark:border-red-800 px-3 py-3 text-sm text-red-700 dark:text-red-300">
-        <AlertTriangle size={15} className="shrink-0 mt-0.5" />
-        <span>
+    <div className="flex flex-col gap-6">
+      <div className="flex gap-3 items-start rounded-2xl border-2 border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-500/40 px-4 py-4 text-sm text-red-700 dark:text-red-300">
+        <AlertTriangle size={16} className="shrink-0 mt-0.5" />
+        <span className="leading-relaxed">
           Deleting your account is <strong>permanent and irreversible</strong>. All projects,
           diagrams, and data will be removed immediately.
         </span>
@@ -57,12 +57,12 @@ export function DangerZoneTab() {
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="w-full max-w-sm dark:bg-slate-900">
+        <DialogContent className="w-full max-w-sm">
           <DialogHeader>
             <DialogTitle>Delete account</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
-            Type <strong className="text-slate-800 dark:text-slate-200">{userEmail}</strong> to
+          <p className="text-sm text-ink-700 dark:text-cream-100 mb-4">
+            Type <strong className="text-ink-900 dark:text-cream-50 font-mono">{userEmail}</strong> to
             confirm deletion.
           </p>
           <Input
@@ -78,7 +78,7 @@ export function DangerZoneTab() {
             <Button
               onClick={handleDelete}
               disabled={deleting || confirmEmail.trim() !== userEmail}
-              className="bg-red-600 hover:bg-red-700 text-white"
+              variant="destructive"
             >
               {deleting ? <Loader2 size={14} className="animate-spin mr-1.5" /> : null}
               {deleting ? "Deleting…" : "Delete forever"}

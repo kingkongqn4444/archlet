@@ -10,8 +10,8 @@ export const ApiNode = React.memo(function ApiNode(props: NodeProps<RFNode>) {
       id={props.id}
       data={props.data}
       selected={props.selected}
-      icon={<Zap size={14} />}
-      colorClass="border-green-200 dark:border-green-800"
+      icon={<Zap size={16} />}
+      accentClass="bg-plum-100 text-plum-600 dark:bg-plum-500/25 dark:text-plum-200"
     />
   );
 });

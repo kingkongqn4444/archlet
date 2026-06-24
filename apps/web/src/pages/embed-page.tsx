@@ -27,16 +27,16 @@ export function EmbedPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center w-screen h-screen">
-        <p className="text-slate-400 text-sm">Loading…</p>
+      <div className="flex items-center justify-center w-screen h-screen bg-cream-50 dark:bg-plum-950">
+        <p className="text-ink-500 dark:text-cream-200/60 text-sm">Loading…</p>
       </div>
     );
   }
 
   if (isError || !data) {
     return (
-      <div className="flex items-center justify-center w-screen h-screen">
-        <p className="text-slate-400 text-sm">Diagram unavailable.</p>
+      <div className="flex items-center justify-center w-screen h-screen bg-cream-50 dark:bg-plum-950">
+        <p className="text-ink-500 dark:text-cream-200/60 text-sm">Diagram unavailable.</p>
       </div>
     );
   }

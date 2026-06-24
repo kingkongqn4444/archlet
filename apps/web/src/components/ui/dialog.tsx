@@ -41,9 +41,17 @@ function DialogContent({ children, className }: { children: React.ReactNode; cla
   const { open, setOpen } = useDialog();
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="fixed inset-0 bg-black/50" onClick={() => setOpen(false)} />
-      <div className={cn("relative z-50 bg-white rounded-lg p-6 shadow-xl w-full max-w-md", className)}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div
+        className="fixed inset-0 bg-plum-950/60 backdrop-blur-sm"
+        onClick={() => setOpen(false)}
+      />
+      <div
+        className={cn(
+          "relative z-50 bg-cream-50 dark:bg-plum-950 rounded-2xl p-6 shadow-float w-full max-w-md border border-cream-200 dark:border-plum-700/40",
+          className
+        )}
+      >
         {children}
       </div>
     </div>
@@ -55,7 +63,16 @@ function DialogHeader({ children, className }: { children: React.ReactNode; clas
 }
 
 function DialogTitle({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <h2 className={cn("text-lg font-semibold", className)}>{children}</h2>;
+  return (
+    <h2
+      className={cn(
+        "text-lg font-bold tracking-tight text-ink-900 dark:text-cream-50",
+        className
+      )}
+    >
+      {children}
+    </h2>
+  );
 }
 
 export { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle };

@@ -40,8 +40,8 @@ function SheetContent({
   return (
     <div
       className={cn(
-        "fixed right-0 top-0 h-full w-80 bg-white dark:bg-slate-900 shadow-xl flex flex-col z-50",
-        "border-l border-slate-200 dark:border-slate-700",
+        "fixed right-0 top-0 h-full w-80 bg-cream-50 dark:bg-plum-950 shadow-float flex flex-col z-50",
+        "border-l border-cream-200 dark:border-plum-700/40",
         className
       )}
       onClick={(e) => e.stopPropagation()}
@@ -53,7 +53,7 @@ function SheetContent({
 
 function SheetHeader({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={cn("px-4 py-3 border-b border-slate-200 dark:border-slate-700 shrink-0", className)}>
+    <div className={cn("px-4 py-3 border-b border-cream-200 dark:border-plum-700/40 shrink-0", className)}>
       {children}
     </div>
   );

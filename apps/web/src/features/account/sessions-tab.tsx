@@ -85,8 +85,8 @@ export function SessionsTab() {
 
   if (sessions === null) {
     return (
-      <div className="flex flex-col gap-4">
-        <p className="text-sm text-slate-500">
+      <div className="flex flex-col gap-4 bg-cream-100 dark:bg-plum-900/40 border border-cream-200 dark:border-plum-700/40 rounded-2xl p-6">
+        <p className="text-sm text-ink-500 dark:text-cream-200/60">
           View and manage all active sessions for your account.
         </p>
         <Button onClick={loadSessions} disabled={loading} className="self-start">
@@ -100,14 +100,16 @@ export function SessionsTab() {
   const currentToken = sessionData?.session?.token;
 
   return (
-    <div className="flex flex-col gap-4 max-w-lg">
+    <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-slate-500">{sessions.length} active session(s)</p>
+        <p className="text-sm text-ink-500 dark:text-cream-200/60">
+          {sessions.length} active session(s)
+        </p>
         <Button
           variant="outline"
           onClick={handleRevokeOthers}
           disabled={revokingAll}
-          className="text-xs px-3"
+          className="text-xs px-4"
         >
           {revokingAll ? <Loader2 size={12} className="animate-spin mr-1" /> : null}
           Revoke all others
@@ -120,23 +122,25 @@ export function SessionsTab() {
           return (
             <div
               key={s.id}
-              className="flex items-start gap-3 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-3"
+              className="flex items-start gap-3 rounded-2xl bg-cream-100 dark:bg-plum-900/40 border border-cream-200 dark:border-plum-700/40 px-4 py-3.5"
             >
-              <Monitor size={16} className="mt-0.5 shrink-0 text-slate-400" />
+              <div className="w-9 h-9 rounded-xl bg-plum-100 dark:bg-plum-800/50 flex items-center justify-center shrink-0">
+                <Monitor size={15} className="text-plum-500" />
+              </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
+                <p className="text-sm font-semibold text-ink-900 dark:text-cream-50">
                   {parseAgent(s.userAgent)}
                   {isCurrent && (
-                    <span className="ml-2 text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-1.5 py-0.5 rounded">
+                    <span className="ml-2 text-[10px] font-bold uppercase tracking-wider bg-plum-100 dark:bg-plum-700/50 text-plum-700 dark:text-cream-50 px-2 py-0.5 rounded-full">
                       Current
                     </span>
                   )}
                 </p>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-ink-500 dark:text-cream-200/60 mt-1">
                   {s.ipAddress ? `IP: ${s.ipAddress} · ` : ""}
                   Created {formatDate(s.createdAt)}
                 </p>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-ink-500 dark:text-cream-200/60">
                   Expires {formatDate(s.expiresAt)}
                 </p>
               </div>
@@ -144,7 +148,7 @@ export function SessionsTab() {
                 <button
                   onClick={() => handleRevoke(s.token)}
                   disabled={revoking === s.token}
-                  className="p-1.5 rounded hover:bg-red-50 dark:hover:bg-red-900/20 text-red-400 disabled:opacity-50 shrink-0"
+                  className="p-2 rounded-full hover:bg-red-50 dark:hover:bg-red-900/30 text-red-500 disabled:opacity-50 shrink-0 transition"
                   title="Revoke session"
                 >
                   {revoking === s.token

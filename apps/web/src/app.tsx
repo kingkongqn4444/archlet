@@ -30,8 +30,8 @@ const EmbedPage = lazy(() =>
 
 function PageLoader() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-slate-950">
-      <div className="w-6 h-6 rounded-full border-2 border-blue-500 border-t-transparent animate-spin" />
+    <div className="min-h-screen flex items-center justify-center bg-cream-50 dark:bg-plum-950">
+      <div className="w-7 h-7 rounded-full border-2 border-plum-500 border-t-transparent animate-spin" />
     </div>
   );
 }

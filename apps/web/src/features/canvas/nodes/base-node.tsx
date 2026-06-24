@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from "react";
 import { Handle, Position, NodeToolbar } from "@xyflow/react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Copy, Trash2, Settings } from "lucide-react";
 import { useDiagramStore, type RFNode } from "../store/diagram-store";
 import type { DiagramNode } from "@archlet/shared";
@@ -10,7 +9,8 @@ export type BaseNodeProps = {
   data: RFNode["data"];
   selected?: boolean;
   icon: React.ReactNode;
-  colorClass: string;
+  /** pastel circle bg + icon text color, e.g. "bg-plum-100 text-plum-600" */
+  accentClass: string;
 };
 
 export const BaseNode = React.memo(function BaseNode({
@@ -18,7 +18,7 @@ export const BaseNode = React.memo(function BaseNode({
   data,
   selected,
   icon,
-  colorClass,
+  accentClass,
 }: BaseNodeProps) {
   const [editing, setEditing] = useState(false);
   const [label, setLabel] = useState(String(data.label ?? ""));
@@ -47,17 +47,32 @@ export const BaseNode = React.memo(function BaseNode({
     addNode(node);
   }, [id, nodes, addNode]);
 
+  const ringClass = selected
+    ? "ring-2 ring-plum-500 ring-offset-2 ring-offset-cream-50 dark:ring-offset-plum-950"
+    : "hover:-translate-y-0.5 hover:shadow-float";
+
   return (
     <>
       <NodeToolbar isVisible={selected ?? false} position={Position.Top}>
-        <div className="flex gap-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-1 shadow-md">
-          <button className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700" title="Configure">
+        <div className="flex gap-0.5 bg-white dark:bg-plum-900 border border-cream-200 dark:border-plum-700/40 rounded-full p-1 shadow-card">
+          <button
+            className="p-1.5 rounded-full text-ink-700 dark:text-cream-100 hover:bg-cream-100 dark:hover:bg-plum-800 transition"
+            title="Configure"
+          >
             <Settings size={13} />
           </button>
-          <button onClick={duplicate} className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700" title="Duplicate">
+          <button
+            onClick={duplicate}
+            className="p-1.5 rounded-full text-ink-700 dark:text-cream-100 hover:bg-cream-100 dark:hover:bg-plum-800 transition"
+            title="Duplicate"
+          >
             <Copy size={13} />
           </button>
-          <button onClick={() => deleteNode(id)} className="p-1 rounded hover:bg-red-100 dark:hover:bg-red-900 text-red-500" title="Delete">
+          <button
+            onClick={() => deleteNode(id)}
+            className="p-1.5 rounded-full text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 transition"
+            title="Delete"
+          >
             <Trash2 size={13} />
           </button>
         </div>
@@ -66,33 +81,49 @@ export const BaseNode = React.memo(function BaseNode({
       <Handle type="target" position={Position.Top} />
       <Handle type="target" position={Position.Left} />
 
-      <Card className={`w-40 rounded-2xl shadow border ${colorClass} bg-white dark:bg-slate-800`}>
-        <CardHeader className="p-2 pb-1 flex flex-row items-center gap-2">
-          <span className="text-slate-600 dark:text-slate-300">{icon}</span>
-          {editing ? (
-            <input
-              autoFocus
-              className="text-sm font-semibold bg-transparent border-b border-slate-400 outline-none w-full"
-              value={label}
-              onChange={(e) => setLabel(e.target.value)}
-              onBlur={commitLabel}
-              onKeyDown={(e) => e.key === "Enter" && commitLabel()}
-            />
-          ) : (
-            <span
-              className="text-sm font-semibold truncate cursor-text"
-              onDoubleClick={() => setEditing(true)}
-            >
-              {String(data.label ?? "")}
-            </span>
-          )}
-        </CardHeader>
-        {data.description != null && (
-          <CardContent className="px-2 pb-2 pt-0">
-            <p className="text-xs text-slate-500 dark:text-slate-400">{String(data.description)}</p>
-          </CardContent>
-        )}
-      </Card>
+      <div
+        className={[
+          "min-w-[180px] min-h-[56px] rounded-2xl bg-white dark:bg-plum-900/85 backdrop-blur",
+          "border border-cream-200 dark:border-plum-700/40 shadow-card",
+          "transition-all duration-150",
+          ringClass,
+        ].join(" ")}
+      >
+        <div className="flex items-center gap-2.5 px-3 py-2.5">
+          <span
+            className={[
+              "inline-flex items-center justify-center w-8 h-8 rounded-full shrink-0",
+              accentClass,
+            ].join(" ")}
+          >
+            {icon}
+          </span>
+          <div className="flex flex-col min-w-0 flex-1">
+            {editing ? (
+              <input
+                autoFocus
+                className="text-[13px] font-semibold bg-transparent border-b border-plum-300 outline-none w-full text-ink-900 dark:text-cream-50"
+                value={label}
+                onChange={(e) => setLabel(e.target.value)}
+                onBlur={commitLabel}
+                onKeyDown={(e) => e.key === "Enter" && commitLabel()}
+              />
+            ) : (
+              <span
+                className="text-[13px] font-semibold tracking-tight truncate cursor-text text-ink-900 dark:text-cream-50"
+                onDoubleClick={() => setEditing(true)}
+              >
+                {String(data.label ?? "")}
+              </span>
+            )}
+            {data.description != null && String(data.description).length > 0 && (
+              <span className="text-[11px] leading-snug text-ink-500 dark:text-cream-200/60 truncate">
+                {String(data.description)}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
 
       <Handle type="source" position={Position.Bottom} />
       <Handle type="source" position={Position.Right} />

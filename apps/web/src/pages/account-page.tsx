@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { Eye, EyeOff, AlertTriangle } from "lucide-react";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
+import { Eye, EyeOff, AlertTriangle, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -61,10 +61,12 @@ function ProviderKeyField({
   }
 
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium text-slate-700 dark:text-slate-300">{meta.name}</label>
-        <a href={meta.docsUrl} target="_blank" rel="noreferrer" className="text-xs text-slate-400 hover:text-slate-600 underline">Get key</a>
+        <label className="text-sm font-semibold text-ink-700 dark:text-cream-100">{meta.name}</label>
+        <a href={meta.docsUrl} target="_blank" rel="noreferrer" className="text-xs text-plum-500 hover:text-plum-700 dark:hover:text-plum-300 font-medium">
+          Get key →
+        </a>
       </div>
       <div className="flex gap-2">
         <div className="relative flex-1">
@@ -73,17 +75,18 @@ function ProviderKeyField({
             placeholder={meta.placeholder}
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className="pr-9"
+            className="pr-10 font-mono text-xs"
           />
           <button
             type="button"
             onClick={() => setVisible((v) => !v)}
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-full text-ink-500 hover:text-plum-500 transition"
+            title={visible ? "Hide" : "Show"}
           >
             {visible ? <EyeOff size={14} /> : <Eye size={14} />}
           </button>
         </div>
-        <Button type="button" variant="outline" className="shrink-0 text-xs px-3" onClick={testConnection} disabled={testing || !value.trim()}>
+        <Button type="button" variant="outline" className="shrink-0 text-xs px-4" onClick={testConnection} disabled={testing || !value.trim()}>
           {testing ? "Testing…" : "Test"}
         </Button>
       </div>
@@ -115,23 +118,23 @@ function ApiKeysTab() {
   }
 
   return (
-    <form onSubmit={handleSave} className="flex flex-col gap-6 max-w-lg">
-      <div className="flex gap-2 items-start rounded-md border border-amber-200 bg-amber-50 dark:bg-amber-950 dark:border-amber-800 px-3 py-2.5 text-xs text-amber-700 dark:text-amber-300">
-        <AlertTriangle size={13} className="shrink-0 mt-0.5" />
+    <form onSubmit={handleSave} className="flex flex-col gap-6">
+      <div className="flex gap-2.5 items-start rounded-2xl border border-amber-300 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-500/40 px-4 py-3 text-xs text-amber-700 dark:text-amber-300">
+        <AlertTriangle size={14} className="shrink-0 mt-0.5" />
         <span>
           Keys are stored in browser <strong>localStorage</strong> as plain text.
           Treat as dev/personal use only — do not use production-tier keys.
         </span>
       </div>
-      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 p-5 flex flex-col gap-5">
+      <div className="bg-cream-100 dark:bg-plum-900/40 rounded-2xl border border-cream-200 dark:border-plum-700/40 p-6 flex flex-col gap-6">
         <ProviderKeyField provider="openai" value={openaiKey} onChange={setOpenaiKey} />
         <ProviderKeyField provider="anthropic" value={anthropicKey} onChange={setAnthropicKey} />
         <ProviderKeyField provider="deepseek" value={deepseekKey} onChange={setDeepseekKey} />
       </div>
-      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 p-5 flex flex-col gap-4">
-        <h2 className="text-sm font-medium text-slate-700 dark:text-slate-300">Defaults</h2>
+      <div className="bg-cream-100 dark:bg-plum-900/40 rounded-2xl border border-cream-200 dark:border-plum-700/40 p-6 flex flex-col gap-4">
+        <h2 className="text-sm font-bold text-ink-900 dark:text-cream-50 tracking-tight">Defaults</h2>
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm text-slate-600 dark:text-slate-400">Default provider</label>
+          <label className="text-sm font-semibold text-ink-700 dark:text-cream-100">Default provider</label>
           <Select value={defaultProvider} onChange={(e) => handleProviderChange(e.target.value as ProviderName)}>
             <option value="openai">OpenAI</option>
             <option value="anthropic">Anthropic</option>
@@ -139,7 +142,7 @@ function ApiKeysTab() {
           </Select>
         </div>
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm text-slate-600 dark:text-slate-400">Default model</label>
+          <label className="text-sm font-semibold text-ink-700 dark:text-cream-100">Default model</label>
           <Select value={defaultModel} onChange={(e) => setDefaultModel(e.target.value)}>
             {PROVIDER_MODELS[defaultProvider].map((m) => (
               <option key={m} value={m}>{m}</option>
@@ -147,7 +150,7 @@ function ApiKeysTab() {
           </Select>
         </div>
       </div>
-      <Button type="submit" className="self-end px-6">Save settings</Button>
+      <Button type="submit" className="self-end px-7">Save settings</Button>
     </form>
   );
 }
@@ -174,31 +177,41 @@ export function AccountPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col">
-      <header className="h-9 flex items-center justify-between px-4 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0">
-        <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">archlet</span>
+    <div className="min-h-screen bg-cream-50 dark:bg-plum-950 flex flex-col">
+      <header className="h-11 flex items-center justify-between px-4 border-b border-cream-200 dark:border-plum-700/30 bg-white/80 dark:bg-plum-900/40 backdrop-blur shrink-0">
+        <Link to="/" className="text-sm font-bold tracking-tight text-ink-900 dark:text-cream-50">
+          archlet<span className="text-plum-500">.</span>
+        </Link>
         <button
           onClick={() => navigate(-1)}
-          className="text-xs px-2 py-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500"
+          className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full hover:bg-cream-100 dark:hover:bg-plum-800/50 text-ink-700 dark:text-cream-100 transition"
         >
-          ← Back
+          <ArrowLeft size={13} />
+          Back
         </button>
       </header>
 
-      <main className="flex-1 flex flex-col items-center py-10 px-4">
+      <main className="flex-1 flex flex-col items-center py-12 px-4">
         <div className="w-full max-w-2xl">
-          <h1 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-6">Account</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-ink-900 dark:text-cream-50 mb-2">
+            Account
+          </h1>
+          <p className="text-sm text-ink-500 dark:text-cream-200/60 mb-8">
+            Manage your profile, API keys, and sessions.
+          </p>
 
-          {/* Tab bar */}
-          <div className="flex border-b border-slate-200 dark:border-slate-700 mb-8">
+          {/* Pill tab bar */}
+          <div className="inline-flex p-1 rounded-full bg-cream-100 dark:bg-plum-900/40 border border-cream-200 dark:border-plum-700/40 mb-8">
             {TABS.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => selectTab(tab.id)}
-                className={`px-4 py-2 text-sm border-b-2 transition-colors ${
+                className={`px-4 py-1.5 text-sm rounded-full transition-all duration-150 ${
                   activeTab === tab.id
-                    ? "border-slate-900 dark:border-slate-100 font-medium text-slate-900 dark:text-slate-100"
-                    : "border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+                    ? tab.id === "danger"
+                      ? "bg-red-500 text-white font-semibold shadow-soft"
+                      : "bg-white dark:bg-plum-700/70 text-plum-700 dark:text-cream-50 font-semibold shadow-soft"
+                    : "text-ink-500 dark:text-cream-200/60 hover:text-ink-900 dark:hover:text-cream-50"
                 }`}
               >
                 {tab.label}
