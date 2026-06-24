@@ -5,3 +5,28 @@
 *, *::before, *::after {
   box-sizing: border-box;
 }
+
+/* ── Dark mode: React Flow chrome ─────────────────────────── */
+.dark .react-flow__controls {
+  background: rgb(15 23 42);
+  border-color: rgb(51 65 85);
+}
+
+.dark .react-flow__controls-button {
+  background: rgb(30 41 59);
+  color: white;
+  border-color: rgb(51 65 85);
+}
+
+.dark .react-flow__controls-button:hover {
+  background: rgb(51 65 85);
+}
+
+.dark .react-flow__attribution {
+  background: transparent;
+  color: rgb(148 163 184);
+}
+
+.dark .react-flow__minimap {
+  background: rgb(15 23 42);
+}

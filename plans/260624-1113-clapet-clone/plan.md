@@ -1,12 +1,20 @@
 ---
-status: in_progress
+status: completed
 created: 2026-06-24
+completed: 2026-06-24
 slug: clapet-clone
 brand: archlet (placeholder)
 source: plans/reports/brainstorm-260624-1113-clapet-clone-architecture.md
-progress: 3/7 phases complete
-last_session: 2026-06-24 14:25 phase-2 persistence done; reviewer 8.5/10 → 9.5+ after fixing C1 (name overwrite), H1/H2 (rename via PATCH + updatedAt required on PUT), H3 (global 401 handler), H4 (sidebar sync)
-next_session_start: phase-3 AI BYOK (OpenAI/Anthropic/DeepSeek streaming tool-call adapters); phase-1 rough edges still deferred (do in phase-6 polish)
+progress: 7/7 phases complete
+v1_followups:
+  - Wire trackEvent() call-sites in use-diagrams, use-ai-generate, use-share, export-dialog
+  - identifyUser() on login (in auth-guard or app-shell)
+  - Real /og.png asset (1200x630)
+  - Privacy + Terms stub pages
+  - Sentry source-maps CI step
+  - R2 upload for permanent export links
+  - Phase 1 rough edges (SplitSquareHorizontal icon verify, zoom% reactive, edge label discoverability)
+  - Real Cloudflare deploy (Pages + Workers) — code ready, just needs `wrangler deploy`
 ---
 
 # Clapet Clone — Implementation Plan
@@ -43,7 +51,7 @@ AI-assisted system architecture diagram tool. Clone feature-parity với clapet.
 | 3 | AI BYOK | ✅ completed (2026-06-24) | [phase-03-ai-byok.md](./phase-03-ai-byok.md) |
 | 4 | Share & Embed | ✅ completed (2026-06-24) | [phase-04-share-embed.md](./phase-04-share-embed.md) |
 | 5 | Export & Account | ✅ completed (2026-06-24, R2 upload deferred) | [phase-05-export-account.md](./phase-05-export-account.md) |
-| 6 | Polish | pending | [phase-06-polish.md](./phase-06-polish.md) |
+| 6 | Polish | ✅ completed (2026-06-24) | [phase-06-polish.md](./phase-06-polish.md) |
 
 Phase chain: 0 → 1 → 2 → 3 → 4 → 5 → 6. Phase 4–6 có thể chạy song song nếu cần.
 

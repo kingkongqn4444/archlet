@@ -1,3 +1,10 @@
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://us-assets.i.posthog.com; connect-src 'self' http://localhost:8787 https://api.archlet.app https://api.openai.com https://api.anthropic.com https://api.deepseek.com https://*.ingest.sentry.io https://us.i.posthog.com; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; object-src 'none'
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: accelerometer=(), camera=(), geolocation=(), microphone=(), payment=()
+
 /e/*
-  Content-Security-Policy: frame-ancestors *;
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:8787 https://api.archlet.app; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; frame-ancestors *
   X-Frame-Options:

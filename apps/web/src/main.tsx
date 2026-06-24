@@ -5,6 +5,12 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "./globals.css";
 import { App } from "./app";
 import { queryClient } from "./lib/query-client";
+import { initSentry } from "./lib/sentry-init";
+
+// Init Sentry before rendering (NO-OP if VITE_SENTRY_DSN unset)
+initSentry();
+
+// Analytics (PostHog) is initialized lazily by CookieConsent after user consent
 
 const root = document.getElementById("root");
 if (!root) throw new Error("Missing #root element");
