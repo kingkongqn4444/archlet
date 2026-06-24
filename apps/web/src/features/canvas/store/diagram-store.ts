@@ -40,6 +40,7 @@ type DiagramActions = {
   setLevel: (level: Level) => void;
   loadDiagram: (diagram: Diagram) => void;
   getDiagram: () => Diagram;
+  applyLayout: (positions: Map<string, { x: number; y: number }>) => void;
   onNodesChange: (changes: NodeChange<RFNode>[]) => void;
   onEdgesChange: (changes: EdgeChange<RFEdge>[]) => void;
   onConnect: (connection: Connection) => void;
@@ -193,6 +194,14 @@ export const useDiagramStore = create<DiagramStore>()(
           },
         };
       },
+
+      applyLayout: (positions) =>
+        set((s) => ({
+          nodes: s.nodes.map((n) => {
+            const pos = positions.get(n.id);
+            return pos ? { ...n, position: pos } : n;
+          }),
+        })),
 
       onNodesChange: (changes) =>
         set((s) => ({ nodes: applyNodeChanges(changes, s.nodes) })),

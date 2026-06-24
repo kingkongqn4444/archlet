@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { Undo2, Redo2, Maximize, Moon, Sun, Share2, Sparkles, Download, Pencil } from "lucide-react";
+import { Undo2, Redo2, Maximize, Moon, Sun, Share2, Sparkles, Download, Pencil, LibraryBig, LayoutTemplate } from "lucide-react";
 import { useReactFlow } from "@xyflow/react";
 import { useTemporalDiagram, useDiagramStore } from "../store/diagram-store";
 import { useDarkMode } from "../hooks/use-dark-mode";
 import { AiPanel } from "@/features/ai/ai-panel";
 import { ShareDialog } from "@/features/share/share-dialog";
 import { ExportDialog } from "@/features/export/export-dialog";
+import { TemplatesGallery } from "@/features/templates/templates-gallery";
+import { autoLayout } from "@/features/canvas/layout/auto-layout";
 
 function Divider() {
   return <span className="w-px h-5 bg-cream-200 dark:bg-plum-700/50 mx-1" aria-hidden="true" />;
@@ -36,6 +38,7 @@ export const TopToolbar = React.memo(function TopToolbar() {
   const [aiOpen, setAiOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
+  const [templatesOpen, setTemplatesOpen] = useState(false);
   const { fitView, getViewport } = useReactFlow();
   const { undo, redo } = useTemporalDiagram();
   const { isDark, toggle } = useDarkMode();
@@ -44,7 +47,17 @@ export const TopToolbar = React.memo(function TopToolbar() {
   const diagramId = useDiagramStore((s) => s.id);
   const name = useDiagramStore((s) => s.name);
   const setName = useDiagramStore((s) => s.setName);
+  const nodes = useDiagramStore((s) => s.nodes);
+  const edges = useDiagramStore((s) => s.edges);
+  const applyLayout = useDiagramStore((s) => s.applyLayout);
   const publicEmbed = false;
+
+  function handleAutoLayout() {
+    if (nodes.length === 0) return;
+    const positions = autoLayout(nodes, edges, "LR");
+    applyLayout(positions);
+    setTimeout(() => fitView({ duration: 400, padding: 0.2 }), 50);
+  }
 
   return (
     <>
@@ -94,6 +107,18 @@ export const TopToolbar = React.memo(function TopToolbar() {
 
         <Divider />
 
+        {/* Templates */}
+        <IconBtn onClick={() => setTemplatesOpen(true)} title="Templates">
+          <LibraryBig size={14} />
+        </IconBtn>
+
+        {/* Auto-arrange */}
+        <IconBtn onClick={handleAutoLayout} title="Auto-arrange (⌘⇧L)">
+          <LayoutTemplate size={14} />
+        </IconBtn>
+
+        <Divider />
+
         {/* Export */}
         <IconBtn onClick={() => setExportOpen(true)} title="Export">
           <Download size={14} />
@@ -134,6 +159,7 @@ export const TopToolbar = React.memo(function TopToolbar() {
         />
       )}
       <ExportDialog open={exportOpen} onOpenChange={setExportOpen} diagramName={name} />
+      <TemplatesGallery open={templatesOpen} onOpenChange={setTemplatesOpen} />
     </>
   );
 });

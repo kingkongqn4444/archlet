@@ -21,6 +21,10 @@ import { FlowOverlay } from "@/features/simulate/flow-overlay";
 import { CanvasHints } from "./toolbar/canvas-hints";
 import { AiPanel } from "@/features/ai/ai-panel";
 import { ReviewPanel } from "@/features/review/review-panel";
+import { CommandPalette } from "@/features/command/command-palette";
+import { ExportDialog } from "@/features/export/export-dialog";
+import { ShareDialog } from "@/features/share/share-dialog";
+import { TemplatesGallery } from "@/features/templates/templates-gallery";
 import type { NodeType } from "@archlet/shared";
 import type { PublicDiagramResponse } from "@archlet/shared";
 
@@ -82,8 +86,26 @@ function CanvasInner({ readOnly = false }: CanvasInnerProps) {
   const addNode = useDiagramStore((s) => s.addNode);
   const { screenToFlowPosition } = useReactFlow();
   const [heroAiOpen, setHeroAiOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [templatesOpen, setTemplatesOpen] = useState(false);
+  const diagramId = useDiagramStore((s) => s.id);
+  const diagramName = useDiagramStore((s) => s.name);
 
   useKeyboard();
+
+  // Global Cmd+K / Ctrl+K listener
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setPaletteOpen((prev) => !prev);
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
 
   const onDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -167,6 +189,34 @@ function CanvasInner({ readOnly = false }: CanvasInnerProps) {
       {!readOnly && <PropertiesPanel />}
       {!readOnly && <ReviewPanel />}
       {!readOnly && <AiPanel open={heroAiOpen} onOpenChange={setHeroAiOpen} />}
+      {!readOnly && (
+        <CommandPalette
+          open={paletteOpen}
+          onOpenChange={setPaletteOpen}
+          onOpenTemplates={() => setTemplatesOpen(true)}
+          onOpenExport={() => setExportOpen(true)}
+          onOpenShare={() => setShareOpen(true)}
+          onOpenAi={() => setHeroAiOpen(true)}
+          onOpenReview={() => {}}
+        />
+      )}
+      {!readOnly && (
+        <ExportDialog
+          open={exportOpen}
+          onOpenChange={setExportOpen}
+          diagramName={diagramName}
+        />
+      )}
+      {!readOnly && diagramId && (
+        <ShareDialog
+          open={shareOpen}
+          onOpenChange={setShareOpen}
+          diagram={{ id: diagramId, name: diagramName, publicEmbed: false }}
+        />
+      )}
+      {!readOnly && (
+        <TemplatesGallery open={templatesOpen} onOpenChange={setTemplatesOpen} />
+      )}
       {readOnly && (
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-[11px] text-ink-500 dark:text-cream-200/50 pointer-events-none tracking-tight">
           Made with <span className="font-semibold text-plum-700 dark:text-plum-300">archlet</span>
