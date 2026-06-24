@@ -10,7 +10,15 @@ import publicRoute from "./routes/public";
 const app = new Hono<{ Bindings: Env }>();
 
 app.use("*", async (c, next) => {
-  const origin = c.env.WEB_ORIGIN ?? "http://localhost:5173";
+  const webOrigin = c.env.WEB_ORIGIN ?? "http://localhost:5173";
+  const isDev = !c.env.WEB_ORIGIN || c.env.WEB_ORIGIN.includes("localhost");
+
+  // In dev, allow any localhost origin (Vite port may vary: 5173, 5174, 5183…)
+  const origin = isDev
+    ? (requestOrigin: string) =>
+        /^http:\/\/localhost:\d+$/.test(requestOrigin) ? requestOrigin : webOrigin
+    : webOrigin;
+
   return cors({
     origin,
     allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],

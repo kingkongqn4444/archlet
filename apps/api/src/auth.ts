@@ -19,10 +19,18 @@ export function createAuth(env: Env) {
   const webOrigin = env.WEB_ORIGIN ?? "http://localhost:5173";
   const isHttps = baseURL.startsWith("https://");
 
+  // In dev, Vite may spin up on :5173, :5174, :5183, etc.
+  // Trust a broad range of localhost ports so auth never breaks during development.
+  const isDev = baseURL.includes("localhost");
+  const devLocalhostOrigins = isDev
+    ? Array.from({ length: 100 }, (_, i) => `http://localhost:${5170 + i}`)
+    : [];
+  const trustedOrigins = [webOrigin, ...devLocalhostOrigins];
+
   return betterAuth({
     secret: env.BETTER_AUTH_SECRET,
     baseURL,
-    trustedOrigins: [webOrigin],
+    trustedOrigins,
     database: drizzleAdapter(db, {
       provider: "sqlite",
       schema,
