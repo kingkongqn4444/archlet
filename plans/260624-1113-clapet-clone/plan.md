@@ -4,9 +4,9 @@ created: 2026-06-24
 slug: clapet-clone
 brand: archlet (placeholder)
 source: plans/reports/brainstorm-260624-1113-clapet-clone-architecture.md
-progress: 2/7 phases complete
-last_session: 2026-06-24 phase-0 + phase-1 built; manual smoke + phase-1 review deferred to next session
-next_session_start: phase-1 manual smoke (drag node, connect, dark mode); fix 4 known rough edges; then phase-2 persistence
+progress: 3/7 phases complete
+last_session: 2026-06-24 14:25 phase-2 persistence done; reviewer 8.5/10 → 9.5+ after fixing C1 (name overwrite), H1/H2 (rename via PATCH + updatedAt required on PUT), H3 (global 401 handler), H4 (sidebar sync)
+next_session_start: phase-3 AI BYOK (OpenAI/Anthropic/DeepSeek streaming tool-call adapters); phase-1 rough edges still deferred (do in phase-6 polish)
 ---
 
 # Clapet Clone — Implementation Plan
@@ -39,7 +39,7 @@ AI-assisted system architecture diagram tool. Clone feature-parity với clapet.
 |---|---|---|---|
 | 0 | Skeleton & Auth | ✅ completed (2026-06-24) | [phase-00-skeleton-and-auth.md](./phase-00-skeleton-and-auth.md) |
 | 1 | Canvas Editor | ✅ completed (2026-06-24, smoke pending) | [phase-01-canvas-editor.md](./phase-01-canvas-editor.md) |
-| 2 | Persistence | pending | [phase-02-persistence.md](./phase-02-persistence.md) |
+| 2 | Persistence | ✅ completed (2026-06-24) | [phase-02-persistence.md](./phase-02-persistence.md) |
 | 3 | AI BYOK | pending | [phase-03-ai-byok.md](./phase-03-ai-byok.md) |
 | 4 | Share & Embed | pending | [phase-04-share-embed.md](./phase-04-share-embed.md) |
 | 5 | Export & Account | pending | [phase-05-export-account.md](./phase-05-export-account.md) |

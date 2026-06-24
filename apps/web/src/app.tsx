@@ -4,7 +4,8 @@ import { AuthGuard } from "@/components/auth-guard";
 import { LandingPage } from "@/pages/landing-page";
 import { LoginPage } from "@/pages/login-page";
 import { SignupPage } from "@/pages/signup-page";
-import { DashboardPage } from "@/pages/dashboard-page";
+import { WorkspacePage } from "@/pages/workspace-page";
+import { CanvasPage } from "@/pages/canvas-page";
 
 export function App() {
   return (
@@ -18,7 +19,15 @@ export function App() {
           path="/d"
           element={
             <AuthGuard>
-              <DashboardPage />
+              <WorkspacePage />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/d/:id"
+          element={
+            <AuthGuard>
+              <CanvasPage />
             </AuthGuard>
           }
         />

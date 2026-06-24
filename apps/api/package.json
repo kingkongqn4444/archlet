@@ -10,6 +10,7 @@
     "deploy": "wrangler deploy"
   },
   "dependencies": {
+    "@archlet/shared": "workspace:*",
     "better-auth": "^1.6.20",
     "drizzle-orm": "^0.45.2",
     "hono": "^4.7.11",

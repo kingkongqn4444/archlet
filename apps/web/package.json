@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@archlet/shared": "workspace:*",
+    "@tanstack/react-query": "^5.101.1",
     "@xyflow/react": "^12.11.1",
     "better-auth": "^1.6.20",
     "class-variance-authority": "^0.7.1",
@@ -27,6 +28,7 @@
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.10",
+    "@tanstack/react-query-devtools": "^5.101.1",
     "@types/node": "^22.15.31",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",

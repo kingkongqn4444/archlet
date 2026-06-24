@@ -19,6 +19,8 @@ export type RFEdge = Edge<{ label?: string } & Record<string, unknown>>;
 type LevelData = { nodes: RFNode[]; edges: RFEdge[] };
 
 type DiagramState = {
+  id: string;
+  name: string;
   nodes: RFNode[];
   edges: RFEdge[];
   activeLevel: Level;
@@ -26,6 +28,7 @@ type DiagramState = {
 };
 
 type DiagramActions = {
+  setName: (name: string) => void;
   addNode: (node: DiagramNode) => void;
   updateNode: (id: string, data: Partial<DiagramNode["data"]>) => void;
   deleteNode: (id: string) => void;
@@ -59,10 +62,14 @@ function fromRFNode(n: RFNode): DiagramNode {
 export const useDiagramStore = create<DiagramStore>()(
   temporal(
     (set, get) => ({
+      id: "",
+      name: "Untitled diagram",
       nodes: [],
       edges: [],
       activeLevel: "high" as Level,
       levels: { high: emptyLevel(), mid: emptyLevel(), low: emptyLevel() },
+
+      setName: (name) => set({ name }),
 
       addNode: (node) =>
         set((s) => ({ nodes: [...s.nodes, toRFNode(node)] })),
@@ -118,6 +125,8 @@ export const useDiagramStore = create<DiagramStore>()(
           low: toLevel(diagram.levels.low),
         };
         set({
+          id: diagram.id,
+          name: diagram.name,
           activeLevel: diagram.activeLevel,
           levels,
           nodes: levels[diagram.activeLevel].nodes,
@@ -139,8 +148,8 @@ export const useDiagramStore = create<DiagramStore>()(
           })),
         });
         return {
-          id: "local",
-          name: "Untitled diagram",
+          id: s.id,
+          name: s.name,
           activeLevel: s.activeLevel,
           levels: {
             high: toLevel(levels.high),

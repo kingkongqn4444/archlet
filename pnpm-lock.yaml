@@ -17,6 +17,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@archlet/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       better-auth:
         specifier: ^1.6.20
         version: 1.6.20(@cloudflare/workers-types@4.20260624.1)(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260624.1)(kysely@0.29.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -48,6 +51,9 @@ importers:
       '@archlet/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      '@tanstack/react-query':
+        specifier: ^5.101.1
+        version: 5.101.1(react@18.3.1)
       '@xyflow/react':
         specifier: ^12.11.1
         version: 12.11.1(@types/react-dom@18.3.7(@types/react@18.3.31))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -91,6 +97,9 @@ importers:
       '@tailwindcss/forms':
         specifier: ^0.5.10
         version: 0.5.11(tailwindcss@3.4.19(tsx@4.22.4))
+      '@tanstack/react-query-devtools':
+        specifier: ^5.101.1
+        version: 5.101.1(@tanstack/react-query@5.101.1(react@18.3.1))(react@18.3.1)
       '@types/node':
         specifier: ^22.15.31
         version: 22.20.0
@@ -1136,6 +1145,23 @@ packages:
     resolution: {integrity: sha512-h9wegbZDPurxG22xZSoWtdzc41/OlNEUQERNqI/0fOwa2aVlWGu7C35E/x6LDyD3lgtztFSSjKZyuVM0hxhbgA==}
     peerDependencies:
       tailwindcss: '>=3.0.0 || >= 3.0.0-alpha.1 || >= 4.0.0-alpha.20 || >= 4.0.0-beta.1'
+
+  '@tanstack/query-core@5.101.1':
+    resolution: {integrity: sha512-Y6Y92dkXtNqx67m2pMSxUsA3zOCwv862JexZRP8/EPwvKXMPu9m8rv43spiXWzOUIggQ3SQApttALStzhA8B4g==}
+
+  '@tanstack/query-devtools@5.101.1':
+    resolution: {integrity: sha512-37RQ9U2PxlXQiv1era2t+uHgVhmiyvxqTMu30+KoVf0rufiucu6rpGRKFJk61Wh5OAZFKqCQd6lxTzFWfLZiuQ==}
+
+  '@tanstack/react-query-devtools@5.101.1':
+    resolution: {integrity: sha512-OXFR9XKdEslraq3cpl3kCUeNvTIq/xGWEZiFZdn2bLB/q4WxSALMEDKYZ5yYjMQytsfnQxwQYqV4qtVEf0nuog==}
+    peerDependencies:
+      '@tanstack/react-query': ^5.101.1
+      react: ^18 || ^19
+
+  '@tanstack/react-query@5.101.1':
+    resolution: {integrity: sha512-ZnONUuQKJe1bJMStXUL1s5uKN9FcfC28j5cK+iDZcdSHtUv1wtin1cGc/Oewhf2Oc4eKY7lggtpvT/AbMmhHew==}
+    peerDependencies:
+      react: ^18 || ^19
 
   '@turbo/darwin-64@2.9.18':
     resolution: {integrity: sha512-9f27peFu16ur8c0v9nUFUEyBnbKuuFsUTjHFWfmwGfzySBXbHwzU44QhZon6Mznz0cHsIr3984NQj/bVrnGSRw==}
@@ -2786,6 +2812,21 @@ snapshots:
     dependencies:
       mini-svg-data-uri: 1.4.4
       tailwindcss: 3.4.19(tsx@4.22.4)
+
+  '@tanstack/query-core@5.101.1': {}
+
+  '@tanstack/query-devtools@5.101.1': {}
+
+  '@tanstack/react-query-devtools@5.101.1(@tanstack/react-query@5.101.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@tanstack/query-devtools': 5.101.1
+      '@tanstack/react-query': 5.101.1(react@18.3.1)
+      react: 18.3.1
+
+  '@tanstack/react-query@5.101.1(react@18.3.1)':
+    dependencies:
+      '@tanstack/query-core': 5.101.1
+      react: 18.3.1
 
   '@turbo/darwin-64@2.9.18':
     optional: true
