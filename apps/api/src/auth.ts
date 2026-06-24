@@ -6,8 +6,8 @@ import * as schema from "./db/schema";
 export type Env = {
   DB: D1Database;
   BETTER_AUTH_SECRET: string;
-  BETTER_AUTH_URL: string;
-  WEB_ORIGIN: string;
+  BETTER_AUTH_URL?: string;
+  WEB_ORIGIN?: string;
 };
 
 export function createAuth(env: Env) {
@@ -15,12 +15,14 @@ export function createAuth(env: Env) {
     throw new Error("BETTER_AUTH_SECRET is not set");
   }
   const db = drizzle(env.DB, { schema });
-  const isHttps = env.BETTER_AUTH_URL.startsWith("https://");
+  const baseURL = env.BETTER_AUTH_URL ?? "http://localhost:8787";
+  const webOrigin = env.WEB_ORIGIN ?? "http://localhost:5173";
+  const isHttps = baseURL.startsWith("https://");
 
   return betterAuth({
     secret: env.BETTER_AUTH_SECRET,
-    baseURL: env.BETTER_AUTH_URL,
-    trustedOrigins: [env.WEB_ORIGIN],
+    baseURL,
+    trustedOrigins: [webOrigin],
     database: drizzleAdapter(db, {
       provider: "sqlite",
       schema,
