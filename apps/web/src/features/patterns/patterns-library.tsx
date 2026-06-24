@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
+import { createPortal } from "react-dom";
 import {
   Zap, Shield, Database, MessageSquare, Layers, TrendingUp,
 } from "lucide-react";
@@ -45,15 +46,23 @@ function PatternFlyout({
 }) {
   const cfg = CATEGORY_CONFIG[category];
 
+  // Clamp so flyout stays inside viewport (account for bottom toolbar ~70px)
+  const BOTTOM_CLEARANCE = 80;
+  const MAX_H = window.innerHeight - BOTTOM_CLEARANCE - 16;
+  const FLYOUT_EST_H = Math.min(56 + patterns.length * 90, MAX_H);
+  const clampedTop = Math.min(Math.max(8, anchorTop - 8), window.innerHeight - FLYOUT_EST_H - BOTTOM_CLEARANCE);
+
   const style: React.CSSProperties = {
     position: "fixed",
     left: anchorLeft,
-    top: Math.max(8, anchorTop - 8),
+    top: clampedTop,
     width: 272,
-    zIndex: 50,
+    maxHeight: MAX_H,
+    overflowY: "auto",
+    zIndex: 9999,
   };
 
-  return (
+  const content = (
     <div
       style={style}
       className="bg-white/97 dark:bg-plum-900/97 backdrop-blur-md border border-cream-200 dark:border-plum-700/40 rounded-2xl shadow-float p-3 flex flex-col gap-2.5"
@@ -107,6 +116,8 @@ function PatternFlyout({
       ))}
     </div>
   );
+
+  return createPortal(content, document.body);
 }
 
 // ── CategoryTile ────────────────────────────────────────────────────────────
