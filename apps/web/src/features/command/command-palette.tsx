@@ -6,8 +6,8 @@ import { autoLayout } from "@/features/canvas/layout/auto-layout";
 import { buildPaletteItems, filterAndSort, type PaletteItem, type ActionGroup } from "./actions";
 import type { NodeType, Diagram } from "@archlet/shared";
 
-const GROUP_ORDER: ActionGroup[] = ["Actions", "Templates", "Nodes", "Variants"];
-const MAX_VISIBLE = 12;
+const GROUP_ORDER: ActionGroup[] = ["Actions", "Templates", "Nodes", "Variants", "Patterns"];
+const MAX_VISIBLE = 16;
 
 interface CommandPaletteProps {
   open: boolean;
@@ -17,6 +17,9 @@ interface CommandPaletteProps {
   onOpenShare: () => void;
   onOpenAi: () => void;
   onOpenReview: () => void;
+  onOpenMentor?: () => void;
+  onToggleFailureMode?: () => void;
+  onDropPattern?: (patternId: string) => void;
 }
 
 export function CommandPalette({
@@ -27,6 +30,9 @@ export function CommandPalette({
   onOpenShare,
   onOpenAi,
   onOpenReview,
+  onOpenMentor,
+  onToggleFailureMode,
+  onDropPattern,
 }: CommandPaletteProps) {
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
@@ -70,6 +76,9 @@ export function CommandPalette({
     openShare: () => { onOpenChange(false); onOpenShare(); },
     openAi: () => { onOpenChange(false); onOpenAi(); },
     openReview: () => { onOpenChange(false); onOpenReview(); },
+    ...(onOpenMentor ? { openMentor: () => { onOpenChange(false); onOpenMentor(); } } : {}),
+    ...(onToggleFailureMode ? { toggleFailureMode: () => { onOpenChange(false); onToggleFailureMode(); } } : {}),
+    ...(onDropPattern ? { dropPattern: (id: string) => { onOpenChange(false); onDropPattern(id); } } : {}),
     runSimulation: null,
     stopSimulation: null,
     navigate: (path) => { onOpenChange(false); navigate(path); },
@@ -92,7 +101,7 @@ export function CommandPalette({
       acc[g] = filtered.filter((i) => i.group === g);
       return acc;
     },
-    { Actions: [], Templates: [], Nodes: [], Variants: [] }
+    { Actions: [], Templates: [], Nodes: [], Variants: [], Patterns: [] }
   );
 
   useEffect(() => {

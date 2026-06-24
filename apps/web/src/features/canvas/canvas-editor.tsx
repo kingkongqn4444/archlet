@@ -25,10 +25,98 @@ import { CommandPalette } from "@/features/command/command-palette";
 import { ExportDialog } from "@/features/export/export-dialog";
 import { ShareDialog } from "@/features/share/share-dialog";
 import { TemplatesGallery } from "@/features/templates/templates-gallery";
-import type { NodeType } from "@archlet/shared";
+import { FailureReport } from "@/features/simulate/failure-report";
+import { useFailureMode } from "@/features/simulate/failure-mode";
+import { useSimStore } from "@/features/simulate/sim-store";
+import { useMentorStore, initMentorStore } from "@/features/mentor/mentor-store";
+import { useCostStore } from "@/features/cost/cost-store";
+import { PATTERNS_CATALOG } from "@archlet/shared";
+import type { NodeType, DiagramNode, DiagramEdge } from "@archlet/shared";
 import type { PublicDiagramResponse } from "@archlet/shared";
 
 const nodeTypes = customNodeTypes as unknown as NodeTypes;
+
+// ── NodeFailureOverlay ─────────────────────────────────────────────────────
+// Renders red "dead" or amber "stranded" overlays on top of RF nodes via DOM.
+
+function NodeFailureOverlay({
+  deadNodes,
+  strandedNodes,
+}: {
+  deadNodes: Set<string>;
+  strandedNodes: Set<string>;
+}) {
+  const [, forceRender] = React.useReducer((x: number) => x + 1, 0);
+
+  // Re-render on rAF so positions stay in sync when canvas pans/zooms
+  React.useEffect(() => {
+    let id: number;
+    const loop = () => { forceRender(); id = requestAnimationFrame(loop); };
+    id = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  const allIds = [...deadNodes, ...strandedNodes];
+  const containerEl = document.querySelector<HTMLElement>(".react-flow__renderer");
+  if (!containerEl) return null;
+  const containerRect = containerEl.getBoundingClientRect();
+
+  return (
+    <div style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 8 }}>
+      {allIds.map((id) => {
+        const el = document.querySelector<HTMLElement>(
+          `.react-flow__node[data-id="${id}"]`
+        );
+        if (!el) return null;
+        const rect = el.getBoundingClientRect();
+        const x = rect.left - containerRect.left;
+        const y = rect.top - containerRect.top;
+        const isDead = deadNodes.has(id);
+
+        return (
+          <div
+            key={id}
+            style={{
+              position: "absolute",
+              left: x,
+              top: y,
+              width: rect.width,
+              height: rect.height,
+              pointerEvents: "none",
+            }}
+          >
+            {/* Coloured overlay */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                borderRadius: 12,
+                backgroundColor: isDead ? "rgba(239,68,68,0.35)" : "rgba(245,158,11,0.28)",
+                border: `2px solid ${isDead ? "#ef4444" : "#f59e0b"}`,
+              }}
+            />
+            {/* Icon */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 18,
+                fontWeight: 900,
+                color: isDead ? "#ef4444" : "#d97706",
+                textShadow: "0 1px 4px rgba(0,0,0,0.3)",
+              }}
+            >
+              {isDead ? "✕" : "⚠"}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 interface CanvasInnerProps {
   readOnly?: boolean;
@@ -93,6 +181,22 @@ function CanvasInner({ readOnly = false }: CanvasInnerProps) {
   const diagramId = useDiagramStore((s) => s.id);
   const diagramName = useDiagramStore((s) => s.name);
 
+  // Failure mode
+  const { failureModeActive, deadNodes, toggleDeadNode, toggleFailureMode } = useFailureMode();
+  const nodeMetrics = useSimStore((s) => s.nodeMetrics);
+  const isSimRunning = useSimStore((s) => s.isRunning);
+  const openMentor = useMentorStore((s) => s.open);
+
+  // Init mentor store with diagram id for per-diagram localStorage persistence
+  useEffect(() => {
+    if (diagramId) initMentorStore(diagramId);
+  }, [diagramId]);
+
+  // Trigger initial cost computation once diagram id is set
+  useEffect(() => {
+    if (diagramId) useCostStore.getState().computeNow();
+  }, [diagramId]);
+
   useKeyboard();
 
   // Global Cmd+K / Ctrl+K listener
@@ -116,6 +220,35 @@ function CanvasInner({ readOnly = false }: CanvasInnerProps) {
     (e: React.DragEvent) => {
       if (readOnly) return;
       e.preventDefault();
+
+      // Pattern drop
+      const patternId = e.dataTransfer.getData("application/archlet-pattern");
+      if (patternId) {
+        const pattern = PATTERNS_CATALOG.find((p) => p.id === patternId);
+        if (pattern) {
+          const dropPos = screenToFlowPosition({ x: e.clientX, y: e.clientY });
+          const ts = Date.now();
+          const idMap = new Map<string, string>();
+          const newNodes: DiagramNode[] = pattern.diagram.nodes.map((n) => {
+            const newId = `${n.type}-${ts}-${n.id}`;
+            idMap.set(n.id, newId);
+            return { ...n, id: newId, position: { x: n.position.x + dropPos.x, y: n.position.y + dropPos.y } };
+          });
+          const newEdges: DiagramEdge[] = pattern.diagram.edges.map((ed) => ({
+            ...ed,
+            id: `e-${ts}-${ed.id}`,
+            source: idMap.get(ed.source) ?? ed.source,
+            target: idMap.get(ed.target) ?? ed.target,
+          }));
+          for (const node of newNodes) addNode(node);
+          const connectFn = useDiagramStore.getState().onConnect;
+          for (const ed of newEdges) {
+            connectFn({ source: ed.source, target: ed.target, sourceHandle: null, targetHandle: null });
+          }
+        }
+        return;
+      }
+
       const raw = e.dataTransfer.getData("application/reactflow");
       if (!raw) return;
 
@@ -149,6 +282,73 @@ function CanvasInner({ readOnly = false }: CanvasInnerProps) {
     [screenToFlowPosition, addNode, readOnly]
   );
 
+  // Compute stranded nodes (downstream of dead, zero arrival)
+  const strandedNodes = React.useMemo(() => {
+    if (!isSimRunning || deadNodes.size === 0) return new Set<string>();
+    const inbound = new Map<string, string[]>();
+    for (const node of nodes) inbound.set(node.id, []);
+    for (const edge of edges) {
+      const arr = inbound.get(edge.target) ?? [];
+      arr.push(edge.source);
+      inbound.set(edge.target, arr);
+    }
+    const stranded = new Set<string>();
+    for (const node of nodes) {
+      if (deadNodes.has(node.id)) continue;
+      const sources = inbound.get(node.id) ?? [];
+      if (sources.length === 0) continue;
+      if (sources.every((src) => deadNodes.has(src))) {
+        const metric = nodeMetrics[node.id];
+        if ((metric?.arrivalRate ?? 0) === 0) stranded.add(node.id);
+      }
+    }
+    return stranded;
+  }, [deadNodes, nodeMetrics, nodes, edges, isSimRunning]);
+
+  // Handle failure-mode node click
+  const handleNodeClick = useCallback(
+    (_e: React.MouseEvent, node: { id: string }) => {
+      if (failureModeActive) {
+        toggleDeadNode(node.id);
+      }
+    },
+    [failureModeActive, toggleDeadNode]
+  );
+
+  // Drop a pattern at canvas center (used by Cmd+K)
+  const dropPattern = useCallback(
+    (patternId: string) => {
+      const pattern = PATTERNS_CATALOG.find((p) => p.id === patternId);
+      if (!pattern) return;
+      const ts = Date.now();
+      // Canvas center in flow coords
+      const cx = 200 + Math.random() * 100;
+      const cy = 150 + Math.random() * 100;
+      const idMap = new Map<string, string>();
+      const newNodes: DiagramNode[] = pattern.diagram.nodes.map((n) => {
+        const newId = `${n.type}-${ts}-${n.id}`;
+        idMap.set(n.id, newId);
+        return {
+          ...n,
+          id: newId,
+          position: { x: n.position.x + cx, y: n.position.y + cy },
+        };
+      });
+      const newEdges: DiagramEdge[] = pattern.diagram.edges.map((e) => ({
+        ...e,
+        id: `e-${ts}-${e.id}`,
+        source: idMap.get(e.source) ?? e.source,
+        target: idMap.get(e.target) ?? e.target,
+      }));
+      for (const node of newNodes) addNode(node);
+      const addEdge = useDiagramStore.getState().onConnect;
+      for (const edge of newEdges) {
+        addEdge({ source: edge.source, target: edge.target, sourceHandle: null, targetHandle: null });
+      }
+    },
+    [addNode]
+  );
+
   const editHandlers = readOnly
     ? {}
     : {
@@ -157,10 +357,14 @@ function CanvasInner({ readOnly = false }: CanvasInnerProps) {
         onConnect,
         onDrop,
         onDragOver,
+        onNodeClick: handleNodeClick,
       };
 
   return (
-    <div className="relative w-full h-full bg-cream-50 dark:bg-plum-950">
+    <div
+      className="relative w-full h-full bg-cream-50 dark:bg-plum-950"
+      style={failureModeActive ? { cursor: "crosshair" } : undefined}
+    >
       <CanvasMarkers />
       {!readOnly && <TopToolbar />}
       {!readOnly && <SidePalette />}
@@ -171,9 +375,9 @@ function CanvasInner({ readOnly = false }: CanvasInnerProps) {
           {...editHandlers}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
-          nodesDraggable={!readOnly}
-          nodesConnectable={!readOnly}
-          elementsSelectable={true}
+          nodesDraggable={!readOnly && !failureModeActive}
+          nodesConnectable={!readOnly && !failureModeActive}
+          elementsSelectable={!failureModeActive}
           fitView
           deleteKeyCode={null}
           proOptions={{ hideAttribution: false }}
@@ -183,9 +387,23 @@ function CanvasInner({ readOnly = false }: CanvasInnerProps) {
           <Controls position="bottom-right" showInteractive={false} />
         </ReactFlow>
         {!readOnly && <FlowOverlay />}
+        {/* Failure-mode node overlays */}
+        {!readOnly && (deadNodes.size > 0 || strandedNodes.size > 0) && (
+          <NodeFailureOverlay
+            deadNodes={deadNodes}
+            strandedNodes={strandedNodes}
+          />
+        )}
+        {/* Kill mode banner */}
+        {!readOnly && failureModeActive && (
+          <div className="absolute top-20 left-1/2 -translate-x-1/2 z-30 px-4 py-2 rounded-full text-[12px] font-semibold bg-red-600/90 text-white shadow-float backdrop-blur-sm animate-pulse pointer-events-none select-none">
+            Click a node to kill it · Click again to revive
+          </div>
+        )}
         {!readOnly && <CanvasHints onPullAi={() => setHeroAiOpen(true)} />}
       </div>
       {!readOnly && <LevelSwitcher />}
+      {!readOnly && <FailureReport />}
       {!readOnly && <PropertiesPanel />}
       {!readOnly && <ReviewPanel />}
       {!readOnly && <AiPanel open={heroAiOpen} onOpenChange={setHeroAiOpen} />}
@@ -198,6 +416,9 @@ function CanvasInner({ readOnly = false }: CanvasInnerProps) {
           onOpenShare={() => setShareOpen(true)}
           onOpenAi={() => setHeroAiOpen(true)}
           onOpenReview={() => {}}
+          onOpenMentor={openMentor}
+          onToggleFailureMode={toggleFailureMode}
+          onDropPattern={dropPattern}
         />
       )}
       {!readOnly && (

@@ -26,6 +26,7 @@ export class Simulator {
   private emitAccumulators: Map<string, number> = new Map();
   private rafId: number | null = null;
   private lastTs: number | null = null;
+  private deadNodeIds: Set<string> = new Set();
   running = false;
 
   private onSnapshot: (snap: SimSnapshot) => void;
@@ -60,6 +61,11 @@ export class Simulator {
       const capacity = getCapacity(type, variant, config);
       this.nodeMetrics.set(node.id, { arrivals: [], capacity });
     }
+  }
+
+  /** Update the set of dead (killed) nodes — called from failure-mode hook */
+  setDeadNodes(ids: Set<string>) {
+    this.deadNodeIds = new Set(ids);
   }
 
   start() {
@@ -107,9 +113,10 @@ export class Simulator {
   tick(dt: number) {
     const now = Date.now();
 
-    // Emit packets from User nodes
+    // Emit packets from User nodes (skip dead ones)
     for (const node of this.nodes) {
       if (node.type !== "user") continue;
+      if (this.deadNodeIds.has(node.id)) continue;
       const config = (node.data.config as Record<string, unknown>) ?? {};
       const reqPerSec = typeof config["reqPerSec"] === "number" ? config["reqPerSec"] : 10;
       const outEdges = this.outgoing.get(node.id) ?? [];
@@ -151,6 +158,9 @@ export class Simulator {
       // Node arrival
       const targetId = this.edgeTarget.get(p.edgeId);
       if (targetId) {
+        // Drop packet if target is a dead node — don't log arrival or fork
+        if (this.deadNodeIds.has(targetId)) continue;
+
         const nm = this.nodeMetrics.get(targetId) ?? { arrivals: [], capacity: 1000 };
         nm.arrivals.push(now);
         this.nodeMetrics.set(targetId, nm);

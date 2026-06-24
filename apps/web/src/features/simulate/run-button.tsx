@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from "react";
-import { Play, Pause, RotateCcw } from "lucide-react";
+import { Play, Pause, RotateCcw, Skull } from "lucide-react";
 import { useDiagramStore } from "@/features/canvas/store/diagram-store";
 import { useSimulate } from "./use-simulate";
+import { useFailureMode } from "./failure-mode";
 
 function canSimulate(nodes: ReturnType<typeof useDiagramStore.getState>["nodes"], edges: ReturnType<typeof useDiagramStore.getState>["edges"]): boolean {
   const userNodes = nodes.filter((n) => n.type === "user");
@@ -22,6 +23,7 @@ export const RunButton = React.memo(function RunButton() {
   const nodes = useDiagramStore((s) => s.nodes);
   const edges = useDiagramStore((s) => s.edges);
   const { isRunning, start, stop, reset } = useSimulate();
+  const { failureModeActive, toggleFailureMode } = useFailureMode();
 
   const enabled = useMemo(() => canSimulate(nodes, edges), [nodes, edges]);
   const reason = useMemo(() => disabledReason(nodes, edges), [nodes, edges]);
@@ -46,6 +48,28 @@ export const RunButton = React.memo(function RunButton() {
           <RotateCcw size={13} />
         </button>
       )}
+
+      {/* Failure Mode toggle */}
+      <div className="relative group/fail">
+        <button
+          onClick={toggleFailureMode}
+          title="Failure Mode — click nodes to kill them"
+          className={[
+            "w-8 h-8 inline-flex items-center justify-center rounded-full transition-all duration-150",
+            failureModeActive
+              ? "bg-red-500 text-white shadow-soft animate-pulse"
+              : "text-ink-500 dark:text-cream-200/60 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400",
+          ].join(" ")}
+        >
+          <Skull size={13} />
+        </button>
+        <span
+          role="tooltip"
+          className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 rounded-lg text-[11px] font-medium whitespace-nowrap bg-ink-900 text-cream-50 shadow-float opacity-0 group-hover/fail:opacity-100 transition-opacity duration-150 z-50"
+        >
+          {failureModeActive ? "Exit Failure Mode" : "Failure Mode"}
+        </span>
+      </div>
 
       <div className="relative">
         <button

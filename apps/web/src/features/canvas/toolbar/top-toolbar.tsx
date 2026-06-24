@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Undo2, Redo2, Maximize, Moon, Sun, Share2, Sparkles, Download, Pencil, LibraryBig, LayoutTemplate } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Undo2, Redo2, Maximize, Moon, Sun, Share2, Sparkles, Download, Pencil, LibraryBig, LayoutTemplate, Brain, DollarSign } from "lucide-react";
 import { useReactFlow } from "@xyflow/react";
 import { useTemporalDiagram, useDiagramStore } from "../store/diagram-store";
 import { useDarkMode } from "../hooks/use-dark-mode";
@@ -8,6 +8,10 @@ import { ShareDialog } from "@/features/share/share-dialog";
 import { ExportDialog } from "@/features/export/export-dialog";
 import { TemplatesGallery } from "@/features/templates/templates-gallery";
 import { autoLayout } from "@/features/canvas/layout/auto-layout";
+import { MentorPanel } from "@/features/mentor/mentor-panel";
+import { CostPanel } from "@/features/cost/cost-panel";
+import { useMentorStore } from "@/features/mentor/mentor-store";
+import { useCostStore } from "@/features/cost/cost-store";
 
 function Divider() {
   return <span className="w-px h-5 bg-cream-200 dark:bg-plum-700/50 mx-1" aria-hidden="true" />;
@@ -33,6 +37,35 @@ function IconBtn({
   );
 }
 
+function CostBadge({ onClick }: { onClick: () => void }) {
+  const total = useCostStore((s) => s.total);
+  const colorClass =
+    total < 500
+      ? "text-emerald-600 dark:text-emerald-400"
+      : total < 2000
+      ? "text-amber-600 dark:text-amber-400"
+      : "text-red-600 dark:text-red-400";
+  const dotClass =
+    total < 500
+      ? "bg-emerald-500"
+      : total < 2000
+      ? "bg-amber-500"
+      : "bg-red-500";
+
+  return (
+    <button
+      onClick={onClick}
+      title="Cost estimate"
+      className="inline-flex items-center gap-1.5 h-8 px-2.5 rounded-full text-[11px] font-semibold hover:bg-cream-100 dark:hover:bg-plum-800/60 transition-all duration-150"
+    >
+      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotClass}`} />
+      <span className={colorClass}>
+        ${total < 1 ? "0" : Math.round(total).toLocaleString()}/mo
+      </span>
+    </button>
+  );
+}
+
 export const TopToolbar = React.memo(function TopToolbar() {
   const [editingName, setEditingName] = useState(false);
   const [aiOpen, setAiOpen] = useState(false);
@@ -43,6 +76,22 @@ export const TopToolbar = React.memo(function TopToolbar() {
   const { undo, redo } = useTemporalDiagram();
   const { isDark, toggle } = useDarkMode();
   const zoom = Math.round((getViewport().zoom ?? 1) * 100);
+  const mentorOpen = useMentorStore((s) => s.isOpen);
+  const toggleMentor = useMentorStore((s) => s.toggle);
+  const costOpen = useCostStore((s) => s.isOpen);
+  const toggleCost = useCostStore((s) => s.toggle);
+
+  // Cmd+M shortcut for Mentor
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "m") {
+        e.preventDefault();
+        toggleMentor();
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [toggleMentor]);
 
   const diagramId = useDiagramStore((s) => s.id);
   const name = useDiagramStore((s) => s.name);
@@ -140,6 +189,24 @@ export const TopToolbar = React.memo(function TopToolbar() {
           {isDark ? <Sun size={14} /> : <Moon size={14} />}
         </IconBtn>
 
+        {/* Cost badge */}
+        <CostBadge onClick={toggleCost} />
+
+        <Divider />
+
+        {/* Mentor button */}
+        <button
+          onClick={toggleMentor}
+          title="Mentor (⌘M)"
+          className={`w-8 h-8 inline-flex items-center justify-center rounded-full transition-all duration-150 ${
+            mentorOpen
+              ? "bg-plum-100 dark:bg-plum-800/60 text-plum-600 dark:text-plum-300"
+              : "text-ink-700 dark:text-cream-100 hover:bg-cream-100 dark:hover:bg-plum-800/60"
+          }`}
+        >
+          <Brain size={14} />
+        </button>
+
         {/* AI sparkles — filled plum circle */}
         <button
           onClick={() => setAiOpen(true)}
@@ -151,6 +218,8 @@ export const TopToolbar = React.memo(function TopToolbar() {
       </div>
 
       <AiPanel open={aiOpen} onOpenChange={setAiOpen} />
+      <MentorPanel open={mentorOpen} onOpenChange={(v) => v ? useMentorStore.getState().open() : useMentorStore.getState().close()} />
+      <CostPanel open={costOpen} onOpenChange={(v) => v ? useCostStore.getState().open() : useCostStore.getState().close()} />
       {diagramId && (
         <ShareDialog
           open={shareOpen}

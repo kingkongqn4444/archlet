@@ -5,6 +5,7 @@ import {
 } from "lucide-react";
 import type { NodeType } from "@archlet/shared";
 import { VariantFlyout } from "./variant-flyout";
+import { PatternsGroup } from "@/features/patterns/patterns-library";
 
 type PaletteItem = {
   type: NodeType;
@@ -212,6 +213,7 @@ export const SidePalette = React.memo(function SidePalette() {
             ))}
           </React.Fragment>
         ))}
+        <PatternsGroup />
       </div>
 
       {flyout && (

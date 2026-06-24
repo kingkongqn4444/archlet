@@ -1,13 +1,14 @@
 import { type RFNode, type RFEdge } from "@/features/canvas/store/diagram-store";
 import { autoLayout } from "@/features/canvas/layout/auto-layout";
 import { VARIANTS_CATALOG, TEMPLATES } from "@archlet/shared";
+import { PATTERNS_CATALOG } from "@archlet/shared";
 import type { NodeType, Diagram } from "@archlet/shared";
 
 // ---------------------------------------------------------------------------
 // Action item shape
 // ---------------------------------------------------------------------------
 
-export type ActionGroup = "Actions" | "Templates" | "Nodes" | "Variants";
+export type ActionGroup = "Actions" | "Templates" | "Nodes" | "Variants" | "Patterns";
 
 export type PaletteItem = {
   id: string;
@@ -33,10 +34,13 @@ type BuildContext = {
   runSimulation: (() => void) | null;
   stopSimulation: (() => void) | null;
   openReview: () => void;
+  openMentor?: () => void;
   addVariantNode: (type: NodeType, variantId: string, label: string) => void;
   navigate: (path: string) => void;
   onSelectNode: (id: string) => void;
   loadTemplate: (diagram: Diagram) => void;
+  toggleFailureMode?: () => void;
+  dropPattern?: (patternId: string) => void;
 };
 
 export function buildPaletteItems(ctx: BuildContext): PaletteItem[] {
@@ -101,6 +105,17 @@ export function buildPaletteItems(ctx: BuildContext): PaletteItem[] {
     onSelect: ctx.openReview,
   });
 
+  if (ctx.openMentor) {
+    items.push({
+      id: "action-mentor",
+      label: "Open Mentor",
+      description: "Chat with AI system design mentor (⌘M)",
+      group: "Actions",
+      icon: "🧠",
+      onSelect: ctx.openMentor,
+    });
+  }
+
   if (ctx.runSimulation) {
     items.push({
       id: "action-run",
@@ -120,6 +135,17 @@ export function buildPaletteItems(ctx: BuildContext): PaletteItem[] {
       group: "Actions",
       icon: "⏹",
       onSelect: ctx.stopSimulation,
+    });
+  }
+
+  if (ctx.toggleFailureMode) {
+    items.push({
+      id: "action-failure-mode",
+      label: "Failure Mode",
+      description: "Toggle failure mode — click nodes to kill them",
+      group: "Actions",
+      icon: "💀",
+      onSelect: ctx.toggleFailureMode,
     });
   }
 
@@ -177,6 +203,21 @@ export function buildPaletteItems(ctx: BuildContext): PaletteItem[] {
         group: "Variants",
         icon: "⊕",
         onSelect: () => ctx.addVariantNode(type, v.id, v.label),
+      });
+    }
+  }
+
+  // --- Patterns group ---
+  if (ctx.dropPattern) {
+    for (const pattern of PATTERNS_CATALOG) {
+      const dropFn = ctx.dropPattern;
+      items.push({
+        id: `pattern-${pattern.id}`,
+        label: pattern.name,
+        description: pattern.description,
+        group: "Patterns",
+        icon: "◈",
+        onSelect: () => dropFn(pattern.id),
       });
     }
   }
