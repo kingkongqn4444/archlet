@@ -7,6 +7,7 @@ import { useReviewStore } from "@/features/review/review-store";
 import type { DiagramNode, NodeType } from "@archlet/shared";
 import { getVariant, getDefaultVariant } from "@archlet/shared";
 import { usePropertiesPanel } from "../properties/use-properties-panel";
+import { useNodeHealth } from "../health/use-health";
 
 export type BaseNodeProps = {
   id: string;
@@ -123,12 +124,22 @@ export const BaseNode = React.memo(function BaseNode({
 
   const highlightedNodeIds = useReviewStore((s) => s.highlightedNodeIds);
   const isReviewHighlighted = highlightedNodeIds.has(id);
+  const health = useNodeHealth(id);
 
   const ringClass = isReviewHighlighted
     ? "ring-2 ring-red-500/70 ring-offset-2 ring-offset-cream-50 dark:ring-offset-plum-950"
     : selected
     ? "ring-2 ring-plum-500/80 ring-offset-2 ring-offset-cream-50 dark:ring-offset-plum-950 archlet-selected-pulse animate-glow-once"
     : "hover:-translate-y-0.5 hover:shadow-float";
+
+  const healthBorderClass =
+    health === "critical"
+      ? "border-red-500 archlet-node-pulse-critical"
+      : health === "warning"
+      ? "border-amber-500"
+      : health === "healthy"
+      ? "border-emerald-500"
+      : "border-cream-200 dark:border-plum-700/40";
 
   const nodeType = nodes.find((n) => n.id === id)?.type as NodeType | undefined;
   const isUser = nodeType === "user";
@@ -167,8 +178,9 @@ export const BaseNode = React.memo(function BaseNode({
       <div
         className={[
           "relative min-w-[180px] min-h-[56px] rounded-2xl bg-white dark:bg-plum-900/85 backdrop-blur",
-          "border border-cream-200 dark:border-plum-700/40 shadow-card",
-          "transition-all duration-150",
+          "border shadow-card",
+          "transition-all duration-300",
+          healthBorderClass,
           ringClass,
         ].join(" ")}
       >

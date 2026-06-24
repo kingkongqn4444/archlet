@@ -138,10 +138,26 @@ html, body {
   50%      { box-shadow: 0 0 0 6px rgba(108, 43, 217, 0.0),  0 2px 12px -4px rgba(54,17,74,0.12); }
 }
 
+/* Health heatmap — critical pulse for edges and nodes */
+.archlet-edge-critical {
+  stroke-width: 2.5 !important;
+  filter: drop-shadow(0 0 4px rgba(239, 68, 68, 0.5));
+  animation: dashdraw 0.5s linear infinite;
+}
+.archlet-node-pulse-critical {
+  animation: archletNodeCriticalPulse 1.4s ease-in-out infinite;
+}
+@keyframes archletNodeCriticalPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.0), 0 2px 12px -4px rgba(54,17,74,0.12); }
+  50%      { box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.18), 0 2px 12px -4px rgba(54,17,74,0.12); }
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .archlet-edge-flow,
   .archlet-selected-pulse,
+  .archlet-edge-critical,
+  .archlet-node-pulse-critical,
   .react-flow__edge.archlet-edge-active .react-flow__edge-path,
   .animate-dashdraw,
   .animate-floatY,

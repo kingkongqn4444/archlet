@@ -7,12 +7,12 @@ import {
   type EdgeTypes,
 } from "@xyflow/react";
 import { useDiagramStore, type RFEdge } from "../store/diagram-store";
-import { useReviewStore } from "@/features/review/review-store";
+import { useEdgeHealth } from "../health/use-health";
 
 export const LabeledEdge = React.memo(function LabeledEdge(
   props: EdgeProps<RFEdge>
 ) {
-  const { id, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, data, selected } = props;
+  const { id, source, target, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, data, selected } = props;
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
     sourceY,
@@ -25,31 +25,49 @@ export const LabeledEdge = React.memo(function LabeledEdge(
   const [editing, setEditing] = useState(false);
   const [label, setLabel] = useState(String(data?.label ?? ""));
   const updateEdge = useDiagramStore((s) => s.updateEdge);
-  const highlightedEdgeIds = useReviewStore((s) => s.highlightedEdgeIds);
-  const isReviewHighlighted = highlightedEdgeIds.has(id);
+  const health = useEdgeHealth(id, source, target);
 
   const commit = useCallback(() => {
     setEditing(false);
     updateEdge(id, { label });
   }, [id, label, updateEdge]);
 
-  // Red when review-highlighted, plum when selected, amber by default
-  const stroke = isReviewHighlighted ? "#EF4444" : selected ? "#6C2BD9" : "#F59E0B";
-  const strokeWidth = isReviewHighlighted ? 3 : 2;
+  // Health-driven stroke; selected plum overrides visual but keeps health class
+  const stroke = selected
+    ? "#6C2BD9"
+    : health === "critical"
+    ? "#EF4444"
+    : health === "warning"
+    ? "#F59E0B"
+    : health === "healthy"
+    ? "#10B981"
+    : "#F59E0B"; // idle → default amber dashed
+
+  const strokeWidth = health === "critical" ? 2.5 : 2;
+
+  const healthClass =
+    health === "critical"
+      ? "archlet-edge-critical"
+      : health === "healthy"
+      ? "archlet-edge-flow"
+      : "archlet-edge-flow";
+
+  const markerColor =
+    selected
+      ? "url(#archlet-arrow-plum)"
+      : health === "critical"
+      ? "url(#archlet-arrow-red)"
+      : health === "healthy"
+      ? "url(#archlet-arrow-emerald)"
+      : "url(#archlet-arrow-amber)";
 
   return (
     <>
       <BaseEdge
         path={edgePath}
-        style={{ stroke, strokeWidth }}
-        className="archlet-edge-flow"
-        markerEnd={
-          isReviewHighlighted
-            ? "url(#archlet-arrow-red)"
-            : selected
-            ? "url(#archlet-arrow-plum)"
-            : "url(#archlet-arrow-amber)"
-        }
+        style={{ stroke, strokeWidth, transition: "stroke 0.3s ease" }}
+        className={healthClass}
+        markerEnd={markerColor}
       />
       <EdgeLabelRenderer>
         <div
