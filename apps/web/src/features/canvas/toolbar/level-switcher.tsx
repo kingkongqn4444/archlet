@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Undo2, Redo2, Sparkles, ChevronDown, X } from "lucide-react";
 import { useDiagramStore, useTemporalDiagram } from "../store/diagram-store";
 import { AiPanel } from "@/features/ai/ai-panel";
+import { RunButton } from "@/features/simulate/run-button";
 import type { Level } from "@archlet/shared";
 
 const LEVELS: { key: Level; label: string }[] = [
@@ -64,6 +65,11 @@ export const LevelSwitcher = React.memo(function LevelSwitcher() {
         >
           <Redo2 size={14} />
         </button>
+
+        <span className="w-px h-5 bg-cream-200 dark:bg-plum-700/50 mx-1" aria-hidden="true" />
+
+        {/* Simulate Run/Stop */}
+        <RunButton />
 
         <span className="w-px h-5 bg-cream-200 dark:bg-plum-700/50 mx-1" aria-hidden="true" />
 
