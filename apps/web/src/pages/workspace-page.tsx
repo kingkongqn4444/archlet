@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { Sparkles, FolderPlus } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
@@ -10,8 +11,23 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 
 export function WorkspacePage() {
   const { data: projects = [], isLoading } = useProjects();
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const urlProjectId = searchParams.get("project");
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(urlProjectId);
   const [showNew, setShowNew] = useState(false);
+
+  // Sync URL → state when ?project= changes (e.g. navigation from canvas-page)
+  useEffect(() => {
+    if (urlProjectId && urlProjectId !== selectedProjectId) {
+      setSelectedProjectId(urlProjectId);
+    }
+  }, [urlProjectId, selectedProjectId]);
+
+  function handleSelect(id: string) {
+    setSelectedProjectId(id);
+    // Keep URL in sync so refresh preserves selection
+    setSearchParams({ project: id }, { replace: true });
+  }
 
   const effectiveProjectId =
     selectedProjectId ?? (projects[0]?.id ?? null);
@@ -19,7 +35,7 @@ export function WorkspacePage() {
   return (
     <AppShell
       activeProjectId={effectiveProjectId}
-      onProjectSelect={setSelectedProjectId}
+      onProjectSelect={handleSelect}
     >
       {isLoading ? (
         <div className="flex items-center justify-center h-full">

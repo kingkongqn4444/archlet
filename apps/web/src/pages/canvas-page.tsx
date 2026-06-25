@@ -1,4 +1,4 @@
-import { useParams, Navigate } from "react-router-dom";
+import { useParams, Navigate, useNavigate } from "react-router-dom";
 import { AppShell } from "@/components/app-shell";
 import { CanvasEditor } from "@/features/canvas/canvas-editor";
 import { useDiagram } from "@/features/diagrams/use-diagram";
@@ -8,6 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 function CanvasPageInner({ id }: { id: string }) {
   const { data, isLoading, isError } = useDiagram(id);
   const qc = useQueryClient();
+  const navigate = useNavigate();
 
   // derive projectId from cached diagram for sidebar highlight
   const projectId = data?.projectId ?? null;
@@ -39,6 +40,9 @@ function CanvasPageInner({ id }: { id: string }) {
           credentials: "include",
         }).then((r) => r.json()),
     });
+    // Navigate back to workspace with the new project pre-selected so user
+    // sees that project's diagrams list instead of staying on current canvas.
+    navigate(`/d?project=${encodeURIComponent(pid)}`);
   }
 
   return (
