@@ -87,10 +87,12 @@ const customThirdPartyConfig = z.object({
 });
 
 export const EXTERNAL_VARIANTS: Variant[] = [
+  // custom-third-party first → becomes default for drag-dropped External tiles
+  // so subtitle doesn't misleadingly say "Payment API" for renamed nodes.
+  { id: "custom-third-party", label: "External Service", description: "Generic third-party API or cloud service", configSchema: customThirdPartyConfig },
   { id: "payment-api", label: "Payment API", iconSlug: "stripe", description: "Payment processor", configSchema: paymentApiConfig },
   { id: "email-service", label: "Email Service", iconSlug: "resend", description: "Transactional email", configSchema: emailServiceConfig },
   { id: "analytics", label: "Analytics", iconSlug: "posthog", description: "Product analytics", configSchema: analyticsConfig },
   { id: "ai-provider", label: "AI Provider", iconSlug: "openai", description: "LLM / AI API", configSchema: aiProviderConfig },
   { id: "oauth-provider", label: "OAuth Provider", iconSlug: "openid", description: "Identity provider", configSchema: oauthProviderConfig },
-  { id: "custom-third-party", label: "Custom API", description: "Generic third-party API", configSchema: customThirdPartyConfig },
 ];
