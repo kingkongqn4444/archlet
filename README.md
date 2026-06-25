@@ -39,25 +39,16 @@ Most system-design tools are either **pretty pictures** (Excalidraw, draw.io) or
 
 ## Screenshots
 
-### Canvas + AI Refactor
-<img src=".github/assets/ai-refactor.png" alt="AI Refactor panel" width="800" />
+### Landing — value prop + CTAs
+<img src=".github/assets/hero.png" alt="archlet landing hero" width="900" />
 
-### Cloud Services picker (235 services)
-<img src=".github/assets/cloud-picker.png" alt="Cloud Services picker" width="800" />
+### Features grid
+<img src=".github/assets/landing-features.png" alt="6-feature grid" width="900" />
 
-### Back-of-envelope estimator
-<img src=".github/assets/estimator.png" alt="Estimator modal" width="700" />
+### Open Source CTA
+<img src=".github/assets/landing-opensource.png" alt="Open Source section" width="700" />
 
-### Templates gallery (50 templates)
-<img src=".github/assets/templates-gallery.png" alt="Templates" width="800" />
-
-### Learn — 28 system-design chapters
-<img src=".github/assets/learn-viewer.png" alt="Chapter viewer" width="800" />
-
-### Mentor chat (BYOK)
-<img src=".github/assets/mentor-chat.png" alt="Mentor sidebar" width="700" />
-
-> ℹ️ All screenshots live in `.github/assets/`. See [`docs/screenshots-guide.md`](docs/screenshots-guide.md) for the full capture checklist.
+> More screenshots (canvas, AI Refactor panel, Cloud Services picker, Estimator, Templates gallery, Learn viewer, Mentor chat) coming after first login flow capture. See [`docs/screenshots-guide.md`](docs/screenshots-guide.md) for the full list.
 
 ---
 
