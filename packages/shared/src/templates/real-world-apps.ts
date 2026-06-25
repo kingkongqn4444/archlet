@@ -1,31 +1,4 @@
-import type { DiagramNode, DiagramEdge } from "./diagram";
-
-export type TemplateCategory =
-  | "social"
-  | "messaging"
-  | "streaming"
-  | "marketplace"
-  | "infra"
-  | "fintech";
-
-export type TemplateDifficulty = "easy" | "medium" | "hard";
-
-export type Template = {
-  id: string;
-  name: string;
-  description: string;
-  category: TemplateCategory;
-  difficulty: TemplateDifficulty;
-  tags: string[];
-  diagram: {
-    nodes: DiagramNode[];
-    edges: DiagramEdge[];
-  };
-};
-
-// ---------------------------------------------------------------------------
-// Template definitions
-// ---------------------------------------------------------------------------
+import type { Template } from "./types";
 
 const urlShortener: Template = {
   id: "url-shortener",
@@ -312,11 +285,7 @@ const paymentSystem: Template = {
   },
 };
 
-// ---------------------------------------------------------------------------
-// Catalog export
-// ---------------------------------------------------------------------------
-
-export const TEMPLATES: Template[] = [
+export const REAL_WORLD_APPS: Template[] = [
   urlShortener,
   twitterTimeline,
   instagramFeed,
@@ -328,7 +297,3 @@ export const TEMPLATES: Template[] = [
   videoUpload,
   paymentSystem,
 ];
-
-export function getTemplateById(id: string): Template | undefined {
-  return TEMPLATES.find((t) => t.id === id);
-}

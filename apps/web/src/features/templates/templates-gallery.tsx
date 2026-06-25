@@ -17,6 +17,13 @@ const CATEGORY_EMOJI: Record<Template["category"], string> = {
   marketplace: "🛒",
   infra: "⚙️",
   fintech: "💳",
+  architectural: "🏛️",
+  healthcare: "🏥",
+  gaming: "🎮",
+  iot: "📡",
+  edtech: "🎓",
+  logistics: "🚚",
+  ai: "🤖",
 };
 
 function VariantIconRow({ template }: { template: Template }) {
