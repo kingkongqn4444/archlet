@@ -174,8 +174,178 @@ const AWS_SERVICES: readonly CloudService[] = [
   aws({ id: "aws-amplify", name: "AWS Amplify", category: "devops", iconSlug: "awsamplify", description: "Build full-stack web/mobile apps.", docsUrl: `${AWS_DOCS}/amplify/`, tags: ["frontend"] }),
 ];
 
+// ────────────────────────────────────────────────────────────────────────────
+// GCP (top services)
+// ────────────────────────────────────────────────────────────────────────────
+
+const gcp = (s: Omit<CloudService, "cloud">): CloudService => ({ ...s, cloud: "gcp" });
+const GCP_DOCS = "https://cloud.google.com";
+
+const GCP_SERVICES: readonly CloudService[] = [
+  // Compute / Container / Serverless
+  gcp({ id: "gcp-compute-engine", name: "Compute Engine", category: "compute", iconSlug: "googlecloud", description: "Virtual machines on GCP.", docsUrl: `${GCP_DOCS}/compute`, tags: ["vm", "iaas"] }),
+  gcp({ id: "gcp-gke", name: "Google Kubernetes Engine", category: "container", iconSlug: "googlecloud", description: "Managed Kubernetes.", docsUrl: `${GCP_DOCS}/kubernetes-engine`, tags: ["k8s"] }),
+  gcp({ id: "gcp-cloud-run", name: "Cloud Run", category: "serverless", iconSlug: "googlecloud", description: "Serverless containers.", docsUrl: `${GCP_DOCS}/run`, tags: ["serverless", "container"] }),
+  gcp({ id: "gcp-cloud-functions", name: "Cloud Functions", category: "serverless", iconSlug: "googlecloud", description: "Event-driven serverless functions.", docsUrl: `${GCP_DOCS}/functions`, tags: ["faas"] }),
+  gcp({ id: "gcp-app-engine", name: "App Engine", category: "compute", iconSlug: "googlecloud", description: "Managed PaaS for web apps.", docsUrl: `${GCP_DOCS}/appengine`, tags: ["paas"] }),
+  gcp({ id: "gcp-batch", name: "Batch", category: "compute", iconSlug: "googlecloud", description: "Batch job scheduler.", docsUrl: `${GCP_DOCS}/batch`, tags: ["batch"] }),
+  gcp({ id: "gcp-cloud-run-jobs", name: "Cloud Run Jobs", category: "compute", iconSlug: "googlecloud", description: "Run containers to completion.", docsUrl: `${GCP_DOCS}/run/docs/create-jobs`, tags: ["jobs"] }),
+  // Storage
+  gcp({ id: "gcp-cloud-storage", name: "Cloud Storage", category: "storage", iconSlug: "googlecloud", description: "Object storage (GCS).", docsUrl: `${GCP_DOCS}/storage`, tags: ["object"] }),
+  gcp({ id: "gcp-persistent-disk", name: "Persistent Disk", category: "storage", iconSlug: "googlecloud", description: "Block storage for VMs.", docsUrl: `${GCP_DOCS}/persistent-disk`, tags: ["block"] }),
+  gcp({ id: "gcp-filestore", name: "Filestore", category: "storage", iconSlug: "googlecloud", description: "Managed NFS file storage.", docsUrl: `${GCP_DOCS}/filestore`, tags: ["nfs"] }),
+  gcp({ id: "gcp-transfer-service", name: "Storage Transfer Service", category: "migration", iconSlug: "googlecloud", description: "Move data into GCS.", docsUrl: `${GCP_DOCS}/storage-transfer-service`, tags: ["transfer"] }),
+  // Databases
+  gcp({ id: "gcp-cloud-sql", name: "Cloud SQL", category: "database", iconSlug: "googlecloud", description: "Managed Postgres/MySQL/SQL Server.", docsUrl: `${GCP_DOCS}/sql`, tags: ["sql"] }),
+  gcp({ id: "gcp-spanner", name: "Spanner", category: "database", iconSlug: "googlecloud", description: "Globally distributed, strongly consistent SQL.", docsUrl: `${GCP_DOCS}/spanner`, tags: ["global", "sql"] }),
+  gcp({ id: "gcp-bigtable", name: "Bigtable", category: "database", iconSlug: "googlecloud", description: "Wide-column NoSQL for analytical workloads.", docsUrl: `${GCP_DOCS}/bigtable`, tags: ["nosql", "wide-column"] }),
+  gcp({ id: "gcp-firestore", name: "Firestore", category: "database", iconSlug: "firebase", description: "Document database with realtime sync.", docsUrl: `${GCP_DOCS}/firestore`, tags: ["document", "realtime"] }),
+  gcp({ id: "gcp-memorystore", name: "Memorystore", category: "cache", iconSlug: "googlecloud", description: "Managed Redis + Memcached.", docsUrl: `${GCP_DOCS}/memorystore`, tags: ["redis"] }),
+  gcp({ id: "gcp-alloydb", name: "AlloyDB for PostgreSQL", category: "database", iconSlug: "googlecloud", description: "High-performance Postgres-compatible DB.", docsUrl: `${GCP_DOCS}/alloydb`, tags: ["postgres"] }),
+  // Pub/Sub / Tasks / Workflow
+  gcp({ id: "gcp-pubsub", name: "Pub/Sub", category: "event", iconSlug: "googlecloud", description: "Async messaging at scale.", docsUrl: `${GCP_DOCS}/pubsub`, tags: ["pubsub"] }),
+  gcp({ id: "gcp-cloud-tasks", name: "Cloud Tasks", category: "queue", iconSlug: "googlecloud", description: "Async task execution.", docsUrl: `${GCP_DOCS}/tasks`, tags: ["queue"] }),
+  gcp({ id: "gcp-cloud-scheduler", name: "Cloud Scheduler", category: "workflow", iconSlug: "googlecloud", description: "Managed cron.", docsUrl: `${GCP_DOCS}/scheduler`, tags: ["cron"] }),
+  gcp({ id: "gcp-workflows", name: "Workflows", category: "workflow", iconSlug: "googlecloud", description: "Orchestrate Google Cloud + HTTP services.", docsUrl: `${GCP_DOCS}/workflows`, tags: ["orchestration"] }),
+  gcp({ id: "gcp-eventarc", name: "Eventarc", category: "event", iconSlug: "googlecloud", description: "Event-driven service connector.", docsUrl: `${GCP_DOCS}/eventarc`, tags: ["events"] }),
+  // Networking / CDN / DNS / LB
+  gcp({ id: "gcp-load-balancing", name: "Cloud Load Balancing", category: "loadbalancer", iconSlug: "googlecloud", description: "Global HTTP(S)/TCP/UDP load balancer.", docsUrl: `${GCP_DOCS}/load-balancing`, tags: ["lb"] }),
+  gcp({ id: "gcp-cdn", name: "Cloud CDN", category: "cdn", iconSlug: "googlecloud", description: "Global content delivery.", docsUrl: `${GCP_DOCS}/cdn`, tags: ["cdn"] }),
+  gcp({ id: "gcp-dns", name: "Cloud DNS", category: "dns", iconSlug: "googlecloud", description: "Authoritative DNS hosting.", docsUrl: `${GCP_DOCS}/dns`, tags: ["dns"] }),
+  gcp({ id: "gcp-vpc", name: "Virtual Private Cloud", category: "networking", iconSlug: "googlecloud", description: "Isolated virtual networks.", docsUrl: `${GCP_DOCS}/vpc`, tags: ["vpc"] }),
+  gcp({ id: "gcp-interconnect", name: "Cloud Interconnect", category: "networking", iconSlug: "googlecloud", description: "Dedicated/partner connection to GCP.", docsUrl: `${GCP_DOCS}/network-connectivity/docs/interconnect`, tags: ["hybrid"] }),
+  gcp({ id: "gcp-nat", name: "Cloud NAT", category: "networking", iconSlug: "googlecloud", description: "Managed NAT for outbound traffic.", docsUrl: `${GCP_DOCS}/nat`, tags: ["nat"] }),
+  gcp({ id: "gcp-anthos-service-mesh", name: "Anthos Service Mesh", category: "networking", iconSlug: "googlecloud", description: "Managed Istio service mesh.", docsUrl: `${GCP_DOCS}/service-mesh`, tags: ["mesh", "istio"] }),
+  // IAM / Security / KMS
+  gcp({ id: "gcp-iam", name: "Cloud IAM", category: "iam", iconSlug: "googlecloud", description: "Identity and access management.", docsUrl: `${GCP_DOCS}/iam`, tags: ["iam"] }),
+  gcp({ id: "gcp-kms", name: "Cloud KMS", category: "kms", iconSlug: "googlecloud", description: "Managed encryption keys.", docsUrl: `${GCP_DOCS}/kms`, tags: ["keys"] }),
+  gcp({ id: "gcp-secret-manager", name: "Secret Manager", category: "kms", iconSlug: "googlecloud", description: "Store + access secrets.", docsUrl: `${GCP_DOCS}/secret-manager`, tags: ["secrets"] }),
+  gcp({ id: "gcp-certificate-manager", name: "Certificate Manager", category: "kms", iconSlug: "googlecloud", description: "Manage TLS certificates.", docsUrl: `${GCP_DOCS}/certificate-manager`, tags: ["tls"] }),
+  gcp({ id: "gcp-armor", name: "Cloud Armor", category: "security", iconSlug: "googlecloud", description: "DDoS + WAF protection.", docsUrl: `${GCP_DOCS}/armor`, tags: ["waf", "ddos"] }),
+  gcp({ id: "gcp-recaptcha-enterprise", name: "reCAPTCHA Enterprise", category: "security", iconSlug: "googlecloud", description: "Bot + fraud protection.", docsUrl: `${GCP_DOCS}/recaptcha-enterprise`, tags: ["bot"] }),
+  gcp({ id: "gcp-beyondcorp", name: "BeyondCorp Enterprise", category: "security", iconSlug: "googlecloud", description: "Zero-trust access.", docsUrl: `${GCP_DOCS}/beyondcorp-enterprise`, tags: ["zero-trust"] }),
+  gcp({ id: "gcp-identity-platform", name: "Identity Platform", category: "auth", iconSlug: "firebase", description: "Customer identity (CIAM).", docsUrl: `${GCP_DOCS}/identity-platform`, tags: ["ciam"] }),
+  // AI / ML
+  gcp({ id: "gcp-vertex-ai", name: "Vertex AI", category: "ml-ai", iconSlug: "googlecloud", description: "Unified ML platform (training + serving).", docsUrl: `${GCP_DOCS}/vertex-ai`, tags: ["ml"] }),
+  gcp({ id: "gcp-gemini-api", name: "Gemini API (AI Studio)", category: "ml-ai", iconSlug: "googlecloud", description: "Foundation model API.", docsUrl: `https://ai.google.dev/`, tags: ["llm"] }),
+  gcp({ id: "gcp-automl", name: "AutoML", category: "ml-ai", iconSlug: "googlecloud", description: "No-code ML model training.", docsUrl: `${GCP_DOCS}/automl`, tags: ["automl"] }),
+  gcp({ id: "gcp-speech-to-text", name: "Speech-to-Text", category: "ml-ai", iconSlug: "googlecloud", description: "Convert audio to text.", docsUrl: `${GCP_DOCS}/speech-to-text`, tags: ["asr"] }),
+  gcp({ id: "gcp-text-to-speech", name: "Text-to-Speech", category: "ml-ai", iconSlug: "googlecloud", description: "Synthesize natural speech.", docsUrl: `${GCP_DOCS}/text-to-speech`, tags: ["tts"] }),
+  gcp({ id: "gcp-vision-ai", name: "Vision AI", category: "ml-ai", iconSlug: "googlecloud", description: "Image analysis API.", docsUrl: `${GCP_DOCS}/vision`, tags: ["vision"] }),
+  gcp({ id: "gcp-translation", name: "Translation", category: "ml-ai", iconSlug: "googlecloud", description: "Neural machine translation.", docsUrl: `${GCP_DOCS}/translate`, tags: ["i18n"] }),
+  gcp({ id: "gcp-natural-language", name: "Natural Language AI", category: "ml-ai", iconSlug: "googlecloud", description: "Entity + sentiment + syntax.", docsUrl: `${GCP_DOCS}/natural-language`, tags: ["nlp"] }),
+  gcp({ id: "gcp-dialogflow", name: "Dialogflow", category: "ml-ai", iconSlug: "googlecloud", description: "Conversational AI agents.", docsUrl: `${GCP_DOCS}/dialogflow`, tags: ["chatbot"] }),
+  gcp({ id: "gcp-document-ai", name: "Document AI", category: "ml-ai", iconSlug: "googlecloud", description: "Extract structured data from documents.", docsUrl: `${GCP_DOCS}/document-ai`, tags: ["ocr"] }),
+  // Analytics
+  gcp({ id: "gcp-bigquery", name: "BigQuery", category: "analytics", iconSlug: "googlebigquery", description: "Serverless data warehouse.", docsUrl: `${GCP_DOCS}/bigquery`, tags: ["dwh", "olap"] }),
+  gcp({ id: "gcp-dataflow", name: "Dataflow", category: "analytics", iconSlug: "googlecloud", description: "Stream + batch processing (Apache Beam).", docsUrl: `${GCP_DOCS}/dataflow`, tags: ["beam"] }),
+  gcp({ id: "gcp-dataproc", name: "Dataproc", category: "analytics", iconSlug: "googlecloud", description: "Managed Spark + Hadoop.", docsUrl: `${GCP_DOCS}/dataproc`, tags: ["spark"] }),
+  gcp({ id: "gcp-composer", name: "Cloud Composer", category: "analytics", iconSlug: "googlecloud", description: "Managed Apache Airflow.", docsUrl: `${GCP_DOCS}/composer`, tags: ["airflow"] }),
+  gcp({ id: "gcp-data-catalog", name: "Data Catalog", category: "analytics", iconSlug: "googlecloud", description: "Metadata discovery.", docsUrl: `${GCP_DOCS}/data-catalog`, tags: ["catalog"] }),
+  gcp({ id: "gcp-looker", name: "Looker", category: "analytics", iconSlug: "looker", description: "BI + embedded analytics.", docsUrl: `${GCP_DOCS}/looker`, tags: ["bi"] }),
+  gcp({ id: "gcp-datastream", name: "Datastream", category: "analytics", iconSlug: "googlecloud", description: "Serverless CDC for DBs.", docsUrl: `${GCP_DOCS}/datastream`, tags: ["cdc"] }),
+  // Observability
+  gcp({ id: "gcp-cloud-logging", name: "Cloud Logging", category: "observability", iconSlug: "googlecloud", description: "Centralized log management.", docsUrl: `${GCP_DOCS}/logging`, tags: ["logs"] }),
+  gcp({ id: "gcp-cloud-monitoring", name: "Cloud Monitoring", category: "observability", iconSlug: "googlecloud", description: "Metrics + alerting.", docsUrl: `${GCP_DOCS}/monitoring`, tags: ["metrics"] }),
+  gcp({ id: "gcp-cloud-trace", name: "Cloud Trace", category: "observability", iconSlug: "googlecloud", description: "Distributed tracing.", docsUrl: `${GCP_DOCS}/trace`, tags: ["tracing"] }),
+  gcp({ id: "gcp-error-reporting", name: "Error Reporting", category: "observability", iconSlug: "googlecloud", description: "Real-time exception tracking.", docsUrl: `${GCP_DOCS}/error-reporting`, tags: ["errors"] }),
+  gcp({ id: "gcp-cloud-profiler", name: "Cloud Profiler", category: "observability", iconSlug: "googlecloud", description: "Continuous CPU + heap profiling.", docsUrl: `${GCP_DOCS}/profiler`, tags: ["profiler"] }),
+  // DevOps
+  gcp({ id: "gcp-cloud-build", name: "Cloud Build", category: "devops", iconSlug: "googlecloud", description: "Serverless CI/CD.", docsUrl: `${GCP_DOCS}/build`, tags: ["ci"] }),
+  gcp({ id: "gcp-cloud-deploy", name: "Cloud Deploy", category: "devops", iconSlug: "googlecloud", description: "Continuous delivery for GKE + Run.", docsUrl: `${GCP_DOCS}/deploy`, tags: ["cd"] }),
+  gcp({ id: "gcp-artifact-registry", name: "Artifact Registry", category: "devops", iconSlug: "googlecloud", description: "Container + package registry.", docsUrl: `${GCP_DOCS}/artifact-registry`, tags: ["registry"] }),
+  gcp({ id: "gcp-source-repos", name: "Source Repositories", category: "devops", iconSlug: "googlecloud", description: "Hosted Git repos.", docsUrl: `${GCP_DOCS}/source-repositories`, tags: ["git"] }),
+];
+
+// ────────────────────────────────────────────────────────────────────────────
+// Azure (top services)
+// ────────────────────────────────────────────────────────────────────────────
+
+const azure = (s: Omit<CloudService, "cloud">): CloudService => ({ ...s, cloud: "azure" });
+const AZURE_DOCS = "https://learn.microsoft.com/azure";
+
+const AZURE_SERVICES: readonly CloudService[] = [
+  // Compute / Container / Serverless
+  azure({ id: "azure-vm", name: "Virtual Machines", category: "compute", iconSlug: "microsoftazure", description: "Linux + Windows VMs.", docsUrl: `${AZURE_DOCS}/virtual-machines/`, tags: ["vm"] }),
+  azure({ id: "azure-aks", name: "Azure Kubernetes Service", category: "container", iconSlug: "microsoftazure", description: "Managed Kubernetes.", docsUrl: `${AZURE_DOCS}/aks/`, tags: ["k8s"] }),
+  azure({ id: "azure-aci", name: "Container Instances", category: "container", iconSlug: "microsoftazure", description: "Run containers without orchestration.", docsUrl: `${AZURE_DOCS}/container-instances/`, tags: ["container"] }),
+  azure({ id: "azure-functions", name: "Azure Functions", category: "serverless", iconSlug: "microsoftazure", description: "Event-driven serverless functions.", docsUrl: `${AZURE_DOCS}/azure-functions/`, tags: ["faas"] }),
+  azure({ id: "azure-app-service", name: "App Service", category: "compute", iconSlug: "microsoftazure", description: "Managed PaaS for web apps.", docsUrl: `${AZURE_DOCS}/app-service/`, tags: ["paas"] }),
+  azure({ id: "azure-container-apps", name: "Container Apps", category: "serverless", iconSlug: "microsoftazure", description: "Serverless containers (KEDA + Dapr).", docsUrl: `${AZURE_DOCS}/container-apps/`, tags: ["serverless"] }),
+  azure({ id: "azure-batch", name: "Azure Batch", category: "compute", iconSlug: "microsoftazure", description: "Large-scale parallel batch jobs.", docsUrl: `${AZURE_DOCS}/batch/`, tags: ["batch"] }),
+  // Storage
+  azure({ id: "azure-blob", name: "Blob Storage", category: "storage", iconSlug: "microsoftazure", description: "Object storage.", docsUrl: `${AZURE_DOCS}/storage/blobs/`, tags: ["object"] }),
+  azure({ id: "azure-files", name: "Azure Files", category: "storage", iconSlug: "microsoftazure", description: "Managed file shares (SMB/NFS).", docsUrl: `${AZURE_DOCS}/storage/files/`, tags: ["smb", "nfs"] }),
+  azure({ id: "azure-disks", name: "Managed Disks", category: "storage", iconSlug: "microsoftazure", description: "Block storage for VMs.", docsUrl: `${AZURE_DOCS}/virtual-machines/managed-disks-overview`, tags: ["block"] }),
+  azure({ id: "azure-netapp-files", name: "NetApp Files", category: "storage", iconSlug: "microsoftazure", description: "Enterprise NFS/SMB file shares.", docsUrl: `${AZURE_DOCS}/azure-netapp-files/`, tags: ["enterprise"] }),
+  azure({ id: "azure-data-box", name: "Data Box", category: "migration", iconSlug: "microsoftazure", description: "Petabyte-scale data transport.", docsUrl: `${AZURE_DOCS}/databox/`, tags: ["transfer"] }),
+  // Databases
+  azure({ id: "azure-sql-db", name: "Azure SQL Database", category: "database", iconSlug: "microsoftazure", description: "Managed SQL Server.", docsUrl: `${AZURE_DOCS}/azure-sql/database/`, tags: ["sql"] }),
+  azure({ id: "azure-cosmos-db", name: "Cosmos DB", category: "database", iconSlug: "microsoftazure", description: "Globally distributed multi-model DB.", docsUrl: `${AZURE_DOCS}/cosmos-db/`, tags: ["nosql", "global"] }),
+  azure({ id: "azure-postgres", name: "Database for PostgreSQL", category: "database", iconSlug: "postgresql", description: "Managed Postgres.", docsUrl: `${AZURE_DOCS}/postgresql/`, tags: ["postgres"] }),
+  azure({ id: "azure-mysql", name: "Database for MySQL", category: "database", iconSlug: "mysql", description: "Managed MySQL.", docsUrl: `${AZURE_DOCS}/mysql/`, tags: ["mysql"] }),
+  azure({ id: "azure-redis", name: "Cache for Redis", category: "cache", iconSlug: "redis", description: "Managed Redis.", docsUrl: `${AZURE_DOCS}/azure-cache-for-redis/`, tags: ["redis"] }),
+  azure({ id: "azure-synapse-dedicated", name: "Synapse Dedicated SQL Pool", category: "analytics", iconSlug: "microsoftazure", description: "MPP data warehouse.", docsUrl: `${AZURE_DOCS}/synapse-analytics/sql-data-warehouse/`, tags: ["mpp"] }),
+  azure({ id: "azure-table-storage", name: "Table Storage", category: "database", iconSlug: "microsoftazure", description: "NoSQL key-attribute store.", docsUrl: `${AZURE_DOCS}/storage/tables/`, tags: ["nosql"] }),
+  // Messaging
+  azure({ id: "azure-service-bus", name: "Service Bus", category: "queue", iconSlug: "microsoftazure", description: "Enterprise messaging broker.", docsUrl: `${AZURE_DOCS}/service-bus-messaging/`, tags: ["amqp"] }),
+  azure({ id: "azure-event-grid", name: "Event Grid", category: "event", iconSlug: "microsoftazure", description: "Reactive event routing.", docsUrl: `${AZURE_DOCS}/event-grid/`, tags: ["events"] }),
+  azure({ id: "azure-event-hubs", name: "Event Hubs", category: "stream", iconSlug: "microsoftazure", description: "Big-data streaming + Kafka-compatible.", docsUrl: `${AZURE_DOCS}/event-hubs/`, tags: ["kafka", "stream"] }),
+  azure({ id: "azure-queue-storage", name: "Queue Storage", category: "queue", iconSlug: "microsoftazure", description: "Simple, durable message queues.", docsUrl: `${AZURE_DOCS}/storage/queues/`, tags: ["queue"] }),
+  azure({ id: "azure-logic-apps", name: "Logic Apps", category: "workflow", iconSlug: "microsoftazure", description: "Visual workflow integrator.", docsUrl: `${AZURE_DOCS}/logic-apps/`, tags: ["integration"] }),
+  azure({ id: "azure-durable-functions", name: "Durable Functions", category: "workflow", iconSlug: "microsoftazure", description: "Stateful serverless orchestration.", docsUrl: `${AZURE_DOCS}/azure-functions/durable/`, tags: ["orchestration"] }),
+  // Networking / CDN / DNS / LB
+  azure({ id: "azure-app-gateway", name: "Application Gateway", category: "loadbalancer", iconSlug: "microsoftazure", description: "L7 load balancer + WAF.", docsUrl: `${AZURE_DOCS}/application-gateway/`, tags: ["lb", "waf"] }),
+  azure({ id: "azure-lb", name: "Load Balancer", category: "loadbalancer", iconSlug: "microsoftazure", description: "L4 load balancer.", docsUrl: `${AZURE_DOCS}/load-balancer/`, tags: ["l4"] }),
+  azure({ id: "azure-front-door", name: "Front Door", category: "cdn", iconSlug: "microsoftazure", description: "Global CDN + WAF + LB.", docsUrl: `${AZURE_DOCS}/frontdoor/`, tags: ["cdn", "global"] }),
+  azure({ id: "azure-cdn", name: "Azure CDN", category: "cdn", iconSlug: "microsoftazure", description: "Content delivery network.", docsUrl: `${AZURE_DOCS}/cdn/`, tags: ["cdn"] }),
+  azure({ id: "azure-traffic-manager", name: "Traffic Manager", category: "dns", iconSlug: "microsoftazure", description: "DNS-based traffic routing.", docsUrl: `${AZURE_DOCS}/traffic-manager/`, tags: ["dns"] }),
+  azure({ id: "azure-dns", name: "Azure DNS", category: "dns", iconSlug: "microsoftazure", description: "Authoritative DNS hosting.", docsUrl: `${AZURE_DOCS}/dns/`, tags: ["dns"] }),
+  azure({ id: "azure-vnet", name: "Virtual Network (VNet)", category: "networking", iconSlug: "microsoftazure", description: "Isolated virtual networks.", docsUrl: `${AZURE_DOCS}/virtual-network/`, tags: ["vnet"] }),
+  azure({ id: "azure-expressroute", name: "ExpressRoute", category: "networking", iconSlug: "microsoftazure", description: "Private connectivity to Azure.", docsUrl: `${AZURE_DOCS}/expressroute/`, tags: ["hybrid"] }),
+  azure({ id: "azure-private-link", name: "Private Link", category: "networking", iconSlug: "microsoftazure", description: "Private access to Azure services.", docsUrl: `${AZURE_DOCS}/private-link/`, tags: ["vnet"] }),
+  azure({ id: "azure-vpn-gateway", name: "VPN Gateway", category: "networking", iconSlug: "microsoftazure", description: "Site-to-site + point-to-site VPN.", docsUrl: `${AZURE_DOCS}/vpn-gateway/`, tags: ["vpn"] }),
+  // Identity / Security
+  azure({ id: "azure-entra-id", name: "Microsoft Entra ID (AD)", category: "iam", iconSlug: "microsoftazure", description: "Cloud identity + access management.", docsUrl: `${AZURE_DOCS}/active-directory/`, tags: ["iam"] }),
+  azure({ id: "azure-key-vault", name: "Key Vault", category: "kms", iconSlug: "microsoftazure", description: "Secrets + keys + certificates.", docsUrl: `${AZURE_DOCS}/key-vault/`, tags: ["secrets", "keys"] }),
+  azure({ id: "azure-managed-identity", name: "Managed Identities", category: "iam", iconSlug: "microsoftazure", description: "App identities without secrets.", docsUrl: `${AZURE_DOCS}/active-directory/managed-identities-azure-resources/`, tags: ["identity"] }),
+  azure({ id: "azure-ad-b2c", name: "Entra External ID (B2C)", category: "auth", iconSlug: "microsoftazure", description: "Customer identity (CIAM).", docsUrl: `${AZURE_DOCS}/active-directory-b2c/`, tags: ["ciam"] }),
+  azure({ id: "azure-defender", name: "Defender for Cloud", category: "security", iconSlug: "microsoftazure", description: "Cloud security posture + workload protection.", docsUrl: `${AZURE_DOCS}/defender-for-cloud/`, tags: ["cspm"] }),
+  azure({ id: "azure-sentinel", name: "Microsoft Sentinel", category: "security", iconSlug: "microsoftazure", description: "SIEM + SOAR.", docsUrl: `${AZURE_DOCS}/sentinel/`, tags: ["siem"] }),
+  azure({ id: "azure-firewall", name: "Azure Firewall", category: "security", iconSlug: "microsoftazure", description: "Managed network firewall.", docsUrl: `${AZURE_DOCS}/firewall/`, tags: ["firewall"] }),
+  azure({ id: "azure-ddos-protection", name: "DDoS Protection", category: "security", iconSlug: "microsoftazure", description: "DDoS attack mitigation.", docsUrl: `${AZURE_DOCS}/ddos-protection/`, tags: ["ddos"] }),
+  azure({ id: "azure-app-insights", name: "Application Insights", category: "observability", iconSlug: "microsoftazure", description: "APM for live apps.", docsUrl: `${AZURE_DOCS}/azure-monitor/app/`, tags: ["apm"] }),
+  // ML / AI
+  azure({ id: "azure-openai", name: "Azure OpenAI Service", category: "ml-ai", iconSlug: "microsoftazure", description: "OpenAI models on Azure.", docsUrl: `${AZURE_DOCS}/ai-services/openai/`, tags: ["llm", "gpt"] }),
+  azure({ id: "azure-ai-services", name: "AI Services (Cognitive)", category: "ml-ai", iconSlug: "microsoftazure", description: "Pre-built AI APIs (Vision, Speech, Language).", docsUrl: `${AZURE_DOCS}/ai-services/`, tags: ["cognitive"] }),
+  azure({ id: "azure-ml", name: "Machine Learning", category: "ml-ai", iconSlug: "microsoftazure", description: "Build, train, deploy ML models.", docsUrl: `${AZURE_DOCS}/machine-learning/`, tags: ["ml"] }),
+  azure({ id: "azure-bot-service", name: "Bot Service", category: "ml-ai", iconSlug: "microsoftazure", description: "Build conversational bots.", docsUrl: `${AZURE_DOCS}/bot-service/`, tags: ["bot"] }),
+  azure({ id: "azure-form-recognizer", name: "Document Intelligence", category: "ml-ai", iconSlug: "microsoftazure", description: "Extract data from documents.", docsUrl: `${AZURE_DOCS}/ai-services/document-intelligence/`, tags: ["ocr"] }),
+  azure({ id: "azure-cognitive-search", name: "AI Search", category: "ml-ai", iconSlug: "microsoftazure", description: "Cloud search with AI enrichment.", docsUrl: `${AZURE_DOCS}/search/`, tags: ["search"] }),
+  // Analytics
+  azure({ id: "azure-synapse", name: "Synapse Analytics", category: "analytics", iconSlug: "microsoftazure", description: "Unified analytics platform.", docsUrl: `${AZURE_DOCS}/synapse-analytics/`, tags: ["dwh"] }),
+  azure({ id: "azure-data-factory", name: "Data Factory", category: "analytics", iconSlug: "microsoftazure", description: "Cloud ETL + data integration.", docsUrl: `${AZURE_DOCS}/data-factory/`, tags: ["etl"] }),
+  azure({ id: "azure-databricks", name: "Azure Databricks", category: "analytics", iconSlug: "databricks", description: "Apache Spark analytics platform.", docsUrl: `${AZURE_DOCS}/databricks/`, tags: ["spark"] }),
+  azure({ id: "azure-stream-analytics", name: "Stream Analytics", category: "analytics", iconSlug: "microsoftazure", description: "Real-time stream processing.", docsUrl: `${AZURE_DOCS}/stream-analytics/`, tags: ["stream"] }),
+  azure({ id: "azure-data-explorer", name: "Data Explorer (Kusto)", category: "analytics", iconSlug: "microsoftazure", description: "Fast big-data analytics.", docsUrl: `${AZURE_DOCS}/data-explorer/`, tags: ["kusto"] }),
+  azure({ id: "azure-purview", name: "Purview", category: "analytics", iconSlug: "microsoftazure", description: "Data governance + catalog.", docsUrl: `${AZURE_DOCS}/purview/`, tags: ["catalog"] }),
+  azure({ id: "azure-power-bi-embedded", name: "Power BI Embedded", category: "analytics", iconSlug: "microsoftazure", description: "Embed BI visuals in apps.", docsUrl: `${AZURE_DOCS}/power-bi-embedded/`, tags: ["bi"] }),
+  // Observability + DevOps
+  azure({ id: "azure-monitor", name: "Azure Monitor", category: "observability", iconSlug: "microsoftazure", description: "Metrics + logs + alerts.", docsUrl: `${AZURE_DOCS}/azure-monitor/`, tags: ["metrics", "logs"] }),
+  azure({ id: "azure-log-analytics", name: "Log Analytics", category: "observability", iconSlug: "microsoftazure", description: "Query log + telemetry.", docsUrl: `${AZURE_DOCS}/azure-monitor/logs/`, tags: ["logs"] }),
+  azure({ id: "azure-network-watcher", name: "Network Watcher", category: "observability", iconSlug: "microsoftazure", description: "Network monitoring + diagnostics.", docsUrl: `${AZURE_DOCS}/network-watcher/`, tags: ["network"] }),
+  azure({ id: "azure-devops", name: "Azure DevOps", category: "devops", iconSlug: "azuredevops", description: "Pipelines + Repos + Boards + Artifacts.", docsUrl: `${AZURE_DOCS}/devops/`, tags: ["cicd"] }),
+  azure({ id: "azure-pipelines", name: "Pipelines", category: "devops", iconSlug: "azurepipelines", description: "Cloud CI/CD.", docsUrl: `${AZURE_DOCS}/devops/pipelines/`, tags: ["ci"] }),
+  azure({ id: "azure-container-registry", name: "Container Registry", category: "devops", iconSlug: "microsoftazure", description: "Managed Docker registry.", docsUrl: `${AZURE_DOCS}/container-registry/`, tags: ["docker"] }),
+  azure({ id: "azure-bicep", name: "Bicep / ARM", category: "devops", iconSlug: "microsoftazure", description: "Infrastructure-as-code for Azure.", docsUrl: `${AZURE_DOCS}/azure-resource-manager/bicep/`, tags: ["iac"] }),
+];
+
 // Total exported catalog
-export const CLOUD_SERVICES_CATALOG: readonly CloudService[] = AWS_SERVICES;
+export const CLOUD_SERVICES_CATALOG: readonly CloudService[] = [
+  ...AWS_SERVICES,
+  ...GCP_SERVICES,
+  ...AZURE_SERVICES,
+];
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
