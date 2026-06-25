@@ -170,30 +170,33 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* Pricing */}
+      {/* Open Source */}
       <section className="max-w-2xl mx-auto px-5 py-20 text-center">
         <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3">
-          Simple pricing
+          Open Source
         </h2>
         <p className="text-ink-500 dark:text-cream-200/60 mb-10">
-          One plan. Free forever.
+          MIT licensed. Self-host or use ours. BYOK — bring your own AI key.
         </p>
         <div className="rounded-3xl border-2 border-plum-500 bg-plum-50 dark:bg-plum-900/40 p-10 shadow-float text-left">
-          <div className="flex items-baseline gap-2 mb-2">
-            <span className="text-6xl font-extrabold tracking-tight">$0</span>
-            <span className="text-sm text-ink-500 dark:text-cream-200/60">/ forever</span>
+          <div className="flex items-center gap-3 mb-4">
+            <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-plum-500 text-cream-50 text-xl">
+              ⭐
+            </span>
+            <div>
+              <div className="text-2xl font-extrabold tracking-tight">100% free + open</div>
+              <div className="text-sm text-ink-500 dark:text-cream-200/60">No accounts required to self-host. BYOK for AI features.</div>
+            </div>
           </div>
-          <p className="text-sm text-ink-500 dark:text-cream-200/60 mb-7">
-            BYOK — Bring Your Own Key. We never charge for AI usage.
-          </p>
           <ul className="space-y-3 mb-8">
             {[
-              "Unlimited diagrams",
+              "Unlimited diagrams (self-hosted)",
               "3-level abstraction switching",
-              "AI generation (BYOK)",
-              "Shareable links",
-              "iframe embeds",
-              "PNG / SVG / PDF export",
+              "AI generation + Refactor + Hints (BYOK)",
+              "235 cloud services + 50 templates + 28 chapters",
+              "Shareable links + iframe embeds",
+              "PNG / SVG / PDF + Terraform / K8s / Compose export",
+              "Fork, modify, ship commercially (MIT)",
             ].map((item) => (
               <li key={item} className="flex items-center gap-2.5 text-sm text-ink-900 dark:text-cream-50">
                 <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-plum-500 text-cream-50 text-[10px] font-bold">
@@ -203,12 +206,22 @@ export function LandingPage() {
               </li>
             ))}
           </ul>
-          <Link
-            to="/signup"
-            className="block text-center h-12 px-8 leading-[3rem] rounded-full bg-plum-900 text-cream-50 font-semibold tracking-tight hover:bg-plum-700 transition-all duration-150 shadow-soft"
-          >
-            Get started — free forever
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Link
+              to="/signup"
+              className="flex-1 text-center h-12 px-8 leading-[3rem] rounded-full bg-plum-900 text-cream-50 font-semibold tracking-tight hover:bg-plum-700 transition-all duration-150 shadow-soft"
+            >
+              Try it now
+            </Link>
+            <a
+              href="https://github.com/YOUR_USERNAME/archlet"
+              target="_blank"
+              rel="noreferrer noopener"
+              className="flex-1 text-center h-12 px-8 leading-[3rem] rounded-full bg-white dark:bg-plum-800 border border-plum-300 dark:border-plum-700 text-ink-900 dark:text-cream-50 font-semibold tracking-tight hover:bg-cream-50 dark:hover:bg-plum-700 transition-all duration-150"
+            >
+              ⭐ Star on GitHub
+            </a>
+          </div>
         </div>
       </section>
 
