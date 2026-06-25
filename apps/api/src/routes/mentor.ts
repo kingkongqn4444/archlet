@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { drizzle } from "drizzle-orm/d1";
 import { eq, and, desc } from "drizzle-orm";
-import { mentorChats } from "../db/schema";
+import { mentorChats, chapterProgress, chapterSummaryCache } from "../db/schema";
 import type { AuthEnv } from "../middleware/auth-required";
 import { getChapterById, chapterReadmeUrl } from "@archlet/shared";
 
@@ -201,6 +201,142 @@ app.delete("/thread/:id", async (c) => {
   const db = drizzle(c.env.DB);
   await db.delete(mentorChats).where(and(eq(mentorChats.id, id), eq(mentorChats.userId, user.id)));
   return c.json({ ok: true });
+});
+
+// ─── Phase 3: progress + notes + summary cache ─────────────────────────────
+
+// POST /api/mentor/progress { chapterId, action: 'mark-read' | 'mark-unread' }
+app.post("/progress", async (c) => {
+  const user = c.get("user");
+  const body = await c.req.json().catch(() => null) as { chapterId?: string; action?: string } | null;
+  if (!body?.chapterId || !body.action) return c.json({ error: "chapterId + action required" }, 400);
+  const now = Date.now();
+  const readAt = body.action === "mark-read" ? now : null;
+  const db = drizzle(c.env.DB);
+  await db
+    .insert(chapterProgress)
+    .values({ userId: user.id, chapterId: body.chapterId, readAt, notes: null, updatedAt: now })
+    .onConflictDoUpdate({
+      target: [chapterProgress.userId, chapterProgress.chapterId],
+      set: { readAt, updatedAt: now },
+    });
+  return c.json({ ok: true, readAt });
+});
+
+// GET /api/mentor/progress → all progress for user
+app.get("/progress", async (c) => {
+  const user = c.get("user");
+  const db = drizzle(c.env.DB);
+  const rows = await db.select().from(chapterProgress).where(eq(chapterProgress.userId, user.id));
+  return c.json({ items: rows });
+});
+
+// PUT /api/mentor/notes { chapterId, notes }
+app.put("/notes", async (c) => {
+  const user = c.get("user");
+  const body = await c.req.json().catch(() => null) as { chapterId?: string; notes?: string } | null;
+  if (!body?.chapterId) return c.json({ error: "chapterId required" }, 400);
+  if (body.notes !== undefined && body.notes.length > 10_000) {
+    return c.json({ error: "notes max 10000 chars" }, 400);
+  }
+  const now = Date.now();
+  const db = drizzle(c.env.DB);
+  await db
+    .insert(chapterProgress)
+    .values({ userId: user.id, chapterId: body.chapterId, readAt: null, notes: body.notes ?? null, updatedAt: now })
+    .onConflictDoUpdate({
+      target: [chapterProgress.userId, chapterProgress.chapterId],
+      set: { notes: body.notes ?? null, updatedAt: now },
+    });
+  return c.json({ ok: true });
+});
+
+// GET /api/mentor/notes/:chapterId → returns notes text
+app.get("/notes/:chapterId", async (c) => {
+  const user = c.get("user");
+  const chapterId = c.req.param("chapterId");
+  const db = drizzle(c.env.DB);
+  const rows = await db
+    .select()
+    .from(chapterProgress)
+    .where(and(eq(chapterProgress.userId, user.id), eq(chapterProgress.chapterId, chapterId)))
+    .limit(1);
+  return c.json({ notes: rows[0]?.notes ?? "" });
+});
+
+// GET /api/mentor/summary/:chapterId?byokKey= → cached AI summary; generates on miss
+app.get("/summary/:chapterId", async (c) => {
+  const chapterId = c.req.param("chapterId");
+  const chapter = getChapterById(chapterId);
+  if (!chapter) return c.json({ error: "Unknown chapter" }, 404);
+  const db = drizzle(c.env.DB);
+
+  const cached = await db.select().from(chapterSummaryCache).where(eq(chapterSummaryCache.chapterId, chapterId)).limit(1);
+  if (cached[0]) {
+    return c.json({
+      chapterId: cached[0].chapterId,
+      title: cached[0].title,
+      summary: cached[0].summary,
+      keyConcepts: JSON.parse(cached[0].keyConcepts),
+      relatedVariants: cached[0].relatedVariants ? JSON.parse(cached[0].relatedVariants) : [],
+      generatedAt: cached[0].generatedAt,
+      cached: true,
+    });
+  }
+
+  // No BYOK provided → return canonical metadata only (no AI call)
+  const byokKey = c.req.query("byokKey");
+  if (!byokKey) {
+    return c.json({
+      chapterId: chapter.id,
+      title: chapter.title,
+      summary: chapter.summary,
+      keyConcepts: chapter.keyConcepts,
+      relatedVariants: chapter.relatedVariants,
+      cached: false,
+      note: "Hand-written summary. Provide byokKey to generate AI version.",
+    });
+  }
+
+  // Generate via BYOK Anthropic call
+  const md = await fetchChapterMarkdown(chapterId);
+  if (!md) return c.json({ error: "Chapter markdown unavailable" }, 502);
+  const prompt = `Summarize this system design chapter in 150-200 words. Then list 5-7 key technical concepts as a JSON array on a separate line prefixed with KEY_CONCEPTS:.\n\n${md}`;
+  const upstream = await fetch(ANTHROPIC_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-api-key": byokKey, "anthropic-version": ANTHROPIC_VERSION },
+    body: JSON.stringify({
+      model: DEFAULT_MODEL,
+      max_tokens: 1024,
+      messages: [{ role: "user", content: prompt }],
+    }),
+  });
+  if (!upstream.ok) return c.json({ error: "Upstream error", status: upstream.status }, 502);
+  const json = await upstream.json() as { content: Array<{ type: string; text?: string }> };
+  const text = json.content?.filter((b) => b.type === "text").map((b) => b.text ?? "").join("\n") ?? "";
+  // Naive parse: split by KEY_CONCEPTS line
+  const kcIdx = text.indexOf("KEY_CONCEPTS:");
+  const summary = kcIdx >= 0 ? text.slice(0, kcIdx).trim() : text.trim();
+  let keyConcepts: string[] = chapter.keyConcepts;
+  if (kcIdx >= 0) {
+    try {
+      const arr = JSON.parse(text.slice(kcIdx + "KEY_CONCEPTS:".length).trim());
+      if (Array.isArray(arr)) keyConcepts = arr;
+    } catch { /* keep fallback */ }
+  }
+  const now = Date.now();
+  await db.insert(chapterSummaryCache).values({
+    chapterId,
+    title: chapter.title,
+    summary,
+    keyConcepts: JSON.stringify(keyConcepts),
+    relatedVariants: JSON.stringify(chapter.relatedVariants),
+    generatedAt: now,
+  }).onConflictDoUpdate({
+    target: chapterSummaryCache.chapterId,
+    set: { summary, keyConcepts: JSON.stringify(keyConcepts), generatedAt: now },
+  });
+  return c.json({ chapterId, title: chapter.title, summary, keyConcepts, relatedVariants: chapter.relatedVariants, generatedAt: now, cached: false });
 });
 
 export default app;

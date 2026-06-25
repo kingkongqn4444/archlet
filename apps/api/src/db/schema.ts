@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, index, primaryKey } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
 
 export const user = sqliteTable("user", {
@@ -116,3 +116,24 @@ export const mentorChats = sqliteTable(
     index("idx_mentor_chats_user_chap").on(t.userId, t.chapterId),
   ]
 );
+
+export const chapterProgress = sqliteTable(
+  "chapter_progress",
+  {
+    userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+    chapterId: text("chapter_id").notNull(),
+    readAt: integer("read_at"),
+    notes: text("notes"),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.chapterId] })]
+);
+
+export const chapterSummaryCache = sqliteTable("chapter_summary_cache", {
+  chapterId: text("chapter_id").primaryKey(),
+  title: text("title").notNull(),
+  summary: text("summary").notNull(),
+  keyConcepts: text("key_concepts").notNull(),
+  relatedVariants: text("related_variants"),
+  generatedAt: integer("generated_at").notNull(),
+});
