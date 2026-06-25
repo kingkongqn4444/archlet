@@ -44,5 +44,11 @@ Layout rules:
 
 ${LEVEL_INSTRUCTIONS[level]}
 
-Tool call order: add all nodes first, then add all edges. Use descriptive labels (e.g. "PostgreSQL Primary" not just "Database"). Edge labels should describe the protocol or relationship (e.g. "REST", "TCP", "async", "reads from").`;
+CRITICAL — tool call order + completeness:
+1. First, call add_node for EVERY component you'll include.
+2. Then, call add_edge for EVERY meaningful connection. The diagram is INCOMPLETE without edges — your output WILL be rejected if any node lacks at least one edge.
+3. Minimum edges = (nodes - 1) so the graph is connected. More if data flows in multiple directions or one node talks to several.
+4. Edge id must be unique (e.g. "e1", "e2", …). source + target must match existing node ids exactly.
+5. Use descriptive labels (e.g. "PostgreSQL Primary" not just "Database"). Edge labels describe the protocol/relationship (e.g. "REST", "TCP", "async", "reads from", "publishes").
+6. Do NOT stop after add_node calls. Continue until all add_edge calls are made.`;
 }

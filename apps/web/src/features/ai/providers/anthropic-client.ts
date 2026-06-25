@@ -20,7 +20,7 @@ export const anthropicClient: AIClient = {
       },
       body: JSON.stringify({
         model: opts.model,
-        max_tokens: 4096,
+        max_tokens: 8192,
         stream: true,
         tools: ANTHROPIC_TOOLS,
         system: opts.systemPrompt,
