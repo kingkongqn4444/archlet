@@ -79,6 +79,9 @@ export function useAiGenerate(): UseAiGenerateResult {
       const client = getClient(opts.provider);
       const systemPrompt = buildSystemPrompt(opts.level);
 
+      const addedNodeIds: string[] = [];
+      let edgesAdded = 0;
+
       for await (const toolCall of client.stream({
         apiKey,
         model: opts.model,
@@ -96,6 +99,26 @@ export function useAiGenerate(): UseAiGenerateResult {
         if (toolCall.name === "add_node") {
           addedNodes++;
           setNodeCount(addedNodes);
+          addedNodeIds.push(toolCall.args.id);
+        } else if (toolCall.name === "add_edge") {
+          edgesAdded++;
+        }
+      }
+
+      // Safety net: if AI generated nodes but skipped edges, auto-chain them
+      // so the diagram isn't a pile of disconnected boxes.
+      if (addedNodes >= 2 && edgesAdded === 0) {
+        setCurrentAction("Auto-connecting nodes…");
+        const ts = Date.now();
+        for (let i = 0; i < addedNodeIds.length - 1; i++) {
+          applyToolCall({
+            name: "add_edge",
+            args: {
+              id: `e-auto-${ts}-${i}`,
+              source: addedNodeIds[i]!,
+              target: addedNodeIds[i + 1]!,
+            },
+          });
         }
       }
     } catch (err) {

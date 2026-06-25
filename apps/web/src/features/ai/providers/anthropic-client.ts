@@ -23,6 +23,9 @@ export const anthropicClient: AIClient = {
         max_tokens: 8192,
         stream: true,
         tools: ANTHROPIC_TOOLS,
+        // Force tool-only output (no prose) — prevents model from stopping
+        // early to emit text commentary instead of completing add_edge calls.
+        tool_choice: { type: "any" },
         system: opts.systemPrompt,
         messages: [{ role: "user", content: opts.userPrompt }],
       }),
