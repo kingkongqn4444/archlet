@@ -6,6 +6,7 @@ import projectsRoute from "./routes/projects";
 import diagramsRoute from "./routes/diagrams";
 import shareRoute from "./routes/share";
 import publicRoute from "./routes/public";
+import mentorRoute from "./routes/mentor";
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -42,5 +43,6 @@ app.route("/api/public", publicRoute);
 app.route("/api/projects", authRequired(projectsRoute));
 app.route("/api/diagrams", authRequired(diagramsRoute));
 app.route("/api/share", authRequired(shareRoute));
+app.route("/api/mentor", authRequired(mentorRoute));
 
 export default app;

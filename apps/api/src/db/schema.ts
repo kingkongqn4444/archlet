@@ -99,3 +99,20 @@ export const shareTokens = sqliteTable(
   },
   (t) => [index("idx_share_diagram").on(t.diagramId)]
 );
+
+export const mentorChats = sqliteTable(
+  "mentor_chats",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+    diagramId: text("diagram_id"),
+    chapterId: text("chapter_id"),
+    messages: text("messages").notNull().default("[]"), // JSON array
+    createdAt: integer("created_at").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (t) => [
+    index("idx_mentor_chats_user_diag").on(t.userId, t.diagramId),
+    index("idx_mentor_chats_user_chap").on(t.userId, t.chapterId),
+  ]
+);
