@@ -339,4 +339,52 @@ app.get("/summary/:chapterId", async (c) => {
   return c.json({ chapterId, title: chapter.title, summary, keyConcepts, relatedVariants: chapter.relatedVariants, generatedAt: now, cached: false });
 });
 
+// ─── Phase 4: AI Hint System ───────────────────────────────────────────────
+
+// POST /api/mentor/hint { problem, diagramSummary, hintLevel: 1|2|3, byokKey }
+// 3-level escalating hints; strict prompt prevents full-solution leak.
+app.post("/hint", async (c) => {
+  const body = await c.req.json().catch(() => null) as {
+    problem?: string;
+    diagramSummary?: string;
+    hintLevel?: 1 | 2 | 3;
+    byokKey?: string;
+  } | null;
+  if (!body?.problem || !body.hintLevel || !body.byokKey) {
+    return c.json({ error: "problem + hintLevel + byokKey required" }, 400);
+  }
+  const level = body.hintLevel;
+  const levelDesc = level === 1
+    ? "Vague concept nudge (1 sentence). Hint at the category, do NOT name patterns or tech."
+    : level === 2
+    ? "Directional (2 sentences). Name a category like 'caching' or 'sharding'. NO specific tech."
+    : "Specific (3 sentences max). Name the exact pattern + 1-line reason. STILL no full implementation.";
+
+  const prompt = `You are a system-design interview coach giving HINTS, not solutions.
+Problem: ${body.problem}
+${body.diagramSummary ? `Current diagram: ${body.diagramSummary}` : "User has not started drawing."}
+
+Provide a hint at LEVEL ${level} of 3.
+Level instruction: ${levelDesc}
+
+CRITICAL: Do NOT solve the problem. Do NOT enumerate the canonical architecture. Make the user think.`;
+
+  const upstream = await fetch(ANTHROPIC_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-api-key": body.byokKey, "anthropic-version": ANTHROPIC_VERSION },
+    body: JSON.stringify({
+      model: DEFAULT_MODEL,
+      max_tokens: 400,
+      messages: [{ role: "user", content: prompt }],
+    }),
+  });
+  if (!upstream.ok) {
+    const errText = await upstream.text().catch(() => "");
+    return c.json({ error: "Upstream error", status: upstream.status, detail: errText }, 502);
+  }
+  const json = await upstream.json() as { content: Array<{ type: string; text?: string }> };
+  const hint = json.content?.filter((b) => b.type === "text").map((b) => b.text ?? "").join("\n").trim() ?? "";
+  return c.json({ hint, level });
+});
+
 export default app;

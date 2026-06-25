@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Undo2, Redo2, Maximize, Moon, Sun, Share2, Sparkles, Download, Pencil, LibraryBig, LayoutTemplate, Brain, DollarSign, Calculator } from "lucide-react";
+import { Undo2, Redo2, Maximize, Moon, Sun, Share2, Sparkles, Download, Pencil, LibraryBig, LayoutTemplate, Brain, DollarSign, Calculator, Lightbulb } from "lucide-react";
 import { useReactFlow } from "@xyflow/react";
 import { useTemporalDiagram, useDiagramStore } from "../store/diagram-store";
 import { useDarkMode } from "../hooks/use-dark-mode";
@@ -8,6 +8,7 @@ import { ShareDialog } from "@/features/share/share-dialog";
 import { ExportDialog } from "@/features/export/export-dialog";
 import { TemplatesGallery } from "@/features/templates/templates-gallery";
 import { EstimateModal } from "@/features/estimate/estimate-modal";
+import { HintPopover } from "@/features/hint/hint-popover";
 import { autoLayout } from "@/features/canvas/layout/auto-layout";
 import { MentorPanel } from "@/features/mentor/mentor-panel";
 import { CostPanel } from "@/features/cost/cost-panel";
@@ -69,6 +70,7 @@ export const TopToolbar = React.memo(function TopToolbar() {
   const [exportOpen, setExportOpen] = useState(false);
   const [templatesOpen, setTemplatesOpen] = useState(false);
   const [estimateOpen, setEstimateOpen] = useState(false);
+  const [hintOpen, setHintOpen] = useState(false);
   const { fitView, getViewport } = useReactFlow();
   const { undo, redo } = useTemporalDiagram();
   const { isDark, toggle } = useDarkMode();
@@ -163,6 +165,11 @@ export const TopToolbar = React.memo(function TopToolbar() {
           <Calculator size={14} />
         </IconBtn>
 
+        {/* AI Hint (3-level escalating hints) */}
+        <IconBtn onClick={() => setHintOpen((v) => !v)} title="AI Hint — get 3 escalating hints for current problem">
+          <Lightbulb size={14} />
+        </IconBtn>
+
         {/* Auto-arrange */}
         <IconBtn onClick={handleAutoLayout} title="Auto-arrange (⌘⇧L)">
           <LayoutTemplate size={14} />
@@ -232,6 +239,7 @@ export const TopToolbar = React.memo(function TopToolbar() {
       <ExportDialog open={exportOpen} onOpenChange={setExportOpen} diagramName={name} />
       <TemplatesGallery open={templatesOpen} onOpenChange={setTemplatesOpen} />
       <EstimateModal open={estimateOpen} onClose={() => setEstimateOpen(false)} />
+      <HintPopover open={hintOpen} onClose={() => setHintOpen(false)} />
     </>
   );
 });
