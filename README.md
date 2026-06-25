@@ -39,16 +39,28 @@ Most system-design tools are either **pretty pictures** (Excalidraw, draw.io) or
 
 ## Screenshots
 
+### Canvas with URL Shortener template
+<img src=".github/assets/canvas-with-template.png" alt="Canvas with template" width="900" />
+
+### Templates gallery — 50 templates
+<img src=".github/assets/templates-gallery.png" alt="50 templates" width="900" />
+
+### Cloud Services picker — 235 services (AWS / GCP / Azure)
+<img src=".github/assets/cloud-picker.png" alt="Cloud Services picker" width="800" />
+
+### Back-of-envelope estimator
+<img src=".github/assets/estimator.png" alt="Estimator modal" width="800" />
+
+### AI Refactor — let AI improve your diagram
+<img src=".github/assets/ai-refactor.png" alt="AI Refactor panel" width="700" />
+
 ### Landing — value prop + CTAs
 <img src=".github/assets/hero.png" alt="archlet landing hero" width="900" />
 
-### Features grid
-<img src=".github/assets/landing-features.png" alt="6-feature grid" width="900" />
-
-### Open Source CTA
+### Open Source section
 <img src=".github/assets/landing-opensource.png" alt="Open Source section" width="700" />
 
-> More screenshots (canvas, AI Refactor panel, Cloud Services picker, Estimator, Templates gallery, Learn viewer, Mentor chat) coming after first login flow capture. See [`docs/screenshots-guide.md`](docs/screenshots-guide.md) for the full list.
+> All screenshots auto-captured via Playwright. See [`docs/screenshots-guide.md`](docs/screenshots-guide.md) for the capture script + scene list.
 
 ---
 
