@@ -5,7 +5,7 @@ import { useDiagramStore, type RFNode } from "../store/diagram-store";
 import { useSimStore } from "@/features/simulate/sim-store";
 import { useReviewStore } from "@/features/review/review-store";
 import type { DiagramNode, NodeType, CloudProvider } from "@archlet/shared";
-import { getVariant, getDefaultVariant, CLOUD_ICON_SLUGS } from "@archlet/shared";
+import { getVariant, getDefaultVariant, CLOUD_ICON_SLUGS, getCloudService } from "@archlet/shared";
 import { usePropertiesPanel } from "../properties/use-properties-panel";
 import { useNodeHealth } from "../health/use-health";
 
@@ -19,14 +19,18 @@ export type BaseNodeProps = {
 };
 
 function VariantBadge({ type, variantId, cloudProvider }: { type: NodeType; variantId?: string; cloudProvider?: CloudProvider }) {
+  // Fallback chain: cloud-services catalog (e.g. "aws-sagemaker") → typed variant → default
+  const cloudService = variantId ? getCloudService(variantId) : undefined;
   const resolvedId = variantId ?? getDefaultVariant(type).id;
   const variant = getVariant(type, resolvedId) ?? getDefaultVariant(type);
 
-  // Resolve icon: per-(variant, cloud) override → cloud default → variant default
+  // If this is a cloud-services catalog entry, use its metadata; else typed variant.
+  const displayLabel = cloudService?.name ?? variant.label;
   const cloud = cloudProvider ?? "self-hosted";
-  const iconSlug = cloud !== "self-hosted"
-    ? (variant.cloudIconSlug?.[cloud] ?? CLOUD_ICON_SLUGS[cloud])
-    : variant.iconSlug;
+  const iconSlug = cloudService?.iconSlug
+    ?? (cloud !== "self-hosted"
+        ? (variant.cloudIconSlug?.[cloud] ?? CLOUD_ICON_SLUGS[cloud])
+        : variant.iconSlug);
 
   return (
     <span className="text-[11px] font-medium tracking-tight text-ink-500 dark:text-cream-200/60 inline-flex items-center gap-1 mt-0.5">
@@ -50,7 +54,7 @@ function VariantBadge({ type, variantId, cloudProvider }: { type: NodeType; vari
           onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
         />
       )}
-      {variant.label}
+      {displayLabel}
     </span>
   );
 }
