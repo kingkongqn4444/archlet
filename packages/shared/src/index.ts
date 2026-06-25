@@ -7,3 +7,4 @@ export * from "./templates";
 export * from "./pricing";
 export * from "./patterns-catalog";
 export * from "./chapters-catalog";
+export * from "./cloud-services-catalog";
