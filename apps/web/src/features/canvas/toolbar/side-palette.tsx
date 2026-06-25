@@ -6,6 +6,7 @@ import {
 import type { NodeType } from "@archlet/shared";
 import { VariantFlyout } from "./variant-flyout";
 import { PatternsGroup } from "@/features/patterns/patterns-library";
+import { LearnGroup } from "@/features/learn/learn-panel";
 
 type PaletteItem = {
   type: NodeType;
@@ -214,6 +215,7 @@ export const SidePalette = React.memo(function SidePalette() {
           </React.Fragment>
         ))}
         <PatternsGroup />
+        <LearnGroup />
       </div>
 
       {flyout && (
