@@ -38,10 +38,24 @@ function load(): ApiKeys {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return { defaultProvider: "openai", defaultModel: DEFAULT_MODELS.openai };
     const parsed = JSON.parse(raw) as ApiKeys;
-    // Migrate deprecated model selections → current default
+    let mutated = false;
+    // Migrate: if defaultProvider has no key, switch to first provider that does.
+    const providers: ProviderName[] = ["anthropic", "openai", "deepseek"];
+    if (!parsed[parsed.defaultProvider]) {
+      const withKey = providers.find((p) => !!parsed[p]);
+      if (withKey && withKey !== parsed.defaultProvider) {
+        parsed.defaultProvider = withKey;
+        parsed.defaultModel = DEFAULT_MODELS[withKey];
+        mutated = true;
+      }
+    }
+    // Migrate: deprecated model selections → current default for active provider.
     const provider = parsed.defaultProvider;
     if (DEPRECATED_MODELS[provider]?.includes(parsed.defaultModel)) {
       parsed.defaultModel = DEFAULT_MODELS[provider];
+      mutated = true;
+    }
+    if (mutated) {
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed)); } catch { /* noop */ }
     }
     return parsed;
