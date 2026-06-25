@@ -85,7 +85,9 @@ function PatternFlyout({
           draggable
           onDragStart={(e) => {
             e.dataTransfer.setData("application/archlet-pattern", p.id);
-            e.dataTransfer.effectAllowed = "copy";
+            // Match canvas onDragOver dropEffect ('move') — Chrome rejects drop
+            // on effectAllowed/dropEffect mismatch.
+            e.dataTransfer.effectAllowed = "move";
           }}
           onClick={() => onDropPattern?.(p.id)}
           className="flex flex-col gap-1 px-2.5 py-2 rounded-xl cursor-grab hover:bg-cream-50 dark:hover:bg-plum-800/50 transition-colors group/item select-none"
