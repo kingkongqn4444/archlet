@@ -73,7 +73,7 @@ const natsConfig = z.object({
 export const QUEUE_VARIANTS: Variant[] = [
   { id: "rabbitmq", label: "RabbitMQ", iconSlug: "rabbitmq", description: "AMQP message broker", configSchema: rabbitmqConfig },
   { id: "kafka", label: "Kafka", iconSlug: "apachekafka", description: "Distributed event stream", configSchema: kafkaConfig },
-  { id: "sqs", label: "Amazon SQS", iconSlug: "amazonsqs", description: "Managed message queue", configSchema: sqsConfig },
+  { id: "sqs", label: "Amazon SQS", iconSlug: "amazonsqs", description: "Managed message queue", configSchema: sqsConfig, availableClouds: ["aws"] },
   { id: "redis-streams", label: "Redis Streams", iconSlug: "redis", description: "Redis log-based queues", configSchema: redisStreamsConfig },
   { id: "nats", label: "NATS", iconSlug: "natsdotio", description: "Cloud-native messaging", configSchema: natsConfig },
 ];

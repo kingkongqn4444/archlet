@@ -77,7 +77,7 @@ const cloudflareLbConfig = z.object({
 export const LOAD_BALANCER_VARIANTS: Variant[] = [
   { id: "nginx", label: "Nginx", iconSlug: "nginx", description: "HTTP proxy + LB", configSchema: nginxConfig },
   { id: "haproxy", label: "HAProxy", iconSlug: "haproxy", description: "TCP/HTTP load balancer", configSchema: haproxyConfig },
-  { id: "aws-alb", label: "AWS ALB", iconSlug: "amazonwebservices", description: "Application load balancer", configSchema: awsAlbConfig },
+  { id: "aws-alb", label: "AWS ALB", iconSlug: "amazonwebservices", description: "Application load balancer", configSchema: awsAlbConfig, availableClouds: ["aws"] },
   { id: "envoy", label: "Envoy", iconSlug: "envoyproxy", description: "Cloud-native proxy", configSchema: envoyConfig },
-  { id: "cloudflare-lb", label: "Cloudflare LB", iconSlug: "cloudflare", description: "Anycast load balancing", configSchema: cloudflareLbConfig },
+  { id: "cloudflare-lb", label: "Cloudflare LB", iconSlug: "cloudflare", description: "Anycast load balancing", configSchema: cloudflareLbConfig, availableClouds: ["cloudflare"] },
 ];

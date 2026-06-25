@@ -10,8 +10,10 @@ import {
   getVariant,
   getDefaultVariant,
   getVariantConfigSchema,
+  CLOUD_PROVIDERS,
+  CLOUD_DISPLAY_NAMES,
 } from "@archlet/shared";
-import type { NodeType } from "@archlet/shared";
+import type { NodeType, CloudProvider } from "@archlet/shared";
 
 type FieldValue = string | number | boolean;
 
@@ -232,6 +234,21 @@ export function PropertiesPanel() {
                 {variant.description}
               </p>
             )}
+          </section>
+        )}
+
+        {variant && (
+          <section className="flex flex-col gap-3">
+            <SectionHeading>Cloud Provider</SectionHeading>
+            <Select
+              value={(config.cloudProvider as string | undefined) ?? "self-hosted"}
+              onChange={(e) => handleConfigChange("cloudProvider", e.target.value)}
+              className="h-8 text-[12px]"
+            >
+              {(variant.availableClouds ?? CLOUD_PROVIDERS).map((cp) => (
+                <option key={cp} value={cp}>{CLOUD_DISPLAY_NAMES[cp as CloudProvider]}</option>
+              ))}
+            </Select>
           </section>
         )}
 

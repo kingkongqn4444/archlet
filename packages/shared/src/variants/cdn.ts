@@ -62,8 +62,8 @@ const akamaiConfig = z.object({
 });
 
 export const CDN_VARIANTS: Variant[] = [
-  { id: "cloudflare", label: "Cloudflare CDN", iconSlug: "cloudflare", description: "Global CDN + DDoS", configSchema: cloudflareConfig },
-  { id: "cloudfront", label: "CloudFront", iconSlug: "amazonwebservices", description: "AWS CDN", configSchema: cloudfrontConfig },
+  { id: "cloudflare", label: "Cloudflare CDN", iconSlug: "cloudflare", description: "Global CDN + DDoS", configSchema: cloudflareConfig, availableClouds: ["cloudflare"] },
+  { id: "cloudfront", label: "CloudFront", iconSlug: "amazonwebservices", description: "AWS CDN", configSchema: cloudfrontConfig, availableClouds: ["aws"] },
   { id: "fastly", label: "Fastly", iconSlug: "fastly", description: "Edge cloud platform", configSchema: fastlyConfig },
   { id: "akamai", label: "Akamai", iconSlug: "akamai", description: "Enterprise CDN", configSchema: akamaiConfig },
 ];

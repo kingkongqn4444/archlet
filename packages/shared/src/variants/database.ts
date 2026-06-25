@@ -96,7 +96,7 @@ export const DATABASE_VARIANTS: Variant[] = [
   { id: "postgres", label: "PostgreSQL", iconSlug: "postgresql", description: "Relational database", configSchema: postgresConfig },
   { id: "mysql", label: "MySQL", iconSlug: "mysql", description: "Relational database", configSchema: mysqlConfig },
   { id: "mongodb", label: "MongoDB", iconSlug: "mongodb", description: "Document database", configSchema: mongodbConfig },
-  { id: "dynamodb", label: "DynamoDB", iconSlug: "amazondynamodb", description: "AWS NoSQL key-value", configSchema: dynamodbConfig },
+  { id: "dynamodb", label: "DynamoDB", iconSlug: "amazondynamodb", description: "AWS NoSQL key-value", configSchema: dynamodbConfig, availableClouds: ["aws"] },
   { id: "cassandra", label: "Cassandra", iconSlug: "apachecassandra", description: "Wide-column store", configSchema: cassandraConfig },
-  { id: "sqlite", label: "SQLite", iconSlug: "sqlite", description: "Embedded SQL database", configSchema: sqliteConfig },
+  { id: "sqlite", label: "SQLite", iconSlug: "sqlite", description: "Embedded SQL database", configSchema: sqliteConfig, availableClouds: ["self-hosted"] },
 ];

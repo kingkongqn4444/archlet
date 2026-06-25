@@ -96,6 +96,6 @@ export const WORKER_VARIANTS: Variant[] = [
   { id: "python", label: "Python", iconSlug: "python", description: "Python worker service", configSchema: pythonConfig },
   { id: "go", label: "Go", iconSlug: "go", description: "Go worker service", configSchema: goConfig },
   { id: "rust", label: "Rust", iconSlug: "rust", description: "Rust worker service", configSchema: rustConfig },
-  { id: "aws-lambda", label: "AWS Lambda", iconSlug: "awslambda", description: "FaaS / serverless", configSchema: awsLambdaConfig },
-  { id: "cloudflare-workers", label: "CF Workers", iconSlug: "cloudflareworkers", description: "Edge serverless", configSchema: cfWorkersConfig },
+  { id: "aws-lambda", label: "AWS Lambda", iconSlug: "awslambda", description: "FaaS / serverless", configSchema: awsLambdaConfig, availableClouds: ["aws"] },
+  { id: "cloudflare-workers", label: "CF Workers", iconSlug: "cloudflareworkers", description: "Edge serverless", configSchema: cfWorkersConfig, availableClouds: ["cloudflare"] },
 ];

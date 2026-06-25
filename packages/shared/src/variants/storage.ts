@@ -69,9 +69,9 @@ const localDiskConfig = z.object({
 });
 
 export const STORAGE_VARIANTS: Variant[] = [
-  { id: "s3", label: "Amazon S3", iconSlug: "amazons3", description: "Object storage", configSchema: s3Config },
-  { id: "r2", label: "Cloudflare R2", iconSlug: "cloudflare", description: "S3-compatible storage", configSchema: r2Config },
-  { id: "gcs", label: "Google Cloud Storage", iconSlug: "googlecloud", description: "GCP object storage", configSchema: gcsConfig },
-  { id: "azure-blob", label: "Azure Blob", iconSlug: "microsoftazure", description: "Azure object storage", configSchema: azureBlobConfig },
-  { id: "local-disk", label: "Local Disk", description: "Filesystem storage", configSchema: localDiskConfig },
+  { id: "s3", label: "Amazon S3", iconSlug: "amazons3", description: "Object storage", configSchema: s3Config, availableClouds: ["aws"] },
+  { id: "r2", label: "Cloudflare R2", iconSlug: "cloudflare", description: "S3-compatible storage", configSchema: r2Config, availableClouds: ["cloudflare"] },
+  { id: "gcs", label: "Google Cloud Storage", iconSlug: "googlecloud", description: "GCP object storage", configSchema: gcsConfig, availableClouds: ["gcp"] },
+  { id: "azure-blob", label: "Azure Blob", iconSlug: "microsoftazure", description: "Azure object storage", configSchema: azureBlobConfig, availableClouds: ["azure"] },
+  { id: "local-disk", label: "Local Disk", description: "Filesystem storage", configSchema: localDiskConfig, availableClouds: ["self-hosted"] },
 ];

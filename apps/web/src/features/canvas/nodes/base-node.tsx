@@ -4,8 +4,8 @@ import { Copy, Trash2, Settings } from "lucide-react";
 import { useDiagramStore, type RFNode } from "../store/diagram-store";
 import { useSimStore } from "@/features/simulate/sim-store";
 import { useReviewStore } from "@/features/review/review-store";
-import type { DiagramNode, NodeType } from "@archlet/shared";
-import { getVariant, getDefaultVariant } from "@archlet/shared";
+import type { DiagramNode, NodeType, CloudProvider } from "@archlet/shared";
+import { getVariant, getDefaultVariant, CLOUD_ICON_SLUGS } from "@archlet/shared";
 import { usePropertiesPanel } from "../properties/use-properties-panel";
 import { useNodeHealth } from "../health/use-health";
 
@@ -18,15 +18,21 @@ export type BaseNodeProps = {
   accentClass: string;
 };
 
-function VariantBadge({ type, variantId }: { type: NodeType; variantId?: string }) {
+function VariantBadge({ type, variantId, cloudProvider }: { type: NodeType; variantId?: string; cloudProvider?: CloudProvider }) {
   const resolvedId = variantId ?? getDefaultVariant(type).id;
   const variant = getVariant(type, resolvedId) ?? getDefaultVariant(type);
 
+  // Resolve icon: per-(variant, cloud) override → cloud default → variant default
+  const cloud = cloudProvider ?? "self-hosted";
+  const iconSlug = cloud !== "self-hosted"
+    ? (variant.cloudIconSlug?.[cloud] ?? CLOUD_ICON_SLUGS[cloud])
+    : variant.iconSlug;
+
   return (
     <span className="text-[11px] font-medium tracking-tight text-ink-500 dark:text-cream-200/60 inline-flex items-center gap-1 mt-0.5">
-      {variant.iconSlug && (
+      {iconSlug && (
         <img
-          src={`https://cdn.simpleicons.org/${variant.iconSlug}/6b7280`}
+          src={`https://cdn.simpleicons.org/${iconSlug}/6b7280`}
           alt=""
           width={11}
           height={11}
@@ -34,9 +40,9 @@ function VariantBadge({ type, variantId }: { type: NodeType; variantId?: string 
           onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
         />
       )}
-      {variant.iconSlug && (
+      {iconSlug && (
         <img
-          src={`https://cdn.simpleicons.org/${variant.iconSlug}/a1a1aa`}
+          src={`https://cdn.simpleicons.org/${iconSlug}/a1a1aa`}
           alt=""
           width={11}
           height={11}
@@ -219,9 +225,12 @@ export const BaseNode = React.memo(function BaseNode({
             )}
             {nodeType && (() => {
               const vid = data.variant as string | undefined;
-              return vid !== undefined
-                ? <VariantBadge type={nodeType} variantId={vid} />
-                : <VariantBadge type={nodeType} />;
+              const cfg = data.config as { cloudProvider?: CloudProvider } | undefined;
+              const cloud = cfg?.cloudProvider;
+              const badgeProps: { type: NodeType; variantId?: string; cloudProvider?: CloudProvider } = { type: nodeType };
+              if (vid !== undefined) badgeProps.variantId = vid;
+              if (cloud !== undefined) badgeProps.cloudProvider = cloud;
+              return <VariantBadge {...badgeProps} />;
             })()}
           </div>
         </div>
