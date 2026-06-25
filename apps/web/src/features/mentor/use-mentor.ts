@@ -149,15 +149,15 @@ async function* streamAnthropicText(opts: {
 const PROVIDER_CONFIG = {
   openai: {
     baseUrl: "https://api.openai.com/v1/chat/completions",
-    models: ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo"],
+    models: ["gpt-5", "gpt-5-mini", "gpt-5-nano", "o3", "o3-mini", "gpt-4o", "gpt-4o-mini", "gpt-4-turbo"],
   },
   anthropic: {
     baseUrl: "",
-    models: ["claude-3-5-sonnet-20241022", "claude-3-5-haiku-20241022"],
+    models: ["claude-opus-4-7", "claude-sonnet-4-6", "claude-haiku-4-5-20251001", "claude-3-7-sonnet-20250219", "claude-3-5-sonnet-20241022", "claude-3-5-haiku-20241022"],
   },
   deepseek: {
     baseUrl: "https://api.deepseek.com/v1/chat/completions",
-    models: ["deepseek-chat"],
+    models: ["deepseek-chat", "deepseek-reasoner", "deepseek-v3", "deepseek-r1"],
   },
 } as const;
 

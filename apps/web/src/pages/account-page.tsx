@@ -14,15 +14,54 @@ import { DangerZoneTab } from "@/features/account/danger-zone-tab";
 // ── API Keys tab (extracted from original account-page) ──────────────────────
 
 const PROVIDER_MODELS: Record<ProviderName, string[]> = {
-  openai: ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo", "gpt-3.5-turbo"],
-  anthropic: ["claude-3-5-sonnet-20241022", "claude-3-5-haiku-20241022", "claude-3-opus-20240229"],
-  deepseek: ["deepseek-chat", "deepseek-reasoner"],
+  // Latest as of 2026-06. First entry = recommended default per provider.
+  openai: [
+    "gpt-5",
+    "gpt-5-mini",
+    "gpt-5-nano",
+    "o3",
+    "o3-mini",
+    "gpt-4o",
+    "gpt-4o-mini",
+    "gpt-4-turbo",
+    "gpt-3.5-turbo",
+  ],
+  anthropic: [
+    "claude-opus-4-7",
+    "claude-sonnet-4-6",
+    "claude-haiku-4-5-20251001",
+    "claude-3-7-sonnet-20250219",
+    "claude-3-5-sonnet-20241022",
+    "claude-3-5-haiku-20241022",
+    "claude-3-opus-20240229",
+  ],
+  deepseek: [
+    "deepseek-chat",
+    "deepseek-reasoner",
+    "deepseek-v3",
+    "deepseek-r1",
+  ],
 };
 
-const PROVIDER_LABELS: Record<ProviderName, { name: string; docsUrl: string; placeholder: string }> = {
-  openai: { name: "OpenAI", docsUrl: "https://platform.openai.com/api-keys", placeholder: "sk-..." },
-  anthropic: { name: "Anthropic", docsUrl: "https://console.anthropic.com/settings/keys", placeholder: "sk-ant-..." },
-  deepseek: { name: "DeepSeek", docsUrl: "https://platform.deepseek.com/api_keys", placeholder: "sk-..." },
+const PROVIDER_LABELS: Record<
+  ProviderName,
+  { name: string; docsUrl: string; placeholder: string }
+> = {
+  openai: {
+    name: "OpenAI",
+    docsUrl: "https://platform.openai.com/api-keys",
+    placeholder: "sk-...",
+  },
+  anthropic: {
+    name: "Anthropic",
+    docsUrl: "https://console.anthropic.com/settings/keys",
+    placeholder: "sk-ant-...",
+  },
+  deepseek: {
+    name: "DeepSeek",
+    docsUrl: "https://platform.deepseek.com/api_keys",
+    placeholder: "sk-...",
+  },
 };
 
 function ProviderKeyField({
@@ -39,15 +78,29 @@ function ProviderKeyField({
   const meta = PROVIDER_LABELS[provider];
 
   async function testConnection() {
-    if (!value.trim()) { toast.error("Enter a key first"); return; }
+    if (!value.trim()) {
+      toast.error("Enter a key first");
+      return;
+    }
     setTesting(true);
     try {
       const endpoints: Record<ProviderName, () => Promise<Response>> = {
-        openai: () => fetch("https://api.openai.com/v1/models", { headers: { Authorization: `Bearer ${value}` } }),
-        anthropic: () => fetch("https://api.anthropic.com/v1/models", {
-          headers: { "x-api-key": value, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
-        }),
-        deepseek: () => fetch("https://api.deepseek.com/models", { headers: { Authorization: `Bearer ${value}` } }),
+        openai: () =>
+          fetch("https://api.openai.com/v1/models", {
+            headers: { Authorization: `Bearer ${value}` },
+          }),
+        anthropic: () =>
+          fetch("https://api.anthropic.com/v1/models", {
+            headers: {
+              "x-api-key": value,
+              "anthropic-version": "2023-06-01",
+              "anthropic-dangerous-direct-browser-access": "true",
+            },
+          }),
+        deepseek: () =>
+          fetch("https://api.deepseek.com/models", {
+            headers: { Authorization: `Bearer ${value}` },
+          }),
       };
       const res = await endpoints[provider]();
       if (res.ok) toast.success(`${meta.name} key is valid`);
@@ -63,8 +116,15 @@ function ProviderKeyField({
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-semibold text-ink-700 dark:text-cream-100">{meta.name}</label>
-        <a href={meta.docsUrl} target="_blank" rel="noreferrer" className="text-xs text-plum-500 hover:text-plum-700 dark:hover:text-plum-300 font-medium">
+        <label className="text-sm font-semibold text-ink-700 dark:text-cream-100">
+          {meta.name}
+        </label>
+        <a
+          href={meta.docsUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="text-xs text-plum-500 hover:text-plum-700 dark:hover:text-plum-300 font-medium"
+        >
           Get key →
         </a>
       </div>
@@ -86,7 +146,13 @@ function ProviderKeyField({
             {visible ? <EyeOff size={14} /> : <Eye size={14} />}
           </button>
         </div>
-        <Button type="button" variant="outline" className="shrink-0 text-xs px-4" onClick={testConnection} disabled={testing || !value.trim()}>
+        <Button
+          type="button"
+          variant="outline"
+          className="shrink-0 text-xs px-4"
+          onClick={testConnection}
+          disabled={testing || !value.trim()}
+        >
           {testing ? "Testing…" : "Test"}
         </Button>
       </div>
@@ -99,7 +165,9 @@ function ApiKeysTab() {
   const [openaiKey, setOpenaiKey] = useState(keys.openai ?? "");
   const [anthropicKey, setAnthropicKey] = useState(keys.anthropic ?? "");
   const [deepseekKey, setDeepseekKey] = useState(keys.deepseek ?? "");
-  const [defaultProvider, setDefaultProvider] = useState<ProviderName>(keys.defaultProvider);
+  const [defaultProvider, setDefaultProvider] = useState<ProviderName>(
+    keys.defaultProvider,
+  );
   const [defaultModel, setDefaultModel] = useState(keys.defaultModel);
 
   function handleProviderChange(p: ProviderName) {
@@ -122,35 +190,66 @@ function ApiKeysTab() {
       <div className="flex gap-2.5 items-start rounded-2xl border border-amber-300 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-500/40 px-4 py-3 text-xs text-amber-700 dark:text-amber-300">
         <AlertTriangle size={14} className="shrink-0 mt-0.5" />
         <span>
-          Keys are stored in browser <strong>localStorage</strong> as plain text.
-          Treat as dev/personal use only — do not use production-tier keys.
+          Keys are stored in browser <strong>localStorage</strong> as plain
+          text. Treat as dev/personal use only — do not use production-tier
+          keys.
         </span>
       </div>
       <div className="bg-cream-100 dark:bg-plum-900/40 rounded-2xl border border-cream-200 dark:border-plum-700/40 p-6 flex flex-col gap-6">
-        <ProviderKeyField provider="openai" value={openaiKey} onChange={setOpenaiKey} />
-        <ProviderKeyField provider="anthropic" value={anthropicKey} onChange={setAnthropicKey} />
-        <ProviderKeyField provider="deepseek" value={deepseekKey} onChange={setDeepseekKey} />
+        <ProviderKeyField
+          provider="openai"
+          value={openaiKey}
+          onChange={setOpenaiKey}
+        />
+        <ProviderKeyField
+          provider="anthropic"
+          value={anthropicKey}
+          onChange={setAnthropicKey}
+        />
+        <ProviderKeyField
+          provider="deepseek"
+          value={deepseekKey}
+          onChange={setDeepseekKey}
+        />
       </div>
       <div className="bg-cream-100 dark:bg-plum-900/40 rounded-2xl border border-cream-200 dark:border-plum-700/40 p-6 flex flex-col gap-4">
-        <h2 className="text-sm font-bold text-ink-900 dark:text-cream-50 tracking-tight">Defaults</h2>
+        <h2 className="text-sm font-bold text-ink-900 dark:text-cream-50 tracking-tight">
+          Defaults
+        </h2>
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-semibold text-ink-700 dark:text-cream-100">Default provider</label>
-          <Select value={defaultProvider} onChange={(e) => handleProviderChange(e.target.value as ProviderName)}>
+          <label className="text-sm font-semibold text-ink-700 dark:text-cream-100">
+            Default provider
+          </label>
+          <Select
+            value={defaultProvider}
+            onChange={(e) =>
+              handleProviderChange(e.target.value as ProviderName)
+            }
+          >
             <option value="openai">OpenAI</option>
             <option value="anthropic">Anthropic</option>
             <option value="deepseek">DeepSeek</option>
           </Select>
         </div>
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-semibold text-ink-700 dark:text-cream-100">Default model</label>
-          <Select value={defaultModel} onChange={(e) => setDefaultModel(e.target.value)}>
+          <label className="text-sm font-semibold text-ink-700 dark:text-cream-100">
+            Default model
+          </label>
+          <Select
+            value={defaultModel}
+            onChange={(e) => setDefaultModel(e.target.value)}
+          >
             {PROVIDER_MODELS[defaultProvider].map((m) => (
-              <option key={m} value={m}>{m}</option>
+              <option key={m} value={m}>
+                {m}
+              </option>
             ))}
           </Select>
         </div>
       </div>
-      <Button type="submit" className="self-end px-7">Save settings</Button>
+      <Button type="submit" className="self-end px-7">
+        Save settings
+      </Button>
     </form>
   );
 }
@@ -170,7 +269,9 @@ export function AccountPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get("tab") as TabId | null;
-  const activeTab: TabId = TABS.some((t) => t.id === tabParam) ? (tabParam as TabId) : "profile";
+  const activeTab: TabId = TABS.some((t) => t.id === tabParam)
+    ? (tabParam as TabId)
+    : "profile";
 
   function selectTab(id: TabId) {
     setSearchParams({ tab: id });
@@ -179,7 +280,10 @@ export function AccountPage() {
   return (
     <div className="min-h-screen bg-cream-50 dark:bg-plum-950 flex flex-col">
       <header className="h-11 flex items-center justify-between px-4 border-b border-cream-200 dark:border-plum-700/30 bg-white/80 dark:bg-plum-900/40 backdrop-blur shrink-0">
-        <Link to="/" className="text-sm font-bold tracking-tight text-ink-900 dark:text-cream-50">
+        <Link
+          to="/"
+          className="text-sm font-bold tracking-tight text-ink-900 dark:text-cream-50"
+        >
           archlet<span className="text-plum-500">.</span>
         </Link>
         <button

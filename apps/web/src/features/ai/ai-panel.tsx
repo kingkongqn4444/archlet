@@ -10,9 +10,33 @@ import type { Level } from "@archlet/shared";
 import { cn } from "@/lib/utils";
 
 const PROVIDER_MODELS: Record<ProviderName, string[]> = {
-  openai: ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo", "gpt-3.5-turbo"],
-  anthropic: ["claude-3-5-sonnet-20241022", "claude-3-5-haiku-20241022", "claude-3-opus-20240229"],
-  deepseek: ["deepseek-chat", "deepseek-reasoner"],
+  // Latest as of 2026-06. First entry = recommended default per provider.
+  openai: [
+    "gpt-5",
+    "gpt-5-mini",
+    "gpt-5-nano",
+    "o3",
+    "o3-mini",
+    "gpt-4o",
+    "gpt-4o-mini",
+    "gpt-4-turbo",
+    "gpt-3.5-turbo",
+  ],
+  anthropic: [
+    "claude-opus-4-7",
+    "claude-sonnet-4-6",
+    "claude-haiku-4-5-20251001",
+    "claude-3-7-sonnet-20250219",
+    "claude-3-5-sonnet-20241022",
+    "claude-3-5-haiku-20241022",
+    "claude-3-opus-20240229",
+  ],
+  deepseek: [
+    "deepseek-chat",
+    "deepseek-reasoner",
+    "deepseek-v3",
+    "deepseek-r1",
+  ],
 };
 
 const LEVEL_LABELS: Record<Level, string> = {

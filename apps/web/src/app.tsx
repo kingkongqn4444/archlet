@@ -13,19 +13,19 @@ import { SignupPage } from "@/pages/signup-page";
 
 // Lazy-loaded: heavy routes
 const WorkspacePage = lazy(() =>
-  import("@/pages/workspace-page").then((m) => ({ default: m.WorkspacePage }))
+  import("@/pages/workspace-page").then((m) => ({ default: m.WorkspacePage })),
 );
 const CanvasPage = lazy(() =>
-  import("@/pages/canvas-page").then((m) => ({ default: m.CanvasPage }))
+  import("@/pages/canvas-page").then((m) => ({ default: m.CanvasPage })),
 );
 const AccountPage = lazy(() =>
-  import("@/pages/account-page").then((m) => ({ default: m.AccountPage }))
+  import("@/pages/account-page").then((m) => ({ default: m.AccountPage })),
 );
 const SharedPage = lazy(() =>
-  import("@/pages/shared-page").then((m) => ({ default: m.SharedPage }))
+  import("@/pages/shared-page").then((m) => ({ default: m.SharedPage })),
 );
 const EmbedPage = lazy(() =>
-  import("@/pages/embed-page").then((m) => ({ default: m.EmbedPage }))
+  import("@/pages/embed-page").then((m) => ({ default: m.EmbedPage })),
 );
 
 function PageLoader() {

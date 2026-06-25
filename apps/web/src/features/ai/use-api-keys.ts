@@ -13,16 +13,38 @@ export interface ApiKeys {
 const STORAGE_KEY = "archlet_keys_v1";
 
 const DEFAULT_MODELS: Record<ProviderName, string> = {
-  openai: "gpt-4o",
-  anthropic: "claude-3-5-sonnet-20241022",
-  deepseek: "deepseek-chat",
+  openai: "gpt-5",
+  anthropic: "claude-sonnet-4-6",
+  deepseek: "deepseek-v3",
+};
+
+// Models that are deprecated upstream (Anthropic returns 404). When loaded,
+// auto-upgrade to current default for that provider so users with stale
+// localStorage aren't stuck.
+const DEPRECATED_MODELS: Record<ProviderName, readonly string[]> = {
+  openai: ["gpt-3.5-turbo"],
+  anthropic: [
+    "claude-3-5-sonnet-20241022",
+    "claude-3-5-haiku-20241022",
+    "claude-3-opus-20240229",
+    "claude-3-sonnet-20240229",
+    "claude-3-haiku-20240307",
+  ],
+  deepseek: [],
 };
 
 function load(): ApiKeys {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return { defaultProvider: "openai", defaultModel: DEFAULT_MODELS.openai };
-    return JSON.parse(raw) as ApiKeys;
+    const parsed = JSON.parse(raw) as ApiKeys;
+    // Migrate deprecated model selections → current default
+    const provider = parsed.defaultProvider;
+    if (DEPRECATED_MODELS[provider]?.includes(parsed.defaultModel)) {
+      parsed.defaultModel = DEFAULT_MODELS[provider];
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed)); } catch { /* noop */ }
+    }
+    return parsed;
   } catch {
     return { defaultProvider: "openai", defaultModel: DEFAULT_MODELS.openai };
   }
