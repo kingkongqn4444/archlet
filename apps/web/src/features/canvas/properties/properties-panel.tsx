@@ -12,8 +12,10 @@ import {
   getVariantConfigSchema,
   CLOUD_PROVIDERS,
   CLOUD_DISPLAY_NAMES,
+  getCloudService,
 } from "@archlet/shared";
 import type { NodeType, CloudProvider } from "@archlet/shared";
+import { ExternalLink } from "lucide-react";
 
 type FieldValue = string | number | boolean;
 
@@ -237,7 +239,35 @@ export function PropertiesPanel() {
           </section>
         )}
 
-        {variant && (
+        {variantId && getCloudService(variantId) && (() => {
+          const svc = getCloudService(variantId)!;
+          const slug = svc.iconSlug ?? "amazonwebservices";
+          return (
+            <section className="flex flex-col gap-2 p-3 rounded-xl bg-sky-50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-700/30">
+              <div className="flex items-center gap-2">
+                <img src={`https://cdn.simpleicons.org/${slug}/0284c7`} alt="" width={20} height={20} className="dark:hidden shrink-0" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                <img src={`https://cdn.simpleicons.org/${slug}/7dd3fc`} alt="" width={20} height={20} className="hidden dark:inline shrink-0" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                <div className="flex flex-col min-w-0 flex-1">
+                  <span className="text-[12.5px] font-bold text-ink-900 dark:text-cream-50">{svc.name}</span>
+                  <div className="flex items-center gap-1.5 text-[10px] text-ink-500 dark:text-cream-200/55">
+                    <span className="uppercase font-bold tracking-wide">{svc.cloud}</span>
+                    <span>·</span>
+                    <span>{svc.category}</span>
+                  </div>
+                </div>
+                <a href={svc.docsUrl} target="_blank" rel="noreferrer noopener" className="p-1.5 rounded-md text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-800/40" title="Open docs">
+                  <ExternalLink size={14} />
+                </a>
+              </div>
+              <p className="text-[11px] text-ink-600 dark:text-cream-200/60 leading-snug">{svc.description}</p>
+              <div className="text-[10px] text-ink-400 dark:text-cream-200/40 italic">
+                Reference node — not included in capacity simulation.
+              </div>
+            </section>
+          );
+        })()}
+
+        {variant && !getCloudService(variantId ?? "") && (
           <section className="flex flex-col gap-3">
             <SectionHeading>Cloud Provider</SectionHeading>
             <Select
