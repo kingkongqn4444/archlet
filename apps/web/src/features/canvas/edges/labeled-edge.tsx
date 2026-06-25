@@ -3,25 +3,20 @@ import {
   BaseEdge,
   EdgeLabelRenderer,
   getBezierPath,
+  useInternalNode,
   type EdgeProps,
   type EdgeTypes,
 } from "@xyflow/react";
 import { useDiagramStore, type RFEdge } from "../store/diagram-store";
 import { useEdgeHealth } from "../health/use-health";
+import { getFloatingEdgeParams } from "./floating-edge-utils";
 
 export const LabeledEdge = React.memo(function LabeledEdge(
   props: EdgeProps<RFEdge>
 ) {
-  const { id, source, target, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, data, selected } = props;
-  const [edgePath, labelX, labelY] = getBezierPath({
-    sourceX,
-    sourceY,
-    targetX,
-    targetY,
-    sourcePosition,
-    targetPosition,
-    curvature: 0.35,
-  });
+  const { id, source, target, data, selected } = props;
+  const sourceNode = useInternalNode(source);
+  const targetNode = useInternalNode(target);
   const [editing, setEditing] = useState(false);
   const [label, setLabel] = useState(String(data?.label ?? ""));
   const updateEdge = useDiagramStore((s) => s.updateEdge);
@@ -31,6 +26,22 @@ export const LabeledEdge = React.memo(function LabeledEdge(
     setEditing(false);
     updateEdge(id, { label });
   }, [id, label, updateEdge]);
+
+  // Floating edges: recompute endpoints from node centers so the edge always
+  // attaches to the closest border (top/right/bottom/left) instead of being
+  // pinned to whichever handle xyflow picked first.
+  if (!sourceNode || !targetNode) return null;
+  const { sx, sy, tx, ty, sourcePos, targetPos } = getFloatingEdgeParams(sourceNode, targetNode);
+
+  const [edgePath, labelX, labelY] = getBezierPath({
+    sourceX: sx,
+    sourceY: sy,
+    targetX: tx,
+    targetY: ty,
+    sourcePosition: sourcePos,
+    targetPosition: targetPos,
+    curvature: 0.35,
+  });
 
   // Health-driven stroke; selected plum overrides visual but keeps health class
   const stroke = selected
