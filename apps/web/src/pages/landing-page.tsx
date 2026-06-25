@@ -214,7 +214,7 @@ export function LandingPage() {
               Try it now
             </Link>
             <a
-              href="https://github.com/YOUR_USERNAME/archlet"
+              href="https://github.com/kingkongqn4444/archlet"
               target="_blank"
               rel="noreferrer noopener"
               className="flex-1 text-center h-12 px-8 leading-[3rem] rounded-full bg-white dark:bg-plum-800 border border-plum-300 dark:border-plum-700 text-ink-900 dark:text-cream-50 font-semibold tracking-tight hover:bg-cream-50 dark:hover:bg-plum-700 transition-all duration-150"
