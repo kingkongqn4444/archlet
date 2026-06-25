@@ -208,3 +208,28 @@ html, body {
 /* Selection */
 ::selection { background: rgba(108,43,217,0.22); color: #1A0E22; }
 .dark ::selection { background: rgba(252,179,37,0.35); color: #FBF7EC; }
+
+/* Chapter Viewer markdown prose */
+.archlet-prose { color: #1A0E22; font-size: 14px; line-height: 1.65; }
+.dark .archlet-prose { color: #E8DDF2; }
+.archlet-prose h1 { font-size: 24px; font-weight: 700; margin: 1.5em 0 0.5em; }
+.archlet-prose h2 { font-size: 20px; font-weight: 700; margin: 1.4em 0 0.5em; border-bottom: 1px solid rgba(108,43,217,0.15); padding-bottom: 0.3em; }
+.archlet-prose h3 { font-size: 17px; font-weight: 600; margin: 1.2em 0 0.4em; }
+.archlet-prose h4 { font-size: 15px; font-weight: 600; margin: 1em 0 0.3em; }
+.archlet-prose p { margin: 0.75em 0; }
+.archlet-prose a { color: #6C2BD9; text-decoration: underline; }
+.dark .archlet-prose a { color: #B294D1; }
+.archlet-prose ul, .archlet-prose ol { padding-left: 1.6em; margin: 0.6em 0; }
+.archlet-prose li { margin: 0.25em 0; }
+.archlet-prose code { background: rgba(108,43,217,0.08); padding: 0.1em 0.35em; border-radius: 4px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.88em; }
+.dark .archlet-prose code { background: rgba(178,148,209,0.15); }
+.archlet-prose pre { background: rgba(0,0,0,0.04); padding: 1em; border-radius: 8px; overflow-x: auto; margin: 1em 0; font-size: 12.5px; }
+.dark .archlet-prose pre { background: rgba(255,255,255,0.05); }
+.archlet-prose pre code { background: transparent; padding: 0; font-size: 12.5px; }
+.archlet-prose img { max-width: 100%; border-radius: 6px; margin: 1em 0; border: 1px solid rgba(108,43,217,0.1); }
+.archlet-prose blockquote { border-left: 3px solid #6C2BD9; padding-left: 1em; color: #6C5F73; margin: 1em 0; font-style: italic; }
+.dark .archlet-prose blockquote { color: #B0A5BD; }
+.archlet-prose table { border-collapse: collapse; margin: 1em 0; font-size: 13px; }
+.archlet-prose th, .archlet-prose td { border: 1px solid rgba(108,43,217,0.15); padding: 0.45em 0.75em; text-align: left; }
+.archlet-prose th { background: rgba(108,43,217,0.06); font-weight: 600; }
+.archlet-prose hr { border: none; border-top: 1px solid rgba(108,43,217,0.15); margin: 1.5em 0; }

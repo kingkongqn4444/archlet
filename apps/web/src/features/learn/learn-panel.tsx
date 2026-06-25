@@ -1,19 +1,19 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { BookOpen, ExternalLink } from "lucide-react";
-import { CHAPTERS_CATALOG, chapterHtmlUrl, type Chapter } from "@archlet/shared";
+import { BookOpen } from "lucide-react";
+import { CHAPTERS_CATALOG, type Chapter } from "@archlet/shared";
+import { ChapterViewer } from "./chapter-viewer";
 
 // Side-palette mounted group: 1 tile (BookOpen) → hover opens flyout listing
-// all 28 chapters from liquidslr/system-design-notes. Click chapter → open
-// GitHub README in new tab (no in-app markdown viewer in Phase 1 framework).
+// all 28 chapters from liquidslr/system-design-notes. Click chapter → opens
+// in-app ChapterViewer drawer (fetches raw markdown, renders via react-markdown).
 
-function ChapterRow({ chapter }: { chapter: Chapter }) {
+function ChapterRow({ chapter, onOpen }: { chapter: Chapter; onOpen: (c: Chapter) => void }) {
   return (
-    <a
-      href={chapterHtmlUrl(chapter)}
-      target="_blank"
-      rel="noreferrer noopener"
-      className="group flex items-start gap-2 p-2.5 rounded-lg hover:bg-cream-100 dark:hover:bg-plum-800/50 transition-colors"
+    <button
+      type="button"
+      onClick={() => onOpen(chapter)}
+      className="group flex items-start gap-2 p-2.5 rounded-lg hover:bg-cream-100 dark:hover:bg-plum-800/50 transition-colors w-full text-left"
     >
       <span className="shrink-0 mt-0.5 text-[10px] font-mono font-semibold text-ink-400 dark:text-cream-200/40 w-6">
         {String(chapter.number).padStart(2, "0")}
@@ -23,7 +23,6 @@ function ChapterRow({ chapter }: { chapter: Chapter }) {
           <span className="text-[12px] font-semibold text-ink-900 dark:text-cream-50 truncate">
             {chapter.title}
           </span>
-          <ExternalLink size={10} className="text-ink-400 dark:text-cream-200/40 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
         </div>
         <p className="text-[11px] text-ink-500 dark:text-cream-200/55 leading-snug line-clamp-2 mt-0.5">
           {chapter.summary}
@@ -38,14 +37,15 @@ function ChapterRow({ chapter }: { chapter: Chapter }) {
           </div>
         )}
       </div>
-    </a>
+    </button>
   );
 }
 
 function ChapterFlyout({
   anchorTop,
   anchorLeft,
-}: { anchorTop: number; anchorLeft: number }) {
+  onOpen,
+}: { anchorTop: number; anchorLeft: number; onOpen: (c: Chapter) => void }) {
   const [hoverPos, setHoverPos] = useState<{ top: number; left: number }>({ top: anchorTop, left: anchorLeft });
 
   useEffect(() => {
@@ -71,7 +71,7 @@ function ChapterFlyout({
       </div>
       <div className="overflow-y-auto py-1 px-1">
         {CHAPTERS_CATALOG.map((ch) => (
-          <ChapterRow key={ch.id} chapter={ch} />
+          <ChapterRow key={ch.id} chapter={ch} onOpen={onOpen} />
         ))}
       </div>
       <div className="px-4 py-2 border-t border-cream-200 dark:border-plum-700/40 text-[10px] text-ink-400 dark:text-cream-200/40">
@@ -85,10 +85,16 @@ function ChapterFlyout({
 
 export function LearnGroup() {
   const [flyout, setFlyout] = useState<{ top: number; left: number } | null>(null);
+  const [activeChapter, setActiveChapter] = useState<Chapter | null>(null);
   const flyoutHoveredRef = useRef(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tileRef = useRef<HTMLDivElement>(null);
   const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleOpenChapter = useCallback((c: Chapter) => {
+    setActiveChapter(c);
+    setFlyout(null); // close flyout when opening viewer
+  }, []);
 
   const scheduleClose = useCallback(() => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -155,9 +161,10 @@ export function LearnGroup() {
           onMouseEnter={() => { flyoutHoveredRef.current = true; cancelClose(); }}
           onMouseLeave={() => { flyoutHoveredRef.current = false; scheduleClose(); }}
         >
-          <ChapterFlyout anchorTop={flyout.top} anchorLeft={flyout.left} />
+          <ChapterFlyout anchorTop={flyout.top} anchorLeft={flyout.left} onOpen={handleOpenChapter} />
         </div>
       )}
+      <ChapterViewer chapter={activeChapter} onClose={() => setActiveChapter(null)} />
     </>
   );
 }
