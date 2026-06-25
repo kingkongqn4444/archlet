@@ -32,11 +32,28 @@ function FieldRow({ label, children }: { label: string; children: React.ReactNod
 }
 
 export function VariantConfigForm({ schema, values, onChange }: Props) {
-  const shape = schema.shape as Record<string, z.ZodTypeAny>;
+  // Cloud-aware discriminated union: pick the branch matching current cloudProvider,
+  // then render its fields. Common fields (present in every branch) preserve
+  // when switching cloud. Zod v4: internals via _zod.def.
+  let activeShape: Record<string, z.ZodTypeAny>;
+  const def = (schema as { _zod?: { def?: { type?: string; discriminator?: string; options?: z.ZodObject<z.ZodRawShape>[] } } })._zod?.def;
+  if (def?.type === "union" && typeof def.discriminator === "string" && Array.isArray(def.options)) {
+    const discriminator = def.discriminator;
+    const currentDiscValue = (values[discriminator] as string | undefined) ?? "self-hosted";
+    const branch = def.options.find((opt) => {
+      const litDef = (opt.shape[discriminator] as { _zod?: { def?: { values?: unknown[] } } })?._zod?.def;
+      return litDef?.values?.includes(currentDiscValue);
+    }) ?? def.options[0]!;
+    activeShape = branch.shape as Record<string, z.ZodTypeAny>;
+  } else {
+    activeShape = (schema as z.ZodObject<z.ZodRawShape>).shape as Record<string, z.ZodTypeAny>;
+  }
 
   return (
     <div className="flex flex-col gap-3">
-      {Object.entries(shape).map(([key, fieldSchema]) => {
+      {Object.entries(activeShape).map(([key, fieldSchema]) => {
+        // Skip cloudProvider here — rendered separately as top-level dropdown
+        if (key === "cloudProvider") return null;
         const rawVal = values[key];
         const label = toLabel(key);
 

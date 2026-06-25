@@ -40,12 +40,23 @@ export function getVariantConfigSchema(type: NodeType, variantId: string): Varia
   return getVariant(type, variantId)?.configSchema;
 }
 
-/** Parse config with defaults; returns defaults if input is empty/invalid. */
+/** Parse config with defaults; returns defaults if input is empty/invalid.
+ *  For discriminatedUnion schemas, fall back to first branch (typically
+ *  "self-hosted") when discriminator missing on input. Zod v4: schema internals
+ *  exposed via _zod.def. */
 export function parseVariantConfig(type: NodeType, variantId: string, raw: unknown): Record<string, unknown> {
   const schema = getVariantConfigSchema(type, variantId);
   if (!schema) return {};
-  const result = schema.safeParse(raw ?? {});
+  const input = { ...((raw ?? {}) as Record<string, unknown>) };
+  const def = (schema as { _zod?: { def?: { type?: string; discriminator?: string } } })._zod?.def;
+  const isDU = def?.type === "union" && typeof def.discriminator === "string";
+  const discKey = isDU ? def!.discriminator! : undefined;
+  if (discKey && input[discKey] === undefined) {
+    input[discKey] = "self-hosted";
+  }
+  const result = schema.safeParse(input);
   if (result.success) return result.data as Record<string, unknown>;
-  const defaults = schema.safeParse({});
+  const defaultsInput = discKey ? { [discKey]: "self-hosted" } : {};
+  const defaults = schema.safeParse(defaultsInput);
   return defaults.success ? (defaults.data as Record<string, unknown>) : {};
 }

@@ -1,24 +1,55 @@
 import { z } from "zod";
 import type { Variant } from "./types";
+import { awsRegion, gcpRegion, azureRegion, AWS_DB_CLASSES, GCP_SQL_CLASSES, AZURE_DB_TIERS, AZURE_DB_SKUS } from "./_shared";
 
-const postgresConfig = z.object({
+// Postgres: per-cloud SKU + region via discriminatedUnion on cloudProvider.
+// Common fields: version, replicas, storageGb, connectionPool, ssl, extensions.
+const postgresCommon = {
   version: z.enum(["14", "15", "16", "17"]).default("16"),
   replicas: z.number().min(0).default(1),
   storageGb: z.number().min(1).default(50),
   connectionPool: z.number().min(1).default(100),
-  region: z.string().default("us-east-1"),
-  instanceClass: z.enum(["db.t3.micro", "db.t3.small", "db.m5.large", "db.m5.xlarge", "db.r5.2xlarge"]).default("db.m5.large"),
-  iops: z.number().min(100).default(3000),
-  storageType: z.enum(["gp3", "gp2", "io1", "io2"]).default("gp3"),
-  multiAz: z.boolean().default(true),
-  backupRetentionDays: z.number().min(0).max(35).default(7),
-  pitrEnabled: z.boolean().default(true),
-  encryptionAtRest: z.boolean().default(true),
   sslEnabled: z.boolean().default(true),
   slowQueryLogMs: z.number().min(0).default(1000),
-  autoVacuum: z.boolean().default(true),
   extensions: z.enum(["none", "pgvector", "postgis", "pg_partman", "timescaledb"]).default("none"),
-});
+};
+const postgresConfig = z.discriminatedUnion("cloudProvider", [
+  z.object({
+    cloudProvider: z.literal("self-hosted"),
+    ...postgresCommon,
+    region: z.string().default("on-prem"),
+  }),
+  z.object({
+    cloudProvider: z.literal("aws"),
+    ...postgresCommon,
+    region: awsRegion,
+    instanceClass: z.enum(AWS_DB_CLASSES).default("db.m5.large"),
+    storageType: z.enum(["gp3", "gp2", "io1", "io2"]).default("gp3"),
+    iops: z.number().min(100).default(3000),
+    multiAz: z.boolean().default(true),
+    backupRetentionDays: z.number().min(0).max(35).default(7),
+    pitrEnabled: z.boolean().default(true),
+    encryptionAtRest: z.boolean().default(true),
+  }),
+  z.object({
+    cloudProvider: z.literal("gcp"),
+    ...postgresCommon,
+    region: gcpRegion,
+    instanceClass: z.enum(GCP_SQL_CLASSES).default("db-n1-standard-2"),
+    tier: z.enum(["enterprise", "enterprise-plus"]).default("enterprise"),
+    backupEnabled: z.boolean().default(true),
+    pointInTimeRecovery: z.boolean().default(true),
+  }),
+  z.object({
+    cloudProvider: z.literal("azure"),
+    ...postgresCommon,
+    region: azureRegion,
+    tier: z.enum(AZURE_DB_TIERS).default("GeneralPurpose"),
+    skuName: z.enum(AZURE_DB_SKUS).default("GP_Gen5_2"),
+    haEnabled: z.boolean().default(false),
+    geoRedundantBackup: z.boolean().default(false),
+  }),
+]);
 
 const mysqlConfig = z.object({
   version: z.enum(["5.7", "8.0", "8.4"]).default("8.0"),
@@ -93,7 +124,7 @@ const sqliteConfig = z.object({
 });
 
 export const DATABASE_VARIANTS: Variant[] = [
-  { id: "postgres", label: "PostgreSQL", iconSlug: "postgresql", description: "Relational database", configSchema: postgresConfig },
+  { id: "postgres", label: "PostgreSQL", iconSlug: "postgresql", description: "Relational database", configSchema: postgresConfig, availableClouds: ["self-hosted", "aws", "gcp", "azure"] },
   { id: "mysql", label: "MySQL", iconSlug: "mysql", description: "Relational database", configSchema: mysqlConfig },
   { id: "mongodb", label: "MongoDB", iconSlug: "mongodb", description: "Document database", configSchema: mongodbConfig },
   { id: "dynamodb", label: "DynamoDB", iconSlug: "amazondynamodb", description: "AWS NoSQL key-value", configSchema: dynamodbConfig, availableClouds: ["aws"] },
